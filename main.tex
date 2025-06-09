@@ -1,3 +1,4 @@
+% !TEX program = xelatex
 \documentclass[runningheads]{llncs}
 %
 \usepackage{array}
@@ -7,10 +8,12 @@
 \usepackage{longtable}
 
 
-\setmainfont{Times New Roman} % English font
+
+% \setmainfont{Noto Serif} % Main font for Latin text
+% \setCJKmainfont{Noto Serif CJK SC} % Chinese font
 % \newfontfamily\chinesefont{SimSun} % Chinese font (you can change this to any available Chinese font on your system)
 
-\newfontfamily\chinesefont{Noto Serif CJK SC}
+\newfontfamily\chinesefont{FandolSong}
 
 % Define a command to easily switch to Chinese font
 \newcommand{\zh}[1]{{\chinesefont #1}}
@@ -19,7 +22,7 @@
 
 
 % \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+% \usepackage[T1]{fontenc} % Do not use with XeLaTeX/fontspec
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{enumitem}
