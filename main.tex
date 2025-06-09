@@ -1,0 +1,269 @@
+\documentclass[runningheads]{llncs}
+%
+\usepackage{array}
+\usepackage{fontspec}
+\usepackage{url}
+\usepackage{tabularx}
+\usepackage{longtable}
+
+
+\setmainfont{Times New Roman} % English font
+% \newfontfamily\chinesefont{SimSun} % Chinese font (you can change this to any available Chinese font on your system)
+
+\newfontfamily\chinesefont{Noto Serif CJK SC}
+
+% Define a command to easily switch to Chinese font
+\newcommand{\zh}[1]{{\chinesefont #1}}
+
+
+
+
+% \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\newcommand{\term}[1]{\textit{#1}}
+\usepackage{xcolor}
+\newcommand{\matt}[1]{{\bf\color{green!50!black}[#1]}} % Colored comments
+
+\usepackage{hyperref}
+\usepackage{color}
+\renewcommand\UrlFont{\color{blue}\rmfamily}
+\urlstyle{rm}
+
+% \usepackage{ctex}
+% \usepackage{xeCJK}
+
+\begin{document}
+
+\input{title_page}
+\title{ \zh{你好，世界！}Contribution Title}
+%
+%\titlerunning{Abbreviated paper title}
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+%
+\author{Mateusz Kędzia\inst{1}\orcidID{0009-0001-4296-4479}}
+%
+\authorrunning{ \zh{你好，世界！} Author et al.}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{Vrije Universiteit Amsterdam, Amsterdam\and
+Vrije Universiteit Amsterdam, Amsterdam, The Netherlands
+\email{lncs@springer.com}\\
+\url{http://www.springer.com/gp/computer-science/lncs} \and
+Vrije Universiteit Amsterdam, Amsterdam, The Netherlands\\
+\email{\{abc,lncs\}@uni-heidelberg.de}}
+%
+\maketitle      % typeset the header of the contribution
+%
+\begin{abstract}
+The abstract should briefly summarize the contents of the paper in
+150--250 words.
+
+\keywords{First keyword  \and Second keyword \and Another keyword.}
+\end{abstract}
+%
+%
+\newpage
+
+\section{Literature Review}
+\label{sec:literature-review}
+
+\subsection{Anomaly Detection Methods in Vehicle Trajectories}
+\label{subsec:anomaly-detection-methods}
+ \zh{你好，世界！}
+The detection of abnormal vehicle trajectories is crucial for applications ranging from fraud detection to traffic management. Various methods have been developed, each with distinct characteristics, data requirements, and feasibility levels. This section organizes these approaches by method type, discussing their technical foundations, data dependencies, and implementation feasibility.
+
+\paragraph{Clustering-Based Methods}
+\label{par:clustering-methods}
+
+\begin{itemize}[label=•]
+\item \textbf{Characteristics}: Groups trajectories based on spatial/spatiotemporal similarity, assuming normal behavior forms dense clusters
+\item \textbf{Key Algorithms}: 
+  \begin{itemize}[label=--]
+  \item \term{DBSCAN/RDBSCAN} for density-based clustering \cite{he2019based,hu2019based}
+  \item \term{CFSFDP} for density peak identification \cite{he2019based}
+  \item \term{K-Means} for comparative analysis \cite{han2016anomaly}
+  \end{itemize}
+\item \textbf{Data Types}: Taxi GPS data (7,600 vehicles/month \cite{zhang2011ibat}), requires grid mapping and trajectory indexing
+\item \textbf{Feasibility}: Moderate. Requires sufficient historical data and careful parameter tuning \cite{hu2019based}
+\end{itemize}
+
+\paragraph{Distance/Similarity-Based Methods}
+\label{par:distance-methods}
+
+\begin{itemize}[label=•]
+\item \textbf{Characteristics}: Identifies outliers through geometric or behavioral dissimilarity metrics
+\item \textbf{Key Metrics}:
+  \begin{itemize}[label=--]
+  \item Edit distance for Pathlet sequences \cite{han2016anomaly}
+  \item Enhanced \term{DTW} and \term{Hausdorff} distances \cite{he2019based}
+  \item \term{MBR} for geographic distribution analysis \cite{he2019based}
+  \end{itemize}
+\item \textbf{Data Types}: High-frequency GPS data (502 SF trajectories \cite{hu2019based})
+\item \textbf{Feasibility}: High for basic metrics (e.g., detour detection), Moderate for sequence-based analysis \cite{he2019based}
+\end{itemize}
+
+\paragraph{Model-Based Methods}
+\label{par:model-methods}
+
+\begin{itemize}[label=•]
+\item \textbf{Characteristics}: Uses machine learning to learn normal patterns from data
+\item \textbf{Key Models}:
+  \begin{itemize}[label=--]
+  \item \term{LSTM-AE-Attention} with data augmentation \cite{huang2021vehicle}
+  \item \term{TSA + MCNN} for time-series analysis \cite{zhao2021research}
+  \item \term{DiffTAD} diffusion models \cite{LI2024111387}
+  \end{itemize}
+\item \textbf{Data Types}: Diverse sources including BeiDou GPS \cite{zhao2021research} and traffic trajectories
+\item \textbf{Feasibility}: Low-Moderate. Requires substantial training data and computational resources \cite{huang2021vehicle}
+\end{itemize}
+
+\paragraph{Density-Based Anomaly Detection}
+\label{par:density-methods}
+
+\begin{itemize}[label=•]
+\item \textbf{Characteristics}: Focuses on low-density trajectory regions
+\item \textbf{Key Approaches}:
+  \begin{itemize}[label=--]
+  \item \term{DENM} density values \cite{he2019based}
+  \item \term{iBAT} isolation forests \cite{zhang2011ibat}
+  \end{itemize}
+\item \textbf{Data Types}: Grid-mapped taxi GPS (Beijing/Shanghai datasets \cite{he2019based})
+\item \textbf{Feasibility}: Moderate. Requires spatial discretization tuning \cite{zhang2011ibat}
+\end{itemize}
+
+\paragraph{Video Analysis-Based Methods}
+\label{par:video-methods}
+
+\begin{itemize}[label=•]
+\item \textbf{Characteristics}: Analyzes visual patterns from surveillance footage
+\item \textbf{Key Techniques}: Background subtraction, Mean Shift tracking \cite{yin2014intelligent}
+\item \textbf{Data Types}: Video datasets (UCF-Crime \cite{lu2024vehicle})
+\item \textbf{Feasibility}: Low for GPS-based projects due to domain mismatch
+\end{itemize}
+
+\paragraph{Data Quality Methods}
+\label{par:data-quality}
+
+\begin{itemize}[label=•]
+\item \textbf{Characteristics}: Detects sensor reliability issues
+\item \textbf{Key Indicators}: Temporal gaps \cite{han2016anomaly,Zheng2015TrajectoryData}, position jumps \cite{hu2024realtime,Zheng2015TrajectoryData}
+\item \textbf{Data Types}: Raw GPS logs with timestamps
+\item \textbf{Feasibility}: High. Requires minimal computation \cite{han2016anomaly}
+\end{itemize}
+
+\paragraph{Hybrid/Specialized Methods}
+\label{par:hybrid-methods}
+
+\begin{itemize}[label=•]
+\item \textbf{Characteristics}: Combines multiple approaches for specific anomaly types
+\item \textbf{Key Examples}:
+  \begin{itemize}[label=--]
+  \item Density-length outlier fusion \cite{hu2019based}
+  \item Spatiotemporal \term{Pathlet} analysis \cite{han2016anomaly}
+  \end{itemize}
+\item \textbf{Data Types}: Contextual data (e.g., POI types) with trajectories
+\item \textbf{Feasibility}: Moderate. Depends on data integration complexity \cite{hu2019based}
+\end{itemize}
+
+The methodological landscape shows clear trade-offs: distance-based methods offer computational efficiency for basic anomalies, while model-based approaches enable complex pattern recognition at higher resource costs. Recent advances in deep learning \cite{LI2024111387} and real-time detection \cite{hu2024realtime} continue to expand the feasibility frontier for different application scenarios.
+
+
+\subsection{Data and Preprocessing}
+\label{sec:data-preprocessing}
+
+\subsection{Data}
+% A description of the ACTUAL data: an overview: data source, when, where, how collected, and obtained under what license from whom? What are the conditions of use and distribution [no distribution, kept within the BJUT and the laptop where this thesis was conducted]. 
+
+\subsection{Data Preprocessing}
+\label{sec:preprocessing}
+
+Report with examples on why there is a need for preprocessing. And how these exceptional cases are dealt with. 
+
+
+
+Report all the statistics before and after the preprocessing. 
+
+
+See Appendix \ref{sec:preprocessing-appendix} for the reasoning and choices of all the parameters. 
+
+
+\section{Methodology}
+\label{sec:methodology}
+
+Below are several ways you can obtain the list of abnormal traj.
+
+\subsection{Isolation Tree}
+\label{sec:iso}
+Isolation Tree method. And the choice of parameters. - anything that is too detailed goes into the Appendix
+
+\subsection{Ratio...}
+- anything that is too detailed goes into the Appendix
+
+\subsection{Improve the results}
+\label{sec:improve}
+
+
+
+When examining the real data, we noticed that simply applying the above-mentioned traj. detection algorithm is not enough. Some exceptions should be taken into consideration. 
+
+- anything that is too detailed goes into the Appendix
+
+Explain exception 1, 2, 3.
+
+\section{Evaluation}
+\label{sec:evaluation}
+
+
+Baseline of your naive traj. section algorithm: simple and imperfect. 
+
+Then the Isolation tree algorithm 
+
+Fine-tuned/improve isolation tree algorithm 
+
+I want to see a table of Precision 
+
+\begin{table}[]
+\begin{tabular}{l|l|l|l}
+                  & Precision & Parametric Setting & Comments \\ \hline
+Baseline          &           &                    &          \\
+Iso Tree          &           &                    &          \\
+Improved Iso Tree &           &                    &         
+\end{tabular}
+\end{table}
+
+
+
+\subsection{Conversion to Knowledge Graph????}
+...
+
+\subsection{Synthetic Knowledge Graph Generation}
+...
+
+
+
+
+
+
+\newpage
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+
+
+
+\bibliographystyle{splncs04}
+\matt{Fix Chinese chars not displaying}
+\bibliography{references}
+
+\appendix
+\section{Data Preprocessing Details}
+\label{sec:preprocessing-appendix}
+
+\end{document}
