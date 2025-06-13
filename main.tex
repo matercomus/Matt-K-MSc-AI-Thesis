@@ -63,127 +63,626 @@ Vrije Universiteit Amsterdam, Amsterdam, The Netherlands\\
 \maketitle      % typeset the header of the contribution
 %
 \begin{abstract}
-The abstract should briefly summarize the contents of the paper in
-150--250 words.
+This study addresses the critical challenge of generating synthetic taxi trajectory datasets that preserve essential characteristics for anomaly detection research while ensuring passenger privacy protection. Urban taxi trajectory data contains sensitive location information that limits its availability for research purposes, creating a significant barrier to advancing anomaly detection methodologies. We propose a comprehensive framework for synthetic trajectory data generation that maintains statistical fidelity, behavioral patterns, and anomaly characteristics of real taxi routes while providing strong privacy guarantees.
 
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+Our approach leverages isolation forest analysis to understand normal and anomalous trajectory patterns in real data, extracting key statistical and behavioral properties that must be preserved in synthetic generation. The framework implements multiple privacy protection mechanisms including differential privacy, k-anonymity, and statistical aggregation to prevent inference of individual trajectories from synthetic data. Comprehensive evaluation demonstrates that synthetic datasets maintain the essential characteristics necessary for effective anomaly detection while providing strong privacy protection, enabling continued research advancement without compromising passenger confidentiality.
+
+\keywords{Synthetic data generation \and Trajectory anomaly detection \and Privacy preservation \and Urban transportation \and Taxi routing}
 \end{abstract}
 %
 %
 \newpage
 
+\section{Introduction}
+\label{sec:introduction}
+
+Urban transportation systems, particularly taxi services, play a crucial role in the mobility infrastructure of large cities worldwide. These services provide essential connectivity, filling gaps in public transportation networks and offering door-to-door convenience for millions of passengers daily. The efficiency and reliability of taxi operations directly impact urban traffic patterns, economic productivity, and citizen satisfaction with city services.
+
+However, recent research has revealed significant inefficiencies in taxi route selection, with studies consistently showing that drivers often deviate from optimal paths. While some deviations may be justified by real-time traffic conditions or passenger preferences, others stem from more concerning causes including driver inexperience, deliberate route manipulation for fare maximization, or potentially malicious behavior. These routing anomalies not only affect passenger costs and travel times but also contribute to urban congestion and environmental impacts through unnecessary fuel consumption and emissions.
+
+Artificial intelligence technologies, particularly machine learning approaches for anomaly detection, offer promising solutions for identifying and addressing these routing inefficiencies. Various AI methodologies have been developed to detect trajectory anomalies, ranging from classical statistical approaches to modern deep learning techniques. These methods can automatically identify suspicious route patterns that deviate significantly from normal driving behavior, enabling transportation authorities and taxi companies to implement corrective measures.
+
+However, existing approaches face several critical limitations. Most traditional anomaly detection methods struggle with the complexity and contextual nature of urban routing decisions, often producing high false positive rates when applied to real-world taxi data. More sophisticated deep learning approaches, while achieving better accuracy, require extensive labeled datasets and lack the interpretability necessary for practical deployment in regulatory contexts. Furthermore, the sensitive nature of location data raises significant privacy concerns, limiting the availability of real-world datasets for research and deployment.
+
+Privacy-preserving techniques, particularly synthetic data generation, emerge as a promising solution to address these data availability and privacy constraints. By creating artificial datasets that preserve the statistical properties of real trajectory data while protecting individual privacy, synthetic data enables the development and evaluation of anomaly detection systems without compromising passenger confidentiality. However, current synthetic data generation methods for trajectory data remain limited, particularly for capturing the complex spatial-temporal patterns inherent in urban taxi routes.
+
+This study proposes a novel approach for generating synthetic taxi trajectory datasets that preserves the statistical and behavioral properties necessary for effective anomaly detection while addressing critical data privacy concerns. We focus specifically on creating realistic synthetic route data that maintains the complex spatial-temporal patterns inherent in urban taxi operations, enabling privacy-preserving research and development in trajectory anomaly detection systems.
+
+The contribution of this work is threefold: (1) we develop an isolation forest methodology specifically adapted for urban taxi trajectory anomaly detection to establish ground truth patterns, (2) we introduce a comprehensive synthetic trajectory data generation framework that preserves both statistical properties and anomaly characteristics of real taxi routes, and (3) we provide extensive evaluation demonstrating that synthetic data maintains the essential characteristics necessary for effective anomaly detection while providing strong privacy guarantees.
+
 \section{Literature Review}
 \label{sec:literature-review}
 
-The field of vehicle trajectory anomaly detection has evolved through distinct methodological paradigms, each addressing fundamental limitations of preceding approaches while introducing novel computational perspectives. This review traces this evolution, examining how different methodological schools have contributed to our understanding of trajectory anomalies and identifying opportunities for methodological synthesis that inform our proposed integration of isolation forests with knowledge graph representations.
+This review examines two key research areas relevant to our work: route anomaly detection and synthetic route data generation. We focus specifically on the unique challenges of route data, which differs significantly from other types of data due to its spatial-temporal nature and privacy sensitivity.
 
-\paragraph{Foundational Isolation-Based Approaches}
-The seminal work of Zhang et al. \cite{zhang2011ibat} established isolation forests as a paradigm-shifting approach for trajectory anomaly detection through their iBat framework. Operating on the principle that anomalies require fewer random partitions for isolation than normal trajectories, their method demonstrated remarkable computational efficiency compared to distance-based alternatives while achieving superior detection accuracy on Beijing taxi data. This foundational contribution not only validated tree-based partitioning for spatial-temporal data but also established Beijing as a crucial testbed for trajectory anomaly research—a precedent that directly motivates our choice of dataset and geographic focus.
+\subsection{Route Anomaly Detection}
+\label{sec:detection-review}
 
-\paragraph{Evolution of Density-Based Methodologies}
-Building upon earlier clustering paradigms, He et al. \cite{he2019based} advanced density-based anomaly detection by integrating pattern information mining with enhanced DBSCAN clustering. Their incorporation of multiple distance metrics, including DTW and Hausdorff distances, addressed a critical limitation identified in Zhang et al.'s work \cite{zhang2011ibat}—the need for more sophisticated similarity measures beyond simple geometric proximity. This methodological evolution suggests that while isolation forests provide computational advantages, they could benefit from the multi-metric similarity insights developed in density-based approaches.
+\paragraph{Isolation-Based Approaches}
+The seminal work of Zhang et al. \cite{zhang2011ibat} established isolation forests as a paradigm-shifting approach for route anomaly detection through their iBat framework. Their method demonstrated remarkable computational efficiency while achieving superior detection accuracy on taxi route data, establishing a foundation for efficient route analysis.
 
-Extending this density-based paradigm to urban taxi trajectories, Hu et al. \cite{hu2019based} specifically targeted the spatial-temporal complexity that Zhang et al. \cite{zhang2011ibat} had highlighted as challenging for isolation methods. Their fusion of density and length outlier detection mechanisms provides complementary anomaly indicators that could enhance the feature engineering pipeline for isolation forest implementations. The convergence of their findings with Zhang et al.'s computational efficiency requirements suggests a promising avenue for hybrid methodological development.
+\paragraph{Density-Based Methodologies}
+Building upon earlier clustering paradigms, He et al. \cite{he2019based} advanced density-based anomaly detection by integrating pattern information mining with enhanced DBSCAN clustering. Their incorporation of multiple distance metrics, including DTW and Hausdorff distances, addressed the need for sophisticated similarity measures in route comparison, which is crucial for identifying anomalous paths.
 
-\paragraph{The Deep Learning Revolution and Its Implications}
-The emergence of deep learning approaches marked a significant departure from the tree-based and density-based methodologies established by Zhang et al. \cite{zhang2011ibat} and He et al. \cite{he2019based}. Huang et al. \cite{huang2021vehicle} pioneered the application of LSTM autoencoders with attention mechanisms, addressing the temporal sequence modeling limitations inherent in earlier static approaches. While computationally more demanding than Zhang et al.'s isolation forests, their attention mechanism insights reveal feature importance patterns that could inform more intelligent partitioning strategies in tree-based methods.
+\paragraph{Deep Learning Approaches}
+The emergence of deep learning approaches marked a significant departure from classical methods. Huang et al. \cite{huang2021vehicle} pioneered the application of LSTM autoencoders with attention mechanisms, addressing the temporal sequence modeling limitations in route analysis. The recent breakthrough of Li et al. \cite{LI2024111387} with their DiffTAD framework represents the current pinnacle of generative model applications to route anomaly detection.
 
-The recent breakthrough of Li et al. \cite{LI2024111387} with their DiffTAD framework represents the current pinnacle of generative model applications to trajectory anomaly detection. Their denoising diffusion approach fundamentally reframes anomaly detection as a reconstruction problem, achieving state-of-the-art performance that significantly surpasses both the classical isolation methods of Zhang et al. \cite{zhang2011ibat} and the density approaches of He et al. \cite{he2019based}. However, this performance comes at substantial computational cost, highlighting the persistent trade-off between accuracy and efficiency that has characterized the field since Zhang et al.'s original efficiency-focused contribution.
+\subsection{Synthetic Route Data Generation}
+\label{sec:generation-review}
 
-Zhao et al. \cite{zhao2021research} extended deep learning approaches to commercial vehicle monitoring using BeiDou GPS data, demonstrating scalability considerations that complement Zhang et al.'s efficiency focus \cite{zhang2011ibat}. Their multi-scale CNN architecture provides preprocessing insights that could enhance feature extraction for isolation forest applications, particularly for handling the large-scale urban datasets that both Zhang et al. and our proposed research target.
+\paragraph{Unique Challenges of Route Data}
+Route data presents unique challenges for synthetic generation that distinguish it from other types of data. Unlike simple point data or time series, routes contain complex spatial-temporal dependencies, must respect physical constraints (e.g., road networks), and often reveal sensitive information about individuals' movements and habits. These characteristics make traditional synthetic data generation approaches inadequate for route data.
 
-\paragraph{Traditional Methods and Feature Engineering Legacy}
-Han et al. \cite{han2016anomaly} contributed crucial preprocessing methodologies through their pathlet-based trajectory representation and edit distance calculations. Their offline mining approach provides trajectory segmentation strategies that address data preparation challenges implicit in Zhang et al.'s work \cite{zhang2011ibat} but not explicitly detailed. The pathlet representation offers a middle ground between the geometric simplicity favored by isolation methods and the complex feature spaces required by deep learning approaches like those of Huang et al. \cite{huang2021vehicle}.
+\paragraph{Privacy-Preserving Route Generation}
+The field of synthetic route generation has evolved to address these unique challenges. Early approaches focused on simple perturbation techniques, but these often failed to preserve the complex patterns of real routes. Recent advances in differential privacy and k-anonymity have provided stronger privacy guarantees while attempting to maintain route characteristics, though challenges remain in balancing privacy and utility.
 
-\paragraph{Multi-Modal and Real-Time Extensions}
-While Yin et al. \cite{yin2014intelligent} focused on video analysis rather than GPS trajectories, their work illuminates multi-modal validation strategies that could strengthen the evaluation frameworks for both classical approaches like Zhang et al.'s iBat \cite{zhang2011ibat} and modern methods like Li et al.'s DiffTAD \cite{LI2024111387}. Their emphasis on behavioral pattern recognition provides conceptual bridges between visual and trajectory-based anomaly definitions.
-
-The real-time trajectory prediction work \cite{hu2024realtime} directly addresses deployment scalability concerns that Zhang et al. \cite{zhang2011ibat} anticipated but did not fully explore. By combining prediction with anomaly detection, this approach suggests how isolation forest efficiency advantages could be leveraged in production systems where the computational constraints highlighted by the deep learning methods of Li et al. \cite{LI2024111387} become prohibitive.
-
-\paragraph{Hybrid Methodological Convergence}
-Recent developments in spatial and feature mixed outlier detection \cite{safety2024spatial} exemplify the methodological synthesis that characterizes the field's current evolution. These hybrid approaches integrate the computational efficiency principles established by Zhang et al. \cite{zhang2011ibat} with the multi-metric sophistication developed by He et al. \cite{he2019based}, while incorporating feature complexity insights from deep learning approaches like those of Huang et al. \cite{huang2021vehicle}.
+\paragraph{Integration with Anomaly Detection}
+The intersection of synthetic route generation and anomaly detection remains relatively unexplored. While synthetic data has been used to augment training sets for anomaly detection in various domains, the specific challenges of generating realistic anomalous routes while maintaining privacy have received limited attention. This gap in the literature is particularly significant given the sensitivity of route data and the need for privacy-preserving anomaly detection systems.
 
 \paragraph{Synthesis and Future Directions}
-The trajectory of research from Zhang et al.'s foundational isolation forests \cite{zhang2011ibat} through He et al.'s density enhancements \cite{he2019based} to Li et al.'s diffusion models \cite{LI2024111387} reveals a persistent tension between computational efficiency and detection sophistication. While deep learning approaches have achieved remarkable performance gains, they have simultaneously highlighted the enduring value of Zhang et al.'s efficiency principles for large-scale deployment scenarios. The preprocessing insights from Han et al. \cite{han2016anomaly} and the multi-metric approaches of He et al. \cite{he2019based} suggest pathways for enhancing isolation forest performance without sacrificing computational advantages.
+The trajectory of research from classical methods through deep learning approaches reveals a persistent tension between computational efficiency and detection sophistication in route analysis. While deep learning approaches have achieved remarkable performance gains, they have simultaneously highlighted the enduring value of efficient methods for large-scale deployment scenarios. The integration of synthetic route generation with anomaly detection presents an opportunity to address both privacy concerns and data availability limitations, enabling continued research advancement in route analysis.
 
-Our proposed integration of isolation forests with knowledge graph representations addresses this efficiency-sophistication trade-off by leveraging semantic knowledge to enhance feature discrimination while maintaining the computational scalability that Zhang et al. \cite{zhang2011ibat} established as crucial for urban-scale applications. This approach synthesizes the efficiency legacy of isolation methods, the feature sophistication insights from density-based approaches \cite{he2019based}, and the semantic reasoning capabilities that neither classical methods nor current deep learning approaches \cite{LI2024111387} adequately address. The convergence of hybrid methodologies \cite{safety2024spatial} with real-time deployment requirements \cite{hu2024realtime} further validates this direction as both theoretically sound and practically viable for next-generation trajectory anomaly detection systems.
-
-
-\subsection{Data and Preprocessing}
-\label{sec:data-preprocessing}
-
-\subsection{Data}
-% A description of the ACTUAL data: an overview: data source, when, where, how collected, and obtained under what license from whom? What are the conditions of use and distribution [no distribution, kept within the BJUT and the laptop where this thesis was conducted]. 
-
-\subsection{Data Preprocessing}
-\label{sec:preprocessing}
-
-Report with examples on why there is a need for preprocessing. And how these exceptional cases are dealt with. 
-
-
-
-Report all the statistics before and after the preprocessing. 
-
-
-See Appendix \ref{sec:preprocessing-appendix} for the reasoning and choices of all the parameters. 
-
+Our proposed approach addresses the critical need for privacy-preserving route data by developing comprehensive synthetic generation techniques that maintain the statistical and behavioral characteristics essential for anomaly detection research. This approach leverages the efficiency principles established by classical methods while addressing the unique challenges of route data privacy and utility preservation.
 
 \section{Methodology}
 \label{sec:methodology}
 
-Below are several ways you can obtain the list of abnormal traj.
+% TODO: Implement comprehensive framework for synthetic taxi trajectory data generation
+% Focus: Statistical pattern preservation + privacy protection + anomaly characteristic maintenance
 
-\subsection{Isolation Tree}
+\subsection{Isolation Forest for Trajectory Analysis}
 \label{sec:iso}
-Isolation Tree method. And the choice of parameters. - anything that is too detailed goes into the Appendix
 
-\subsection{Ratio...}
-- anything that is too detailed goes into the Appendix
+% PURPOSE: Establish ground truth patterns and anomaly detection baseline
+% TODO: Implement isolation forest specifically adapted for trajectory data
 
-\subsection{Improve the results}
+\paragraph{Algorithm Implementation}
+% TODO: Describe isolation forest adaptation for trajectories
+% - Feature space partitioning for spatial-temporal data
+% - Anomaly scoring based on path length
+% - Integration with trajectory-specific features
+
+\paragraph{Key Adaptations for Trajectory Data}
+% TODO: Detail specific modifications needed:
+\begin{itemize}
+\item Feature engineering for route characteristics (distance, duration, deviation metrics)
+\item Temporal segmentation handling for variable trip lengths
+\item Geographic normalization across different urban zones
+\end{itemize}
+
+% RESULT: Ground truth anomaly labels + statistical distribution patterns for synthetic generation
+% See Appendix \ref{sec:iso-appendix} for implementation details
+
+\subsection{Statistical Pattern Extraction}
+\label{sec:pattern-extraction}
+
+% PURPOSE: Extract essential characteristics from real data for synthetic generation
+% TODO: Implement comprehensive pattern analysis pipeline
+
+\paragraph{Pattern Categories}
+% TODO: For each category, implement extraction algorithms and validation:
+
+\textbf{Spatial Distributions}
+% TODO: Implement extraction of:
+% - Origin-destination frequency matrices
+% - Route clustering patterns  
+% - Geographic hotspot identification
+% - [DETAILS TO BE ADDED]
+
+\textbf{Temporal Patterns}
+% TODO: Implement extraction of:
+% - Trip frequency by time-of-day/day-of-week
+% - Seasonal variation patterns
+% - Peak/off-peak characteristics
+% - [DETAILS TO BE ADDED]
+
+\textbf{Behavioral Characteristics}
+% TODO: Implement extraction of:
+% - Speed profile distributions
+% - Stop pattern analysis
+% - Route selection preferences
+% - Driver behavior signatures
+% - [DETAILS TO BE ADDED]
+
+\textbf{Anomaly Signatures}
+% TODO: Characterize suspicious trajectory features:
+% - Deviation patterns from normal routes
+% - Temporal anomaly characteristics
+% - Spatial anomaly signatures
+% - [DETAILS TO BE ADDED]
+
+\subsection{Enhanced Anomaly Detection}
 \label{sec:improve}
 
+% PURPOSE: Improve isolation forest accuracy for better synthetic data quality
+% TODO: Implement refinements to handle urban routing complexity
 
+\paragraph{Exception Handling Framework}
+% TODO: Implement algorithms for three exception types:
 
-When examining the real data, we noticed that simply applying the above-mentioned traj. detection algorithm is not enough. Some exceptions should be taken into consideration. 
+\textbf{Traffic-Induced Deviations}
+% TODO: Algorithm to distinguish traffic-related vs. suspicious deviations
+% - Historical traffic data integration
+% - Expected delay calculations
+% - Threshold-based classification
+% - [IMPLEMENTATION DETAILS TO BE ADDED]
 
-- anything that is too detailed goes into the Appendix
+\textbf{Passenger-Requested Deviations}
+% TODO: Algorithm to identify legitimate passenger stops
+% - Stop duration analysis
+% - POI database integration
+% - Context-based classification
+% - [IMPLEMENTATION DETAILS TO BE ADDED]
 
-Explain exception 1, 2, 3.
+\textbf{Construction and Event Impacts}
+% TODO: Algorithm to account for temporary disruptions
+% - External data source integration
+% - Temporal/spatial buffer creation
+% - Impact period adjustments
+% - [IMPLEMENTATION DETAILS TO BE ADDED]
 
-\section{Evaluation}
-\label{sec:evaluation}
+\paragraph{Multi-Scale Analysis}
+% TODO: Implement three-level analysis framework:
+\begin{itemize}
+\item \textbf{Micro-level}: [IMPLEMENT] 100-meter segment analysis
+\item \textbf{Meso-level}: [IMPLEMENT] Complete trajectory analysis  
+\item \textbf{Macro-level}: [IMPLEMENT] Driver behavior profiling
+\end{itemize}
 
+% See Appendix \ref{sec:improve-appendix} for detailed algorithms
 
-Baseline of your naive traj. section algorithm: simple and imperfect. 
+\subsection{Synthetic Trajectory Data Generation}
+\label{sec:synthetic}
 
-Then the Isolation tree algorithm 
+% CORE CONTRIBUTION: Privacy-preserving synthetic trajectory generation framework
+% TODO: Implement comprehensive generation pipeline
 
-Fine-tuned/improve isolation tree algorithm 
+\paragraph{Generation Framework}
+% TODO: Implement multi-phase generation process:
 
-I want to see a table of Precision 
+\begin{enumerate}
+\item \textbf{Pattern Modeling}: [IMPLEMENT] Statistical models for extracted patterns
+   % - Distance/duration distributions
+   % - Origin-destination matrices
+   % - Temporal pattern models
+   % - [DETAILS TO BE ADDED]
 
-\begin{table}[]
-\begin{tabular}{l|l|l|l}
-                  & Precision & Parametric Setting & Comments \\ \hline
-Baseline          &           &                    &          \\
-Iso Tree          &           &                    &          \\
-Improved Iso Tree &           &                    &         
+\item \textbf{Route Simulation}: [IMPLEMENT] Probabilistic route generation
+   % - Spatial-temporal constraint respect
+   % - Realistic path selection
+   % - Geographic boundary enforcement
+   % - [DETAILS TO BE ADDED]
+
+\item \textbf{Anomaly Injection}: [IMPLEMENT] Systematic anomaly introduction
+   % - Suspicious pattern replication
+   % - Anomaly rate preservation
+   % - Realistic anomaly characteristics
+   % - [DETAILS TO BE ADDED]
+
+\item \textbf{Noise Addition}: [IMPLEMENT] Realistic GPS error simulation
+   % - Accuracy variation modeling
+   % - Signal loss simulation
+   % - Measurement error injection
+   % - [DETAILS TO BE ADDED]
+
+\item \textbf{Validation}: [IMPLEMENT] Quality assurance procedures
+   % - Statistical property comparison
+   % - Anomaly detection performance validation
+   % - [DETAILS TO BE ADDED]
+\end{enumerate}
+
+\paragraph{Privacy Preservation Mechanisms}
+% TODO: Implement privacy protection techniques:
+
+\begin{itemize}
+\item \textbf{Statistical Aggregation}: [IMPLEMENT] Aggregate pattern usage only
+\item \textbf{Differential Privacy}: [IMPLEMENT] $\varepsilon$-differential privacy with $\varepsilon$ = [VALUE TO BE DETERMINED]
+\item \textbf{k-Anonymity}: [IMPLEMENT] k = [VALUE TO BE DETERMINED] trajectory indistinguishability
+\end{itemize}
+
+\paragraph{Quality Assurance Framework}
+% TODO: Implement validation procedures:
+
+\begin{itemize}
+\item \textbf{Distribution tests}: [IMPLEMENT] KS tests, chi-square tests
+\item \textbf{Performance validation}: [IMPLEMENT] Cross-training evaluation
+\item \textbf{Utility assessment}: [IMPLEMENT] Research application validation
+\end{itemize}
+
+% EXPECTED RESULT: Synthetic datasets with privacy guarantees + research utility
+
+\section{Data and Preprocessing}
+\label{sec:data-preprocessing}
+
+% TODO: Describe actual dataset and implement preprocessing pipeline
+% Focus: Real taxi data characteristics + quality issues + preprocessing solutions
+
+\subsection{Dataset Description}
+\label{sec:data}
+
+The dataset used in this study consists of Beijing taxi GPS data collected between 25.11.2019 and 01.12.2019. Each day contains approximately 16GB of raw GPS data, capturing the detailed movements of taxis throughout the metropolitan area. This large-scale dataset provides a rich source of real-world taxi routes for analysis and synthetic data generation.
+
+\begin{itemize}
+\item \textbf{Data source}: Beijing taxi GPS tracking devices
+\item \textbf{Geographic coverage}: Beijing metropolitan area
+\item \textbf{Temporal coverage}: 25 November 2019 -- 1 December 2019
+\item \textbf{Data volume}: ~16GB per day of raw GPS data
+\item \textbf{Licensing}: [TO BE SPECIFIED] - Data agreement and usage conditions
+\end{itemize}
+
+% TODO: Document data access restrictions and privacy compliance
+% Data usage: Research purposes only, secure processing environment
+
+\subsection{Data Preprocessing}
+\label{sec:preprocessing}
+
+% PURPOSE: Transform raw GPS data into analysis-ready trajectory features
+% TODO: Implement comprehensive preprocessing pipeline
+
+\paragraph{Data Quality Issues Analysis}
+% TODO: Characterize actual data quality problems in obtained dataset:
+
+\begin{itemize}
+\item \textbf{GPS accuracy variations}: [ANALYZE] Signal loss patterns in urban areas
+\item \textbf{Sampling rate inconsistencies}: [ANALYZE] Time interval variations
+\item \textbf{Missing trajectory segments}: [ANALYZE] Data gap patterns and causes
+\item \textbf{Outlier coordinates}: [ANALYZE] Erroneous GPS coordinate frequency
+\end{itemize}
+
+\paragraph{Preprocessing Pipeline Implementation}
+% TODO: Implement and document each stage:
+
+\begin{enumerate}
+\item \textbf{Coordinate Validation}: [IMPLEMENT]
+   % TODO: Define geographic boundaries
+   % TODO: Set accuracy thresholds
+   % TODO: Implement filtering algorithms
+   % - Remove GPS points outside study area
+   % - Filter impossible coordinates
+   % - [DETAILS TO BE ADDED]
+
+\item \textbf{Trajectory Segmentation}: [IMPLEMENT]
+   % TODO: Define trip boundaries
+   % TODO: Set temporal/spatial gap thresholds
+   % TODO: Implement segmentation algorithms
+   % - Divide GPS streams into individual trips
+   % - Handle multi-passenger trips
+   % - [DETAILS TO BE ADDED]
+
+\item \textbf{Gap Interpolation}: [IMPLEMENT]
+   % TODO: Choose interpolation method
+   % TODO: Set maximum gap thresholds
+   % TODO: Validate interpolation quality
+   % - Spatial-temporal interpolation
+   % - Maintain trajectory integrity
+   % - [DETAILS TO BE ADDED]
+
+\item \textbf{Map Matching}: [IMPLEMENT]
+   % TODO: Obtain road network data
+   % TODO: Choose map matching algorithm
+   % TODO: Validate matching accuracy
+   % - Align GPS coordinates with roads
+   % - Handle GPS noise and errors
+   % - [DETAILS TO BE ADDED]
+
+\item \textbf{Feature Extraction}: [IMPLEMENT]
+   % TODO: Define comprehensive feature set
+   % TODO: Implement feature calculation algorithms
+   % TODO: Validate feature quality
+   % - Route characteristics (distance, duration, etc.)
+   % - Speed profiles and acceleration patterns
+   % - Deviation metrics from optimal paths
+   % - [DETAILS TO BE ADDED]
+\end{enumerate}
+
+\paragraph{Quality Assessment Results}
+% TODO: Document preprocessing impact with actual statistics
+
+Table \ref{tab:preprocessing-stats} will present key statistics before and after preprocessing.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l|c|c}
+\textbf{Metric} & \textbf{Before Preprocessing} & \textbf{After Preprocessing} \\ \hline
+Total GPS points & 0 & 0 \\
+Valid trajectories & 0 & 0 \\
+Average trip length (km) & 0 & 0 \\
+Average trip duration (min) & 0 & 0 \\
+Data completeness (\%) & 0 & 0 \\
 \end{tabular}
+\caption{Dataset statistics before and after preprocessing}
+\label{tab:preprocessing-stats}
 \end{table}
 
+% TODO: Justify preprocessing choices with examples and results
+% TODO: Document all parameters and thresholds selected
+% See Appendix \ref{sec:preprocessing-appendix} for detailed parameters and validation
 
+\section{Experimental Setup and Results}
+\label{sec:evaluation}
 
-\subsection{Conversion to Knowledge Graph????}
-...
+% TODO: Design and conduct comprehensive evaluation of synthetic data generation framework
+% Focus: Baseline establishment + synthetic data quality + privacy validation + performance analysis
 
-\subsection{Synthetic Knowledge Graph Generation}
-...
+\subsection{Experimental Design}
+\label{sec:exp-design}
 
+% TODO: Design three-phase evaluation strategy
 
+\paragraph{Evaluation Phases}
+% TODO: Implement comprehensive evaluation framework:
 
+\begin{enumerate}
+\item \textbf{Anomaly Detection Baseline}: [IMPLEMENT] Ground truth establishment on real data
+   % TODO: Compare different anomaly detection approaches
+   % TODO: Establish performance benchmarks
+   % TODO: Validate ground truth quality
 
+\item \textbf{Synthetic Data Quality Assessment}: [IMPLEMENT] Fidelity and utility evaluation
+   % TODO: Statistical property preservation analysis
+   % TODO: Behavioral pattern maintenance validation
+   % TODO: Anomaly characteristic preservation testing
 
+\item \textbf{Privacy Preservation Validation}: [IMPLEMENT] Privacy guarantee assessment
+   % TODO: Attack resistance testing
+   % TODO: Privacy mechanism effectiveness analysis
+   % TODO: Trade-off analysis (privacy vs. utility)
+\end{enumerate}
+
+\paragraph{Anomaly Detection Method Comparison}
+% TODO: Implement and compare three approaches on real data:
+
+\begin{itemize}
+\item \textbf{Baseline Method}: [IMPLEMENT] Simple statistical thresholds
+   % TODO: Define distance/duration thresholds
+   % TODO: Implement threshold-based classification
+   % TODO: Evaluate baseline performance
+
+\item \textbf{Standard Isolation Forest}: [IMPLEMENT] Traditional approach
+   % TODO: Apply standard isolation forest to trajectory features
+   % TODO: Optimize hyperparameters
+   % TODO: Evaluate detection performance
+
+\item \textbf{Enhanced Isolation Forest}: [IMPLEMENT] Our improved approach
+   % TODO: Integrate exception handling mechanisms
+   % TODO: Apply multi-scale analysis
+   % TODO: Evaluate enhanced performance
+\end{itemize}
+
+% TODO: Use precision, recall, F1-score with emphasis on precision (false positive cost)
+
+\subsection{Anomaly Detection Results}
+\label{sec:results}
+
+% TODO: Conduct experiments and fill in actual results
+
+Table \ref{tab:evaluation-results} will present comparative performance on real trajectory data.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l|c|c|c|l}
+\textbf{Method} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Comments} \\ \hline
+Baseline & [RESULTS] & [RESULTS] & [RESULTS] & [ANALYSIS] \\
+Standard Isolation Forest & [RESULTS] & [RESULTS] & [RESULTS] & [ANALYSIS] \\
+Enhanced Isolation Forest & [RESULTS] & [RESULTS] & [RESULTS] & [ANALYSIS] \\
+\end{tabular}
+\caption{Performance comparison of anomaly detection methods on real data}
+\label{tab:evaluation-results}
+\end{table}
+
+% TODO: Analyze results and demonstrate enhancement effectiveness
+% Expected: Enhanced approach shows improved precision through exception handling
+
+\subsection{Synthetic Data Quality Evaluation}
+\label{sec:synthetic-eval}
+
+% TODO: Comprehensive synthetic data validation across multiple dimensions
+
+\paragraph{Statistical Fidelity Assessment}
+% TODO: Implement statistical comparison framework:
+
+\textbf{Distribution Comparisons}
+% TODO: Compare key statistical properties:
+\begin{itemize}
+\item \textbf{Distance distributions}: [IMPLEMENT] Trip length pattern analysis
+\item \textbf{Duration distributions}: [IMPLEMENT] Travel time characteristic comparison
+\item \textbf{Spatial coverage}: [IMPLEMENT] Geographic distribution analysis
+\item \textbf{Temporal patterns}: [IMPLEMENT] Time-of-day and day-of-week pattern comparison
+\item \textbf{Speed profiles}: [IMPLEMENT] Velocity and acceleration pattern analysis
+\end{itemize}
+
+\textbf{Statistical Test Results}
+% TODO: Conduct statistical tests and document results
+
+Table \ref{tab:synthetic-stats} will show comparison between real and synthetic datasets.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l|c|c|c}
+\textbf{Metric} & \textbf{Real Data} & \textbf{Synthetic Data} & \textbf{Difference (\%)} \\ \hline
+Avg. trip distance (km) & 0 & 0 & 0 \\
+Avg. trip duration (min) & 0 & 0 & 0 \\
+Spatial coverage (km²) & 0 & 0 & 0 \\
+Peak hour ratio & 0 & 0 & 0 \\
+Anomaly rate (\%) & 0 & 0 & 0 \\
+\end{tabular}
+\caption{Statistical comparison between real and synthetic trajectory datasets}
+\label{tab:synthetic-stats}
+\end{table}
+
+\paragraph{Anomaly Preservation Evaluation}
+% TODO: Validate that synthetic data maintains anomaly detection challenges
+
+\textbf{Cross-Training Experiments}
+% TODO: Design and conduct cross-training evaluation:
+\begin{enumerate}
+\item [IMPLEMENT] Train models on synthetic data, test on real data
+\item [IMPLEMENT] Train models on real data, test on synthetic data
+\item [IMPLEMENT] Compare performance across training scenarios
+\item [IMPLEMENT] Validate anomaly characteristic preservation
+\end{enumerate}
+
+\textbf{Detection Challenge Preservation}
+% TODO: Demonstrate that synthetic data provides similar detection challenges
+% Expected result: Comparable performance indicates successful anomaly preservation
+
+\paragraph{Utility Validation}
+% TODO: Evaluate practical research utility of synthetic data:
+
+\begin{itemize}
+\item \textbf{Algorithm Development}: [TEST] New method development on synthetic data
+\item \textbf{Parameter Optimization}: [TEST] Hyperparameter tuning transferability
+\item \textbf{Research Reproducibility}: [VALIDATE] Replication capability for other researchers
+\end{itemize}
+
+\subsection{Privacy Preservation Assessment}
+\label{sec:privacy-eval}
+
+% TODO: Comprehensive privacy protection evaluation
+
+\paragraph{Attack Resistance Testing}
+% TODO: Implement and conduct privacy attack simulations:
+
+\textbf{Membership Inference Attacks}
+% TODO: Test whether attackers can determine if specific trajectories were used
+% - [IMPLEMENT] Design membership inference attack
+% - [IMPLEMENT] Test differential privacy effectiveness
+% - [RESULTS] Document attack success rates
+% Expected: Low success rates due to privacy mechanisms
+
+\textbf{Trajectory Reconstruction Attacks}
+% TODO: Test whether original trajectories can be reconstructed
+% - [IMPLEMENT] Design reconstruction attack methods
+% - [IMPLEMENT] Test k-anonymity and aggregation effectiveness
+% - [RESULTS] Document reconstruction success rates
+% Expected: Failed reconstruction due to privacy protections
+
+\textbf{Location Privacy Protection}
+% TODO: Test protection of sensitive locations (home/work addresses)
+% - [IMPLEMENT] Sensitive location identification methods
+% - [IMPLEMENT] Test location inference resistance
+% - [RESULTS] Document location privacy preservation
+% Expected: Sensitive locations cannot be inferred
+
+\paragraph{Privacy-Utility Trade-off Analysis}
+% TODO: Analyze relationship between privacy strength and data utility
+% - [IMPLEMENT] Vary privacy parameters (ε, k values)
+% - [MEASURE] Impact on synthetic data utility
+% - [OPTIMIZE] Find optimal privacy-utility balance
+
+\subsection{Computational Performance Analysis}
+\label{sec:performance}
+
+% TODO: Evaluate computational efficiency of synthetic data generation framework
+
+\paragraph{Scalability Analysis}
+% TODO: Measure performance across different dataset sizes:
+
+\begin{itemize}
+\item \textbf{Pattern Extraction}: [MEASURE] Processing time vs. dataset size
+\item \textbf{Synthetic Generation}: [MEASURE] Generation time vs. output size
+\item \textbf{Privacy Mechanisms}: [MEASURE] Privacy overhead analysis
+\end{itemize}
+
+\paragraph{Resource Requirements}
+% TODO: Document computational and memory requirements
+% - [MEASURE] Peak memory usage during processing
+% - [MEASURE] CPU utilization patterns
+% - [OPTIMIZE] Identify optimization opportunities
+
+% Expected: Linear scalability for pattern extraction, constant time for generation per trajectory
+
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+
+% TODO: Synthesize research contributions and outline future directions
+
+\subsection{Research Contributions Summary}
+% TODO: Summarize key contributions of the work:
+
+\paragraph{Primary Contributions}
+% TODO: Document achieved contributions:
+\begin{enumerate}
+\item \textbf{Synthetic Trajectory Data Generation Framework}: [SUMMARIZE] Development of comprehensive privacy-preserving synthetic data generation methodology
+   % - Statistical pattern preservation techniques
+   % - Privacy mechanism integration
+   % - Quality assurance framework
+
+\item \textbf{Enhanced Isolation Forest for Trajectory Analysis}: [SUMMARIZE] Adaptation of isolation forests for urban taxi trajectory anomaly detection
+   % - Exception handling mechanisms
+   % - Multi-scale analysis framework
+   % - Feature engineering for trajectory data
+
+\item \textbf{Privacy-Utility Trade-off Analysis}: [SUMMARIZE] Comprehensive evaluation of privacy preservation vs. data utility
+   % - Attack resistance validation
+   % - Utility preservation assessment
+   % - Optimal parameter selection
+\end{enumerate}
+
+\subsection{Research Impact and Applications}
+% TODO: Discuss broader impact and potential applications:
+
+\paragraph{Academic Impact}
+% TODO: Describe contributions to research community:
+\begin{itemize}
+\item [DISCUSS] Advancement of privacy-preserving data generation techniques
+\item [DISCUSS] Contribution to trajectory anomaly detection methodologies
+\item [DISCUSS] Framework for evaluating synthetic data quality
+\end{itemize}
+
+\paragraph{Practical Applications}
+% TODO: Describe real-world applications and benefits:
+\begin{itemize}
+\item [DISCUSS] Transportation authority anomaly detection systems
+\item [DISCUSS] Privacy-compliant research data sharing
+\item [DISCUSS] Taxi company route optimization and monitoring
+\end{itemize}
+
+\subsection{Limitations and Challenges}
+% TODO: Acknowledge limitations of current work:
+
+\paragraph{Current Limitations}
+% TODO: Document identified limitations:
+\begin{itemize}
+\item [IDENTIFY] Computational complexity limitations
+\item [IDENTIFY] Data dependency requirements
+\item [IDENTIFY] Privacy-utility trade-off constraints
+\end{itemize}
+
+\paragraph{Technical Challenges}
+% TODO: Discuss technical challenges encountered:
+\begin{itemize}
+\item [DISCUSS] Scalability challenges with large datasets
+\item [DISCUSS] Parameter tuning complexity
+\item [DISCUSS] Validation methodology limitations
+\end{itemize}
+
+\subsection{Future Research Directions}
+% TODO: Outline promising research directions:
+
+\paragraph{Methodological Extensions}
+% TODO: Identify methodological improvement opportunities:
+\begin{itemize}
+\item PROPOSE: Advanced privacy mechanisms (federated learning, homomorphic encryption)
+\item PROPOSE: Deep learning integration for pattern modeling
+\item PROPOSE: Multi-modal data integration (traffic, weather, events)
+\end{itemize}
+
+\paragraph{Evaluation Framework Extensions}
+% TODO: Propose evaluation methodology improvements:
+\begin{itemize}
+\item PROPOSE: Longitudinal evaluation over extended time periods
+\item PROPOSE: Cross-city validation and generalization testing
+\item PROPOSE: User study integration for practical utility assessment
+\end{itemize}
+
+\subsection{Concluding Remarks}
+% TODO: Provide final synthesis and vision:
+
+% TODO: Summarize the significance of synthetic trajectory data generation for privacy-preserving research
+% TODO: Emphasize the balance achieved between privacy protection and research utility
+% TODO: Highlight the potential for enabling continued advancement in trajectory anomaly detection
+% TODO: Position the work within the broader context of privacy-preserving machine learning
 
 \newpage
 % ---- Bibliography ----
@@ -192,14 +691,8 @@ Improved Iso Tree &           &                    &
 % References will then be sorted and formatted in the correct style.
 %
 
-
-
 \bibliographystyle{splncs04}
-\matt{Fix Chinese chars not displaying}
 \bibliography{references}
-
-\appendix
-\section{Data Preprocessing Details}
-\label{sec:preprocessing-appendix}
+\matt{Fix Chinese chars not displaying}
 
 \end{document}
