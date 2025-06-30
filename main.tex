@@ -50,19 +50,16 @@ Our approach leverages isolation forest analysis to understand normal and anomal
 \section{Introduction}
 \label{sec:introduction}
 
-Urban transportation systems, particularly taxi services, play a crucial role in the mobility infrastructure of large cities worldwide. These services provide essential connectivity, filling gaps in public transportation networks and offering door-to-door convenience for millions of passengers daily. The efficiency and reliability of taxi operations directly impact urban traffic patterns, economic productivity, and citizen satisfaction with city services.
+\begin{compactoutline}
+   \outlineitem{Context and motivation: taxis play a crucial role in urban transportation}
+   \outlineitem{Problem: Taxis sometimes take suboptimal or wrong routes}
+   \outlineitem{AI solutions: Artificial intelligence can help detect and address these issues}
+   \outlineitem{Privacy concern: Real route data is sensitive, so privacy must be protected}
+   \outlineitem{Solution: Use synthetic data to enable research while preserving privacy}
+   \outlineitem{But routes are different than other data}
+   \outlineitem{We need to come up with method for creating synthetic route data}
+\end{compactoutline}
 
-However, recent research has revealed significant inefficiencies in taxi route selection, with studies consistently showing that drivers often deviate from optimal paths. While some deviations may be justified by real-time traffic conditions or passenger preferences, others stem from more concerning causes including driver inexperience, deliberate route manipulation for fare maximization, or potentially malicious behavior. These routing anomalies not only affect passenger costs and travel times but also contribute to urban congestion and environmental impacts through unnecessary fuel consumption and emissions.
-
-Artificial intelligence technologies, particularly machine learning approaches for anomaly detection, offer promising solutions for identifying and addressing these routing inefficiencies. Various AI methodologies have been developed to detect trajectory anomalies, ranging from classical statistical approaches to modern deep learning techniques. These methods can automatically identify suspicious route patterns that deviate significantly from normal driving behavior, enabling transportation authorities and taxi companies to implement corrective measures.
-
-However, existing approaches face several critical limitations. Most traditional anomaly detection methods struggled with the complexity and contextual nature of urban routing decisions, often producing high false positive rates when applied to real-world taxi data. More sophisticated deep learning approaches, while achieving better accuracy, required extensive labeled datasets and lacked the interpretability necessary for practical deployment in regulatory contexts. Furthermore, the sensitive nature of location data raised significant privacy concerns, limiting the availability of real-world datasets for research and deployment.
-
-Privacy-preserving techniques, particularly synthetic data generation, emerged as a promising solution to address these data availability and privacy constraints. By creating artificial datasets that preserve the statistical properties of real trajectory data while protecting individual privacy, synthetic data enabled the development and evaluation of anomaly detection systems without compromising passenger confidentiality. However, current synthetic data generation methods for trajectory data remained limited, particularly for capturing the complex spatial-temporal patterns inherent in urban taxi routes.
-
-This study proposed a novel approach for generating synthetic taxi trajectory datasets that preserved the statistical and behavioral properties necessary for effective anomaly detection while addressing critical data privacy concerns. We focused specifically on creating realistic synthetic route data that maintained the complex spatial-temporal patterns inherent in urban taxi operations, enabling privacy-preserving research and development in trajectory anomaly detection systems.
-
-The contribution of this work was threefold: (1) we developed an isolation forest methodology specifically adapted for urban taxi trajectory anomaly detection to establish ground truth patterns, (2) we introduced a comprehensive synthetic trajectory data generation framework that preserved both statistical properties and anomaly characteristics of real taxi routes, and (3) we provided extensive evaluation demonstrating that synthetic data maintained the essential characteristics necessary for effective anomaly detection while providing strong privacy guarantees.
 
 \section{Literature Review}
 \label{sec:literature-review}
