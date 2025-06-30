@@ -65,81 +65,69 @@ This thesis proposes a novel framework for generating synthetic trajectory datas
 \section{Literature Review}
 \label{sec:literature-review}
 
-Trajectory anomaly detection and privacy-preserving synthetic data generation evolved significantly due to increasing GPS data availability and privacy concerns. This review examined the progression from statistical approaches to machine learning methods, highlighting challenges in balancing detection accuracy, computational efficiency, and privacy protection.
+\begin{compactoutline}
+   \outlineitem{Traditional Anomaly Detection Methods}
+   \outlineitem{Statistical Methods -- distance-based and density-based approaches, Z-score normalization~\cite{wang2020statistical}}
+   \outlineitem{Clustering-Based Detection -- DBSCAN variations, enhanced density clustering~\cite{he2020enhanced}}
+   \outlineitem{Isolation-Based Methods -- Isolation Forest, iBAT algorithm~\cite{zhang2019ibat}, multi-scale isolation~\cite{li2022enhanced}}
+   \outlineitem{Limitations -- parameter sensitivity, global threshold issues~\matt{ADD CITATION}}
+   
+   \outlineitem{Spatial-Temporal Trajectory Analysis}
+   \outlineitem{Trajectory Representation -- grid-based mapping, symbolic sequences~\matt{ADD CITATION}}
+   \outlineitem{Multi-Scale Analysis -- segment-level vs. trip-level detection~\matt{ADD CITATION}}
+   \outlineitem{Spatial Feature Extraction -- route pattern analysis, OD pair clustering~\matt{ADD CITATION}}
+   \outlineitem{Temporal Context Analysis -- time-dependent behavior, traffic variability~\cite{chen2021temporal}}
+   
+   \outlineitem{Deep Learning Approaches}
+   \outlineitem{Recurrent Neural Networks -- LSTM autoencoders with attention~\cite{huang2021lstm}}
+   \outlineitem{Generative Models -- VAE, GAN applications, reconstruction errors~\matt{ADD CITATION}}
+   \outlineitem{Diffusion Models -- denoising probabilistic models for trajectories~\cite{li2023diffusion}}
+   \outlineitem{Transformer Architectures -- spatial-temporal attention mechanisms~\matt{ADD CITATION}}
+   \outlineitem{Computer Vision Methods -- dense blocks, soft thresholding~\matt{ADD CITATION}}
+   
+   \outlineitem{Real-Time Detection Systems}
+   \outlineitem{Prediction-Based Detection -- TAPS framework, trajectory prediction~\matt{ADD CITATION}}
+   \outlineitem{Streaming Algorithms -- online processing, low-latency requirements~\matt{ADD CITATION}}
+   \outlineitem{Distributed Processing -- Safety framework with spatial-feature mixing~\cite{wu2024safety}}
+   \outlineitem{Performance Optimization -- computational efficiency, scalability~\matt{ADD CITATION}}
+   
+   \outlineitem{Graph-Based and Advanced Methods}
+   \outlineitem{Graph-Based Density Estimation -- network topology analysis~\cite{wu2023graph}}
+   \outlineitem{Multi-Distance Metrics -- enhanced similarity measures~\matt{ADD CITATION}}
+   \outlineitem{Hybrid Approaches -- combining multiple detection paradigms~\matt{ADD CITATION}}
+   
+   \outlineitem{Anomaly Types and Applications}
+   \outlineitem{Taxi Fraud Detection -- deliberate detours, overcharging patterns~\matt{ADD CITATION}}
+   \outlineitem{Traffic Safety Monitoring -- dangerous behaviors, accident prediction~\matt{ADD CITATION}}
+   \outlineitem{Road Network Changes -- new routes, construction impacts~\matt{ADD CITATION}}
+   \outlineitem{Vehicle Behavior Analysis -- autonomous driving, surveillance systems~\matt{ADD CITATION}}
+   
+   \outlineitem{Data Challenges and Preprocessing}
+   \outlineitem{GPS Data Quality -- sparse sampling, noise handling~\matt{ADD CITATION}}
+   \outlineitem{Trajectory Reconstruction -- missing points, interpolation methods~\matt{ADD CITATION}}
+   \outlineitem{Multi-Source Integration -- sensor fusion, data validation~\matt{ADD CITATION}}
+   \outlineitem{Feature Engineering -- spatial, temporal, and behavioral features~\matt{ADD CITATION}}
+   
+   \outlineitem{Evaluation Methodologies}
+   \outlineitem{Benchmark Datasets -- synthetic vs. real-world data~\matt{ADD CITATION}}
+   \outlineitem{Performance Metrics -- precision, recall, F1-score, AUC~\matt{ADD CITATION}}
+   \outlineitem{Ground Truth Generation -- manual labeling challenges~\matt{ADD CITATION}}
+   \outlineitem{Cross-Domain Validation -- generalization across cities~\matt{ADD CITATION}}
+   
+   \outlineitem{Privacy-Preserving Approaches}
+   \outlineitem{Differential Privacy -- trajectory noise injection~\cite{zhang2023differential}}
+   \outlineitem{k-Anonymity Methods -- spatial cloaking, utility preservation~\cite{liu2023enhanced}}
+   \outlineitem{Synthetic Data Generation -- statistical frameworks~\cite{wang2023comprehensive}}
+   \outlineitem{Behavior-Aware Generation -- reinforcement learning approaches~\cite{chen2023behavior}}
+   
+   \outlineitem{Research Gaps and Limitations}
+   \outlineitem{Privacy Constraints -- limited real data access, synthetic data needs~\matt{ADD CITATION}}
+   \outlineitem{Anomaly Pattern Preservation -- maintaining detection characteristics~\matt{ADD CITATION}}
+   \outlineitem{Contextual Understanding -- traffic conditions, passenger requests~\matt{ADD CITATION}}
+   \outlineitem{Scalability Issues -- big data processing, real-time requirements~\matt{ADD CITATION}}
+   \outlineitem{Interpretability Needs -- regulatory compliance, decision transparency~\matt{ADD CITATION}}
+\end{compactoutline}
 
-\subsection{Route Anomaly Detection}
-\label{sec:detection-review}
-
-\paragraph{Statistical Approaches}
-The first attempts at trajectory anomaly detection used simple statistical methods that compared individual trips against historical patterns. Wang et al.~\cite{wang2020statistical} developed a framework based on z-score normalization, examining how much each trip deviated from average duration, distance, and speed patterns. While this established a foundation for the field, the approach struggled with the fundamental challenge of distinguishing between legitimate route variations and truly suspicious behavior.
-
-Chen and Liu~\cite{chen2021temporal} recognized that traffic patterns varied significantly by time and season, leading them to incorporate temporal context into statistical analysis. Their work highlighted a key insight: route anomalies cannot be understood without considering when they occur. However, even with temporal awareness, statistical methods remained limited by their reliance on simple thresholds and their inability to capture the complex, multidimensional nature of urban routing decisions.
-
-\paragraph{Isolation-Based Approaches}
-The limitations of threshold-based statistical methods motivated the development of isolation-based approaches. Zhang et al.~\cite{zhang2019ibat} introduced isolation forests to trajectory analysis, based on the principle that anomalies are easier to isolate than normal data points. Their iBat framework partitioned the feature space recursively, requiring fewer splits to isolate unusual routes compared to normal ones.
-
-Li et al.~\cite{li2022enhanced} extended this concept with multi-scale analysis, recognizing that anomalies might occur at different levels - from individual route segments to complete trip patterns. Their approach incorporated contextual weighting, acknowledging that not all features are equally important for anomaly detection in different urban zones or time periods.
-
-Despite these advances, isolation-based methods faced a critical limitation: they struggled to account for the legitimate variability inherent in urban transportation. Dynamic traffic conditions, construction zones, and passenger requests could all cause routes to appear anomalous when they were actually justified deviations.
-
-\paragraph{Density-Based Methods}
-To address the spatial-temporal complexity of trajectory data, researchers turned to density-based clustering methods. He et al.~\cite{he2020enhanced} developed enhanced DBSCAN techniques that used multiple distance metrics, including Dynamic Time Warping for temporal alignment and Hausdorff distances for spatial similarity. This approach recognized that trajectory anomalies must be understood in terms of both spatial deviation and temporal patterns.
-
-Wu et al.~\cite{wu2023graph} further advanced this direction by representing trajectory relationships as graphs, enabling the modeling of complex interactions between routes that traditional clustering methods could not capture. The graph-based approach allowed for more nuanced understanding of how routes relate to each other in urban networks.
-
-However, density-based methods introduced new challenges: high computational costs that limited real-time application, sensitivity to parameter settings that required expert tuning, and difficulty handling sparse regions where few similar routes existed for comparison.
-
-\paragraph{Deep Learning Approaches}
-The complexity of trajectory patterns motivated researchers to explore deep learning methods. Huang et al.~\cite{huang2021lstm} applied LSTM autoencoders with attention mechanisms, allowing the model to learn complex temporal dependencies and automatically focus on potentially anomalous trajectory segments. This approach represented a shift from hand-crafted features to learned representations.
-
-Li et al.~\cite{li2023diffusion} introduced diffusion models that reframed anomaly detection as a reconstruction problem. By learning to generate normal trajectories, the model could identify anomalies as trajectories that were difficult to reconstruct accurately.
-
-While deep learning approaches showed promise in handling complex patterns, they introduced new limitations: substantial computational requirements that hindered deployment, need for large labeled datasets that were difficult to obtain due to privacy concerns, and black-box characteristics that made results difficult to interpret for regulatory purposes.
-
-\subsection{Privacy-Preserving Data Generation}
-\label{sec:privacy-review}
-
-The development of sophisticated anomaly detection methods was constrained by a fundamental challenge: the sensitive nature of trajectory data limited researchers' access to realistic datasets for algorithm development and evaluation.
-
-\paragraph{Traditional Privacy Methods}
-Early approaches attempted to balance privacy and utility through simple anonymization - removing identifiers and adding noise to coordinates. However, these methods proved inadequate when researchers demonstrated that trajectory patterns themselves could be used for re-identification, even without explicit identifiers.
-
-\paragraph{Differential Privacy in Trajectory Data}
-Zhang et al.~\cite{zhang2023differential} applied differential privacy principles to trajectory data, adding carefully calibrated noise to protect individual privacy while preserving aggregate patterns. Their approach addressed the mathematical requirements of privacy protection but faced the challenge of maintaining sufficient data utility for complex analytical tasks like anomaly detection.
-
-The core tension became apparent: the subtle patterns that anomaly detection systems rely upon are precisely the types of information that privacy mechanisms tend to obscure. Stronger privacy guarantees often came at the cost of reduced utility for downstream applications.
-
-\paragraph{k-Anonymity and Spatial Cloaking}
-Liu et al.~\cite{liu2023enhanced} explored k-anonymity approaches that ensured each trajectory was indistinguishable from others in the dataset. While this provided some privacy protection, the method struggled with the high dimensionality of trajectory data and the difficulty of finding truly similar routes in sparse geographic regions.
-
-\subsection{Synthetic Data Generation}
-\label{sec:generation-review}
-
-The privacy limitations of real trajectory data motivated researchers to explore synthetic data generation as an alternative approach that could provide both privacy protection and research utility.
-
-\paragraph{Statistical Pattern Preservation}
-Wang et al.~\cite{wang2023comprehensive} developed statistical models that captured aggregate patterns like origin-destination distributions and temporal trends using Gaussian mixture models and hidden Markov models. While this approach could generate realistic-looking trajectories that preserved basic statistical properties, it failed to capture the behavioral complexity underlying real routing decisions.
-
-\paragraph{Behavioral Pattern Modeling}
-Chen et al.~\cite{chen2023behavior} recognized that realistic trajectory generation required modeling driver behavior and decision-making processes. Their approach used reinforcement learning to simulate route choices and Bayesian networks to model behavioral factors. This represented a significant advancement in understanding that synthetic data must reflect not just statistical patterns but also the underlying human decisions that create those patterns.
-
-\paragraph{Anomaly Pattern Generation}
-Despite progress in generating normal trajectory patterns, a critical gap remained: existing methods focused almost exclusively on normal routing behavior. This created a fundamental limitation for anomaly detection research, as researchers lacked access to synthetic datasets that included the types of anomalous patterns necessary for robust system development and evaluation.
-
-The challenge of generating realistic anomalies proved particularly difficult because anomalous behavior is inherently rare and diverse. Traditional generative models, optimized for majority patterns, struggled to capture and preserve the subtle characteristics that distinguish various types of trajectory anomalies from normal route variations.
-
-\subsection{Research Gaps and Motivation}
-\label{sec:gaps}
-
-The evolution of trajectory anomaly detection and synthetic data generation revealed three fundamental challenges that motivated our research approach.
-
-First, existing anomaly detection methods struggled to balance accuracy with practical deployment requirements. Statistical methods were interpretable but limited in handling complex patterns. Machine learning approaches could capture complexity but required large datasets and computational resources that were often unavailable due to privacy constraints.
-
-Second, privacy-preserving techniques created a paradox: the more privacy protection was applied, the less useful the data became for anomaly detection research. Current approaches failed to maintain both strong privacy guarantees and the subtle patterns necessary for effective anomaly detection system development.
-
-Third, and most critically, no existing synthetic data generation framework adequately addressed the challenge of preserving anomaly patterns while providing privacy protection. This gap severely limited researchers' ability to develop and evaluate robust anomaly detection systems without access to sensitive real-world data.
-
-These limitations highlighted the need for a comprehensive approach that could generate synthetic trajectory data preserving both normal and anomalous patterns while providing strong privacy guarantees - precisely the gap that our work addresses.
 
 \section{Methodology}
 \label{sec:methodology}
