@@ -68,24 +68,40 @@ This thesis proposes a novel framework for generating synthetic trajectory datas
 \subsection{Trajectory Anomaly Detection}
 \label{sec:anomaly-review}
 
-\begin{compactoutline}
-   \outlineitem{Statistical and Traditional Methods}
-   \outlineitem{Distance-based approaches -- Z-score normalization, statistical thresholds~\cite{wang2020statistical}}
-   \outlineitem{Density-based clustering -- DBSCAN variations, enhanced clustering~\cite{he2020enhanced}}
-   \outlineitem{Isolation-based methods -- Isolation Forest, iBAT algorithm~\cite{zhang2019ibat}, multi-scale isolation~\cite{li2022enhanced}}
-   \outlineitem{Method limitations -- parameter sensitivity, distance/density measure issues~\cite{zhang2019ibat}}
-   
-   \outlineitem{Deep Learning Approaches}
-   \outlineitem{LSTM autoencoders -- reconstruction-based detection~\cite{huang2021lstm}}
-   \outlineitem{Diffusion models -- denoising probabilistic approaches~\cite{li2023diffusion}}
-   \outlineitem{Performance comparison -- isolation vs. density-based baselines, AUC evaluation~\cite{zhang2019ibat}}
-   
-   \outlineitem{Spatial-Temporal Pattern Analysis}
-   \outlineitem{Trajectory representation -- grid-based mapping, symbolic sequences~\cite{zhang2019ibat}}
-   \outlineitem{Temporal context modeling -- time-dependent behavior, traffic variability~\cite{chen2021temporal}}
-   \outlineitem{Statistical pattern extraction -- origin-destination patterns, location zones~\cite{balan2011real}}
-   \outlineitem{Distributed processing -- spatial-feature mixing frameworks~\cite{wu2024safety}}
-\end{compactoutline}
+\subsubsection{Statistical and Traditional Methods}
+\label{sec:statistical-traditional}
+
+Statistical approaches reveal what properties synthetic trajectory data must preserve to remain useful for anomaly detection research. The key insight is that different detection methods rely on fundamentally different trajectory characteristics.
+
+Distance-based methods like Wang et al.~\cite{wang2020statistical} work by comparing route lengths and travel patterns against historical distributions. For synthetic data to support this type of research, it must maintain realistic distance distributions and route variation patterns. Similarly, density-based approaches such as He et al.~\cite{he2020enhanced} depend on preserving local neighborhood structures - how trajectories cluster together spatially affects detection performance significantly.
+
+The most successful traditional method has been isolation-based detection, particularly Zhang et al.~\cite{zhang2019ibat}'s iBAT algorithm. This approach groups trajectories by origin-destination pairs and converts routes into symbolic sequences of grid cells. What makes this relevant for synthetic data generation is that it shows two critical requirements: preserving origin-destination flow patterns and maintaining consistent spatial traversal sequences between locations.
+
+Traditional methods also highlight a key research gap that synthetic data directly addresses. Most approaches struggle with parameter sensitivity and lack of labeled anomaly data~\cite{zhang2019ibat}, making it difficult for researchers to systematically evaluate new detection algorithms. Synthetic generation could solve this by providing controlled datasets where anomaly labels are known and parameters can be adjusted systematically.
+
+\subsubsection{Deep Learning Approaches}
+\label{sec:deep-learning}
+
+Deep learning has brought new challenges for synthetic data generation, mainly because these methods depend on learning complex patterns that traditional approaches miss.
+
+Autoencoder-based detection, like Huang et al.~\cite{huang2021lstm}'s LSTM-AE-Attention model, works by learning to reconstruct normal trajectory patterns. When an anomalous trajectory doesn't reconstruct well, it gets flagged as suspicious. This creates an interesting requirement for synthetic data: it must contain the same subtle temporal patterns and sequence dependencies that real trajectories have, otherwise the reconstruction-based detection won't work properly. The study also reveals a practical problem - real datasets are heavily imbalanced with about 12 normal trajectories for every anomalous one, which makes training difficult.
+
+More recent work with diffusion models, such as Li et al.~\cite{li2023diffusion}'s DiffTAD, shows that synthetic trajectory generation itself can be used for anomaly detection. Their approach treats trajectory generation as a denoising process, which performs significantly better than older methods. This suggests that synthetic data generation techniques developed for privacy protection could potentially be adapted for anomaly detection as well.
+
+What's particularly relevant for synthetic data research is that these deep learning methods need large amounts of training data and work best when they can learn from diverse trajectory patterns. This is exactly what synthetic data generation aims to provide - abundant, diverse trajectory data that maintains the essential characteristics needed for effective anomaly detection.
+
+\subsubsection{Spatial-Temporal Pattern Analysis}
+\label{sec:spatial-temporal}
+
+Understanding what patterns matter most in trajectory data helps define what synthetic generation must preserve. Research shows that trajectories have structure at multiple levels that anomaly detection algorithms rely on.
+
+At the spatial level, Zhang et al.~\cite{zhang2019ibat} found that converting continuous GPS traces into grid-based symbolic sequences works well for anomaly detection. This suggests that synthetic data doesn't need to perfectly replicate every GPS coordinate, but it must maintain the sequence of spatial regions that vehicles traverse. Their approach handles variable GPS sampling rates effectively, which is important since synthetic data will likely have different temporal characteristics than real data.
+
+Temporal patterns are more complex than they first appear. Chen et al.~\cite{chen2021temporal} show that what counts as "normal" behavior changes dramatically based on time context - a route that's normal during off-peak hours might be highly suspicious during rush hour. This means synthetic data generation can't just focus on spatial accuracy; it must also preserve these time-dependent behavioral patterns.
+
+The most revealing insights come from large-scale analysis like Balan et al.~\cite{balan2011real}'s study of 250 million taxi trips. They found that urban mobility follows predictable patterns: normal routes cluster around a few preferred paths between any two locations, and these patterns repeat frequently enough to enable statistical prediction. For synthetic data generation, this suggests focusing on preserving origin-destination flow patterns and route clustering rather than trying to generate completely novel trajectory types.
+
+An important practical consideration is that synthetic data must be scalable. Wu et al.~\cite{wu2024safety} demonstrate that modern anomaly detection requires distributed processing approaches to handle large datasets effectively. This means synthetic data generation methods must be designed to produce datasets large enough and structured appropriately for parallel processing systems.
 
 \subsection{Synthetic Trajectory Data Generation}
 \label{sec:generation-review}
