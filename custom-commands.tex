@@ -1,0 +1,33 @@
+% Custom Commands for Thesis Document
+% =================================
+
+% Text formatting commands
+% ------------------------
+\newcommand{\term}[1]{\textit{#1}}                                    % Italicize terms
+\newcommand{\matt}[1]{{\bf\color{green!50!black}[#1]}}               % Colored comments for Matt
+
+% Skeleton content commands for clean outline structure
+% ----------------------------------------------------
+\newcommand{\outline}[1]{{\small\color{gray!70}\textit{#1}}}         % Brief descriptions in gray italic
+\newcommand{\todoheading}[1]{{\small\color{gray!60}$\triangleright$ \textit{#1}}} % Section headings with triangle markers
+\newcommand{\skeletontext}[1]{\begin{quote}\small\color{gray!60}\textit{#1}\end{quote}} % Longer placeholder text in quote blocks
+
+% Compact skeleton sections
+\newcommand{\skeletonsection}[2]{
+  \paragraph{#1} \outline{#2}
+}
+
+% Simplified compact outline environment
+% Creates compact, gray-colored outline lists for skeleton content
+\newenvironment{compactoutline}{
+  \begin{quote}
+    \small\color{gray!60}
+    \begin{itemize}[leftmargin=1em,itemsep=0pt,parsep=0pt]
+}{
+    \end{itemize}
+  \end{quote}
+}
+
+% Simple command for outline items - creates compact gray skeleton content entries
+% Usage: \outlineitem{Topic Name -- Brief description}
+\newcommand{\outlineitem}[1]{\item \todoheading{#1}} 

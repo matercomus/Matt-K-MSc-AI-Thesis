@@ -1,53 +1,39 @@
+% ===== Setup =====
 \documentclass[runningheads]{llncs}
 
-% Package imports - organized by category
-% Basic formatting and fonts
 \usepackage{array}
-\usepackage{fontspec}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage{xcolor}
-
-% Tables and layout
 \usepackage{tabularx}
 \usepackage{longtable}
-
-% URLs and hyperlinks
 \usepackage{url}
 \usepackage{hyperref}
-\usepackage{color}
 
-% Font configuration
-\newfontfamily\chinesefont{FandolSong}
+% Font configuration (only if Chinese text is actually used)
+% \usepackage{fontspec}
+% \newfontfamily\chinesefont{FandolSong}
 
 % Custom commands
-\newcommand{\term}[1]{\textit{#1}}
-\newcommand{\matt}[1]{{\bf\color{green!50!black}[#1]}} % Colored comments
-\newcommand{\zh}[1]{{\chinesefont #1}} % Chinese font switch
+\input{custom-commands}
 
 % URL styling
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 \urlstyle{rm}
 
+
+% ===== Document =====
 \begin{document}
 
+% ===== Title Page =====
 \input{title_page}
 \title{Contribution Title}
-
 \titlerunning{Abbreviated paper title}
-% If the paper title is too long for the running head, you can set
-% an abbreviated paper title here
-
 \author{Mateusz Kędzia\inst{1}\orcidID{0009-0001-4296-4479}}
-
 \authorrunning{Kędzia M.G.}
-% First names are abbreviated in the running head.
-% If there are more than two authors, 'et al.' is used.
-
 \institute{Vrije Universiteit Amsterdam, Amsterdam}
-
-\maketitle      % typeset the header of the contribution
+\maketitle
 
 \begin{abstract}
 This study addresses the critical challenge of generating synthetic taxi trajectory datasets that preserve essential characteristics for anomaly detection research while ensuring passenger privacy protection. Urban taxi trajectory data contains sensitive location information that limits its availability for research purposes, creating a significant barrier to advancing anomaly detection methodologies. We propose a comprehensive framework for synthetic trajectory data generation that maintains statistical fidelity, behavioral patterns, and anomaly characteristics of real taxi routes while providing strong privacy guarantees.
@@ -58,6 +44,8 @@ Our approach leverages isolation forest analysis to understand normal and anomal
 \end{abstract}
 
 \newpage
+
+% ===== Content =====
 
 \section{Introduction}
 \label{sec:introduction}
@@ -161,44 +149,40 @@ These limitations highlighted the need for a comprehensive approach that could g
 \subsection{Isolation Forest for Trajectory Analysis}
 \label{sec:iso}
 
-\paragraph{Algorithm Implementation}
-
-\paragraph{Key Adaptations for Trajectory Data}
+\begin{compactoutline}
+  \outlineitem{Algorithm Implementation -- Core isolation forest adaptation for trajectory data}
+  \outlineitem{Key Adaptations for Trajectory Data -- Feature engineering and distance metrics}
+\end{compactoutline}
 
 \subsection{Statistical Pattern Extraction}
 \label{sec:pattern-extraction}
 
-\paragraph{Pattern Categories}
-
-\textbf{Spatial Distributions}
-
-\textbf{Temporal Patterns}
-
-\textbf{Behavioral Characteristics}
-
-\textbf{Anomaly Signatures}
+\begin{compactoutline}
+  \outlineitem{Spatial Distributions -- Origin-destination patterns, route density maps}
+  \outlineitem{Temporal Patterns -- Time-of-day effects, seasonal variations}
+  \outlineitem{Behavioral Characteristics -- Driver decision patterns, route preferences}
+  \outlineitem{Anomaly Signatures -- Characteristic patterns of anomalous behavior}
+\end{compactoutline}
 
 \subsection{Enhanced Anomaly Detection}
 \label{sec:improve}
 
-\paragraph{Exception Handling Framework}
-
-\textbf{Traffic-Induced Deviations}
-
-\textbf{Passenger-Requested Deviations}
-
-\textbf{Construction and Event Impacts}
-
-\paragraph{Multi-Scale Analysis}
+\begin{compactoutline}
+  \outlineitem{Exception Handling Framework}
+  \outlineitem{Traffic-Induced Deviations -- Real-time congestion handling}
+  \outlineitem{Passenger-Requested Deviations -- Legitimate route changes}
+  \outlineitem{Construction and Event Impacts -- Temporary route modifications}
+  \outlineitem{Multi-Scale Analysis -- Segment-level vs. trip-level anomaly detection}
+\end{compactoutline}
 
 \subsection{Synthetic Trajectory Data Generation}
 \label{sec:synthetic}
 
-\paragraph{Generation Framework}
-
-\paragraph{Privacy Preservation Mechanisms}
-
-\paragraph{Quality Assurance Framework}
+\begin{compactoutline}
+  \outlineitem{Generation Framework -- Statistical model architecture and implementation}
+  \outlineitem{Privacy Preservation Mechanisms -- Differential privacy, k-anonymity integration}
+  \outlineitem{Quality Assurance Framework -- Validation metrics and testing procedures}
+\end{compactoutline}
 
 \section{Data and Preprocessing}
 \label{sec:data-preprocessing}
@@ -211,11 +195,11 @@ The dataset used in this study consisted of Beijing taxi GPS data collected betw
 \subsection{Data Preprocessing}
 \label{sec:preprocessing}
 
-\paragraph{Data Quality Issues Analysis}
-
-\paragraph{Preprocessing Pipeline Implementation}
-
-\paragraph{Quality Assessment Results}
+\begin{compactoutline}
+  \outlineitem{Data Quality Issues Analysis -- Missing data, GPS accuracy, temporal gaps}
+  \outlineitem{Preprocessing Pipeline Implementation -- Cleaning, filtering, trajectory reconstruction}
+  \outlineitem{Quality Assessment Results -- Statistics on data quality improvements}
+\end{compactoutline}
 
 \section{Experimental Setup and Results}
 \label{sec:evaluation}
@@ -223,82 +207,97 @@ The dataset used in this study consisted of Beijing taxi GPS data collected betw
 \subsection{Experimental Design}
 \label{sec:exp-design}
 
-\paragraph{Evaluation Phases}
-
-\paragraph{Anomaly Detection Method Comparison}
+\begin{compactoutline}
+  \outlineitem{Evaluation Phases -- Real data analysis, synthetic generation, validation}
+  \outlineitem{Anomaly Detection Method Comparison -- Baseline vs. proposed approach}
+\end{compactoutline}
 
 \subsection{Anomaly Detection Results}
 \label{sec:results}
 
+\skeletontext{Results from isolation forest analysis on real Beijing taxi data, including accuracy metrics, false positive rates, and comparison with baseline methods.}
+
 \subsection{Synthetic Data Quality Evaluation}
 \label{sec:synthetic-eval}
 
-\paragraph{Statistical Fidelity Assessment}
-
-\textbf{Distribution Comparisons}
-
-\textbf{Statistical Test Results}
-
-\paragraph{Anomaly Preservation Evaluation}
-
-\textbf{Cross-Training Experiments}
-
-\textbf{Detection Challenge Preservation}
-
-\paragraph{Utility Validation}
+\begin{compactoutline}
+  \outlineitem{Statistical Fidelity Assessment}
+  \outlineitem{Distribution Comparisons -- Real vs. synthetic statistical properties}
+  \outlineitem{Statistical Test Results -- Kolmogorov-Smirnov, Jensen-Shannon divergence}
+  \outlineitem{Anomaly Preservation Evaluation}
+  \outlineitem{Cross-Training Experiments -- Models trained on synthetic, tested on real}
+  \outlineitem{Detection Challenge Preservation -- Maintaining difficulty of anomaly detection}
+  \outlineitem{Utility Validation -- Performance of anomaly detection on synthetic data}
+\end{compactoutline}
 
 \subsection{Privacy Preservation Assessment}
 \label{sec:privacy-eval}
 
-\paragraph{Attack Resistance Testing}
-
-\textbf{Membership Inference Attacks}
-
-\textbf{Trajectory Reconstruction Attacks}
-
-\textbf{Location Privacy Protection}
-
-\paragraph{Privacy-Utility Trade-off Analysis}
+\begin{compactoutline}
+  \outlineitem{Attack Resistance Testing}
+  \outlineitem{Membership Inference Attacks -- Can attackers identify original trajectories?}
+  \outlineitem{Trajectory Reconstruction Attacks -- Ability to reconstruct individual routes}
+  \outlineitem{Location Privacy Protection -- Geographic anonymization effectiveness}
+  \outlineitem{Privacy-Utility Trade-off Analysis -- Quantitative analysis of privacy vs. utility}
+\end{compactoutline}
 
 \subsection{Computational Performance Analysis}
 \label{sec:performance}
 
-\paragraph{Scalability Analysis}
-
-\paragraph{Resource Requirements}
+\begin{compactoutline}
+  \outlineitem{Scalability Analysis -- Performance with varying dataset sizes}
+  \outlineitem{Resource Requirements -- Memory, CPU, time complexity analysis}
+\end{compactoutline}
 
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 
 \subsection{Research Contributions Summary}
 
-\paragraph{Primary Contributions}
+\begin{compactoutline}
+  \outlineitem{Primary Contributions -- Novel synthetic generation framework, privacy-preserving anomaly detection}
+\end{compactoutline}
 
 \subsection{Research Impact and Applications}
 
-\paragraph{Academic Impact}
-
-\paragraph{Practical Applications}
+\begin{compactoutline}
+  \outlineitem{Academic Impact -- Contributions to trajectory analysis and privacy research}
+  \outlineitem{Practical Applications -- Urban transportation, ride-sharing platforms}
+\end{compactoutline}
 
 \subsection{Limitations and Challenges}
 
-\paragraph{Current Limitations}
-
-\paragraph{Technical Challenges}
+\begin{compactoutline}
+  \outlineitem{Current Limitations -- Computational complexity, geographical specificity}
+  \outlineitem{Technical Challenges -- Privacy-utility trade-offs, scalability issues}
+\end{compactoutline}
 
 \subsection{Future Research Directions}
 
-\paragraph{Methodological Extensions}
-
-\paragraph{Evaluation Framework Extensions}
+\begin{compactoutline}
+  \outlineitem{Methodological Extensions -- Advanced generative models, multi-modal data}
+  \outlineitem{Evaluation Framework Extensions -- Additional privacy metrics, real-world validation}
+\end{compactoutline}
 
 \subsection{Concluding Remarks}
 
+\skeletontext{Summary of the research significance, implications for urban transportation research, and the potential for practical deployment of privacy-preserving trajectory anomaly detection systems.}
+
 \newpage
 
-% Bibliography
+% ===== Bibliography =====
 \bibliographystyle{splncs04}
 \bibliography{references}
 
+% ===== Appendix =====
+\appendix
+\section{Appendix}
+\label{sec:appendix}
+
+\subsection{Appendix Section}
+\label{sec:appendix-section}
+
+\subsection{Appendix Section}
+\label{sec:appendix-section-2}
 
 \end{document}
