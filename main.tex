@@ -65,43 +65,67 @@ This thesis proposes a novel framework for generating synthetic trajectory datas
 \section{Literature Review}
 \label{sec:literature-review}
 
+\subsection{Trajectory Anomaly Detection}
+\label{sec:anomaly-review}
+
 \begin{compactoutline}
-   \outlineitem{Trajectory Anomaly Detection Methods}
-   \outlineitem{Statistical Methods -- distance-based and density-based approaches, Z-score normalization~\cite{wang2020statistical}}
-   \outlineitem{Clustering-Based Detection -- DBSCAN variations, enhanced density clustering~\cite{he2020enhanced}}
-   \outlineitem{Isolation-Based Methods -- Isolation Forest, iBAT algorithm~\cite{zhang2019ibat}, multi-scale isolation~\cite{li2022enhanced}}
-   \outlineitem{Deep Learning Approaches -- LSTM autoencoders~\cite{huang2021lstm}, diffusion models~\cite{li2023diffusion}}
-   \outlineitem{Limitations -- parameter sensitivity, global threshold issues~\matt{ADD CITATION}}
+   \outlineitem{Statistical and Traditional Methods}
+   \outlineitem{Distance-based approaches -- Z-score normalization, statistical thresholds~\cite{wang2020statistical}}
+   \outlineitem{Density-based clustering -- DBSCAN variations, enhanced clustering~\cite{he2020enhanced}}
+   \outlineitem{Isolation-based methods -- Isolation Forest, iBAT algorithm~\cite{zhang2019ibat}, multi-scale isolation~\cite{li2022enhanced}}
+   \outlineitem{Method limitations -- parameter sensitivity, global threshold issues~\matt{ADD CITATION}}
+   
+   \outlineitem{Deep Learning Approaches}
+   \outlineitem{LSTM autoencoders -- reconstruction-based detection~\cite{huang2021lstm}}
+   \outlineitem{Diffusion models -- denoising probabilistic approaches~\cite{li2023diffusion}}
+   \outlineitem{Performance comparison -- traditional vs. deep learning methods~\matt{ADD CITATION}}
    
    \outlineitem{Spatial-Temporal Pattern Analysis}
-   \outlineitem{Trajectory Representation -- grid-based mapping, symbolic sequences~\matt{ADD CITATION}}
-   \outlineitem{Temporal Context Analysis -- time-dependent behavior, traffic variability~\cite{chen2021temporal}}
-   \outlineitem{Statistical Pattern Extraction -- origin-destination patterns, route densities~\matt{ADD CITATION}}
-   \outlineitem{Distributed Processing -- Safety framework with spatial-feature mixing~\cite{wu2024safety}}
-   
-   \outlineitem{Privacy-Preserving Data Generation}
-   \outlineitem{Differential Privacy -- trajectory noise injection~\cite{zhang2023differential}}
-   \outlineitem{k-Anonymity Methods -- spatial cloaking, utility preservation~\cite{liu2023enhanced}}
-   \outlineitem{Statistical Synthetic Generation -- pattern preservation frameworks~\cite{wang2023comprehensive}}
-   \outlineitem{Behavior-Aware Generation -- reinforcement learning approaches~\cite{chen2023behavior}}
-   \outlineitem{Privacy-Utility Trade-offs -- balancing protection and research utility~\matt{ADD CITATION}}
-   
-   \outlineitem{Anomaly Pattern Preservation}
-   \outlineitem{Normal Pattern Generation -- statistical and behavioral modeling~\matt{ADD CITATION}}
-   \outlineitem{Anomaly Pattern Generation -- rare event synthesis challenges~\matt{ADD CITATION}}
-   \outlineitem{Pattern Fidelity Assessment -- maintaining detection characteristics~\matt{ADD CITATION}}
-   
-   \outlineitem{Evaluation and Validation}
-   \outlineitem{Synthetic Data Quality Assessment -- statistical fidelity metrics~\matt{ADD CITATION}}
-   \outlineitem{Anomaly Detection Performance -- precision, recall, F1-score evaluation~\matt{ADD CITATION}}
-   \outlineitem{Privacy Protection Validation -- attack resistance testing~\matt{ADD CITATION}}
-   
-   \outlineitem{Research Gaps and Motivation}
-   \outlineitem{Privacy Constraints -- limited real data access for research~\matt{ADD CITATION}}
-   \outlineitem{Anomaly Pattern Preservation Gap -- maintaining detection characteristics in synthetic data~\matt{ADD CITATION}}
-   \outlineitem{Comprehensive Framework Need -- integrated privacy-preserving anomaly detection~\matt{ADD CITATION}}
+   \outlineitem{Trajectory representation -- grid-based mapping, symbolic sequences~\matt{ADD CITATION}}
+   \outlineitem{Temporal context modeling -- time-dependent behavior, traffic variability~\cite{chen2021temporal}}
+   \outlineitem{Statistical pattern extraction -- origin-destination patterns, route densities~\matt{ADD CITATION}}
+   \outlineitem{Distributed processing -- spatial-feature mixing frameworks~\cite{wu2024safety}}
 \end{compactoutline}
 
+\subsection{Synthetic Trajectory Data Generation}
+\label{sec:generation-review}
+
+\begin{compactoutline}
+   \outlineitem{Statistical Generation Methods}
+   \outlineitem{Pattern preservation frameworks -- maintaining statistical properties~\cite{wang2023comprehensive}}
+   \outlineitem{Behavior-aware generation -- reinforcement learning approaches~\cite{chen2023behavior}}
+   \outlineitem{Normal pattern modeling -- spatial-temporal distribution preservation~\matt{ADD CITATION}}
+   
+   \outlineitem{Anomaly Pattern Preservation}
+   \outlineitem{Rare event synthesis -- challenges in anomaly generation~\matt{ADD CITATION}}
+   \outlineitem{Pattern fidelity assessment -- maintaining detection characteristics~\matt{ADD CITATION}}
+   \outlineitem{Cross-training validation -- synthetic-to-real transferability~\matt{ADD CITATION}}
+   
+   \outlineitem{Generation Quality and Validation}
+   \outlineitem{Statistical fidelity metrics -- distribution similarity measures~\matt{ADD CITATION}}
+   \outlineitem{Anomaly detection performance -- evaluation on synthetic data~\matt{ADD CITATION}}
+   \outlineitem{Utility preservation -- maintaining research applicability~\matt{ADD CITATION}}
+\end{compactoutline}
+
+\subsection{Privacy Protection Methods}
+\label{sec:privacy-review}
+
+\begin{compactoutline}
+   \outlineitem{Traditional Privacy Techniques}
+   \outlineitem{Differential privacy -- trajectory noise injection~\cite{zhang2023differential}}
+   \outlineitem{k-Anonymity methods -- spatial cloaking, utility preservation~\cite{liu2023enhanced}}
+   \outlineitem{Privacy-utility trade-offs -- balancing protection and research utility~\matt{ADD CITATION}}
+   
+   \outlineitem{Privacy in Synthetic Data}
+   \outlineitem{Synthetic data as privacy solution -- avoiding direct exposure~\matt{ADD CITATION}}
+   \outlineitem{Attack resistance -- membership inference, reconstruction attacks~\matt{ADD CITATION}}
+   \outlineitem{Privacy validation methods -- measuring protection effectiveness~\matt{ADD CITATION}}
+   
+   \outlineitem{Research Gaps and Challenges}
+   \outlineitem{Privacy constraints -- limited real data access for research~\matt{ADD CITATION}}
+   \outlineitem{Anomaly pattern preservation gap -- maintaining detection characteristics~\matt{ADD CITATION}}
+   \outlineitem{Comprehensive framework need -- integrated privacy-preserving anomaly detection~\matt{ADD CITATION}}
+\end{compactoutline}
 
 \section{Methodology}
 \label{sec:methodology}
