@@ -1,6 +1,8 @@
 % ===== Setup =====
 \documentclass[runningheads]{llncs}
 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{array}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -30,8 +32,8 @@
 \input{title_page}
 \title{Contribution Title}
 \titlerunning{Abbreviated paper title}
-\author{Mateusz Kędzia\inst{1}\orcidID{0009-0001-4296-4479}}
-\authorrunning{Kędzia M.G.}
+\author{Mateusz K{\k e}dzia\inst{1}\orcidID{0009-0001-4296-4479}}
+\authorrunning{K{\k e}dzia M.G.}
 \institute{Vrije Universiteit Amsterdam, Amsterdam}
 \maketitle
 
@@ -106,22 +108,41 @@ An important practical consideration is that synthetic data must be scalable. Wu
 \subsection{Synthetic Trajectory Data Generation}
 \label{sec:generation-review}
 
-\begin{compactoutline}
-   \outlineitem{Statistical Generation Methods}
-   \outlineitem{Pattern preservation frameworks -- maintaining statistical properties~\cite{wang2023comprehensive}}
-   \outlineitem{Behavior-aware generation -- reinforcement learning approaches~\cite{chen2023behavior}}
-   \outlineitem{Normal pattern modeling -- spatial-temporal distribution preservation~\matt{ADD CITATION}}
-   
-   \outlineitem{Anomaly Pattern Preservation}
-   \outlineitem{Rare event synthesis -- challenges in anomaly generation~\matt{ADD CITATION}}
-   \outlineitem{Pattern fidelity assessment -- maintaining detection characteristics~\matt{ADD CITATION}}
-   \outlineitem{Cross-training validation -- synthetic-to-real transferability~\matt{ADD CITATION}}
-   
-   \outlineitem{Generation Quality and Validation}
-   \outlineitem{Statistical fidelity metrics -- distribution similarity measures~\matt{ADD CITATION}}
-   \outlineitem{Anomaly detection performance -- evaluation on synthetic data~\matt{ADD CITATION}}
-   \outlineitem{Utility preservation -- maintaining research applicability~\matt{ADD CITATION}}
-\end{compactoutline}
+The limitations of real trajectory data access have driven significant research into synthetic trajectory generation as a privacy-preserving alternative for anomaly detection research. Urban mobility data contains sensitive location information that can reveal personal attributes and enable individual re-identification~\cite{rao2023cats,merhi2024synthetic}, creating substantial barriers to data sharing for research purposes. Studies demonstrate that up to 95\% of users can be re-identified from mobile phone datasets using just a few location points~\cite{rao2023cats}, highlighting the severity of privacy risks in trajectory data.
+
+Traditional privacy-preserving mechanisms like k-anonymity and differential privacy face significant utility-privacy trade-offs that often render data unsuitable for complex analytical tasks~\cite{jordon2019pate}. Synthetic trajectory generation emerges as a promising solution that can potentially provide better balance between privacy protection and data utility by creating artificial datasets that preserve essential mobility patterns without exposing individual trajectories~\cite{cao2021generating}.
+
+\subsubsection{Methodological Approaches to Synthetic Generation}
+
+Synthetic trajectory generation methods broadly fall into two categories: knowledge-driven approaches that rely on mobility theories and empirical patterns, and data-driven approaches that learn trajectory distributions directly from data~\cite{kong2023mobility,wang2025gtg}.
+
+Knowledge-driven methods, including gravity models and intervening opportunities models, offer interpretability and require minimal training data~\cite{liu2023act2loc}. However, these approaches often rely on simplified assumptions about human mobility that fail to capture fine-grained behavioral complexities necessary for effective anomaly detection~\cite{kong2023mobility}. The Act2Loc framework demonstrates how hybrid approaches can combine machine learning for activity sequence generation with mechanistic models for spatial location selection, addressing some limitations of purely knowledge-driven methods~\cite{liu2023act2loc}.
+
+Data-driven approaches have gained prominence for their ability to capture complex non-linear relationships in trajectory data. Generative Adversarial Networks (GANs) represent the most widely adopted approach, with frameworks like TrajGen successfully generating trajectories that preserve spatial-temporal characteristics~\cite{cao2021generating}. However, GAN-based methods face challenges with training stability and mode collapse, particularly for vehicle trajectories where temporal dependencies prove difficult to capture despite satisfactory spatial modeling~\cite{bajarunas2022generative}.
+
+Recent innovations include two-stage generation frameworks that address error accumulation problems in sequential generation. The TS-TrajGen approach first generates structural regions on road networks, then produces continuous trajectories guided by these regional patterns, effectively integrating domain knowledge with model-free learning~\cite{jiang2023continuous}. This addresses a critical limitation where traditional stochastic generation processes suffer from continuity problems on road networks.
+
+\subsubsection{Advanced Architectural Approaches}
+
+The sequential nature of trajectories has motivated extensive use of Recurrent Neural Networks and Long Short-Term Memory networks. The RMTPP framework demonstrates how RNNs can simultaneously model event timings and spatial markers using recurrent architectures~\cite{du2016recurrent}. However, RNN-based GANs often exhibit less stable training compared to CNN models and struggle with convergence issues~\cite{merhi2024synthetic}.
+
+Convolutional Neural Networks have shown promise through novel transformation approaches. The Reversible Trajectory-to-CNN Transformation (RTCT) method adapts trajectories into formats suitable for CNN-based models, with Conv1D layers demonstrating superior performance for capturing spatial distributions compared to RNN-based approaches~\cite{merhi2024synthetic}. However, CNN-based methods face challenges in replicating sequential and temporal properties effectively.
+
+Language model-inspired approaches represent an emerging paradigm that conceptualizes trajectories as sequences, with each spatial-temporal point acting as a "word"~\cite{zhang2025end}. Their autoregressive nature enables capture of inherent dependencies, while training on finite vocabulary of locations implicitly enforces spatial-temporal validity constraints~\cite{kong2023mobility}.
+
+Cross-city generalization has emerged as a critical research direction, with the GTG framework demonstrating how space syntax theory can extract topological features of road networks to learn invariant mobility patterns across different urban environments~\cite{wang2025gtg}. This addresses a fundamental limitation where most generation methods require extensive retraining for new geographical contexts.
+
+\subsubsection{Privacy Integration and Evaluation}
+
+The integration of formal privacy guarantees with synthetic generation presents ongoing challenges. The PATE-GAN framework provides differential privacy guarantees by modifying the Private Aggregation of Teacher Ensembles approach for GANs~\cite{jordon2019pate}. Alternative approaches include k-anonymity integration through conditional adversarial training on anonymized trajectory matrices~\cite{rao2023cats} and DP-SGD integration with trajectory GANs for stronger privacy guarantees~\cite{merhi2024synthetic}.
+
+Evaluation methodologies have evolved from basic similarity metrics to comprehensive utility and privacy assessments. Macro-level metrics like Jensen-Shannon divergence assess overall distribution similarity, while micro-level metrics such as Hausdorff distance evaluate individual trajectory characteristics~\cite{kong2023mobility}. Privacy assessment employs metrics like Trajectory-User Linking and Home Location Clustering to measure re-identification difficulty~\cite{rao2023cats}. The Synthetic Ranking Agreement metric evaluates whether relative performance rankings of predictive models are preserved when trained on synthetic versus real data~\cite{jordon2019pate}.
+
+\subsubsection{Implications for Anomaly Detection Research}
+
+Synthetic trajectory generation directly addresses key requirements for anomaly detection research identified in previous studies. The preservation of origin-destination flow patterns and spatial traversal sequences aligns with needs of isolation-based detection methods like iBAT~\cite{zhang2019ibat}. For deep learning approaches, synthetic data can provide the large, diverse datasets necessary for training while maintaining the subtle temporal patterns required for autoencoder-based detection~\cite{huang2021lstm}.
+
+The controlled nature of synthetic datasets enables systematic evaluation of anomaly detection algorithms with known ground truth labels, addressing the parameter sensitivity and labeled data scarcity issues that plague traditional evaluation approaches. This capability is particularly valuable for developing robust anomaly detection systems that can handle the complexity and scale of modern urban transportation networks while maintaining privacy protection for sensitive location data.
 
 \subsection{Privacy Protection Methods}
 \label{sec:privacy-review}
