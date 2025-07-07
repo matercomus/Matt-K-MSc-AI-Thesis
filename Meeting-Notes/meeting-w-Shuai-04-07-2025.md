@@ -1,52 +1,37 @@
-# note meeting fri jul 4
+# Meeting Notes - Friday, July 4, 2025
 
-Documentation for data pre-processing:
-Report basic statistics of the raw data
-The source of data, report privacy issues
-Pseudo-anonymisation sets
-Detection of abnormal data
-Illustrating some examples and explain why they were excluded
-Report the resulting data: basic statistics (with comparison before data preprocessing)
-Choices of Parameters and hyper-parameters [Quoting (of law) and references]
-Discussion
+## TODO
+- Data agreement
+- Data pre-procrssing documentation
+- Methodology
+- Next meeting to happen on campus in the lab
 
-references for all
+## Notes
 
-by next friday!
+### Documentation for Data Pre-processing
+- Report basic statistics of the raw data
+- The source of data, report privacy issues
+- Pseudo-anonymisation sets
+- Detection of abnormal data
+- Illustrating some examples and explain why they were excluded
+- Report the resulting data: basic statistics (with comparison before data preprocessing)
+- Choices of Parameters and hyper-parameters [Quoting (of law) and references]
+- Discussion
+- **References for all**
 
-----
+### Methodology
 
-also by next friday (ronald will join)
+#### Methodology 1: Abnormality Detection
+- Comparison (already done in literature review)
+- Some results
+- Discuss indicators (with visualised examples)
+- Discuss efficiency (with visualised examples)
 
-methodology 2 parts
-- methodology of abnormal detection
-- Prepare a comparison the ideas and opinions from literature - 1) give us the pointers what to read, 2) discuss with Prof. Weng about it.
+#### Methodology 2: Trajectory Generation
+- Which forms graphs
+- Privacy concerns - the worst case is that we make the data available on request
+- **Prepare a comparison** the ideas and opinions from literature:
+  1. Give us the pointers what to read
+  2. Discuss with Prof. Weng about it
+  3. Present my preference
 
-my preferences regarding t
-
-discuss indicators and efficiency with examples
-
-----
-
-Matt
- 
-2019 data for the entire Beijing on the server - needs agreement.
- 
- 
-Methodology 1: abnormal detection:
-Comparison: see the latex file
-Some results
-Discuss indicators (with visualised examples)
-Discuss efficiency (with visualised examples)
- 
- 
-Methodology 2: trajectory generation -> which forms graphs.
-Privacy concerns.
-the comparison and your preference
- 
-Discussion
-Privacy concerns - the worst case is that we make the data
- 
-TODO:
-Prepare a comparison the ideas and opinions from literature - 1) give us the pointers what to read (before Wednesday night), 2) discuss with Prof. Weng about it.
-Next meeting to happen on campus in the lab. The internet is not good at your girl friend's place.
