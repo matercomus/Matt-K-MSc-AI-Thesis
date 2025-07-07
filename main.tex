@@ -235,15 +235,18 @@ This integrated approach creates a research contribution that extends beyond ind
 \section{Methodology}
 \label{sec:methodology}
 
-\subsection{Isolation Forest for Trajectory Analysis}
+\subsection{Methodology of Abnormal Detection}
+\label{sec:abnormal-detection}
+
+\subsubsection{Isolation Forest for Trajectory Analysis}
 \label{sec:iso}
 
 \begin{compactoutline}
-  \outlineitem{Algorithm Implementation -- Core isolation forest adaptation for trajectory data}
+  \outlineitem{Algorithm Implementation -- isolation forest adaptation for trajectory data}
   \outlineitem{Key Adaptations for Trajectory Data -- Feature engineering and distance metrics}
 \end{compactoutline}
 
-\subsection{Statistical Pattern Extraction}
+\subsubsection{Statistical Pattern Extraction}
 \label{sec:pattern-extraction}
 
 \begin{compactoutline}
@@ -253,7 +256,7 @@ This integrated approach creates a research contribution that extends beyond ind
   \outlineitem{Anomaly Signatures -- Characteristic patterns of anomalous behavior}
 \end{compactoutline}
 
-\subsection{Enhanced Anomaly Detection}
+\subsubsection{Enhanced Anomaly Detection Framework}
 \label{sec:improve}
 
 \begin{compactoutline}
@@ -264,13 +267,61 @@ This integrated approach creates a research contribution that extends beyond ind
   \outlineitem{Multi-Scale Analysis -- Segment-level vs. trip-level anomaly detection}
 \end{compactoutline}
 
-\subsection{Synthetic Trajectory Data Generation}
-\label{sec:synthetic}
+\subsubsection{Indicators Discussion}
+\label{sec:indicators}
 
 \begin{compactoutline}
-  \outlineitem{Generation Framework -- Statistical model architecture and implementation}
+  \outlineitem{Anomaly Detection Indicators -- Performance metrics and evaluation criteria}
+  \outlineitem{Visualized Examples -- Concrete examples of detected anomalies}
+  \outlineitem{Indicator Interpretation -- Understanding and validating detection results}
+\end{compactoutline}
+
+\subsubsection{Efficiency Discussion}
+\label{sec:efficiency}
+
+\begin{compactoutline}
+  \outlineitem{Computational Efficiency -- Runtime and memory performance analysis}
+  \outlineitem{Scalability Analysis -- Performance with varying dataset sizes}
+  \outlineitem{Visualized Examples -- Efficiency comparisons and bottleneck analysis}
+\end{compactoutline}
+
+\subsection{Trajectory Generation}
+\label{sec:trajectory-generation}
+
+\subsubsection{Generation Framework}
+\label{sec:generation-framework}
+
+\begin{compactoutline}
+  \outlineitem{Statistical Model Architecture -- Core generation approach and implementation}
+  \outlineitem{Graph-Based Trajectory Generation -- Forms graphs methodology}
+  \outlineitem{Pattern Preservation -- Maintaining essential trajectory characteristics}
+\end{compactoutline}
+
+\subsubsection{Privacy Concerns and Protection}
+\label{sec:privacy-concerns}
+
+\begin{compactoutline}
+  \outlineitem{Privacy Risk Assessment -- Identification of privacy vulnerabilities}
   \outlineitem{Privacy Preservation Mechanisms -- Differential privacy, k-anonymity integration}
-  \outlineitem{Quality Assurance Framework -- Validation metrics and testing procedures}
+  \outlineitem{Worst Case Scenario Analysis -- Privacy implications of synthetic data creation}
+\end{compactoutline}
+
+\subsubsection{Comparison and Preference}
+\label{sec:comparison}
+
+\begin{compactoutline}
+  \outlineitem{Approach Comparison -- Evaluation of different generation methods}
+  \outlineitem{Preference Justification -- Rationale for chosen methodology}
+  \outlineitem{Trade-off Analysis -- Privacy vs. utility considerations}
+\end{compactoutline}
+
+\subsubsection{Quality Assurance Framework}
+\label{sec:quality-assurance}
+
+\begin{compactoutline}
+  \outlineitem{Validation Metrics -- Statistical and behavioral validation methods}
+  \outlineitem{Testing Procedures -- Systematic evaluation of synthetic data quality}
+  \outlineitem{Utility Preservation -- Ensuring research value of synthetic datasets}
 \end{compactoutline}
 
 \section{Data and Preprocessing}
@@ -281,13 +332,62 @@ This integrated approach creates a research contribution that extends beyond ind
 
 The dataset used in this study consisted of Beijing taxi GPS data collected between 25.11.2019 and 01.12.2019. Each day contained approximately 16GB of raw GPS data, capturing the detailed movements of taxis throughout the metropolitan area. This large-scale dataset provided a rich source of real-world taxi routes for analysis and synthetic data generation.
 
-\subsection{Data Preprocessing}
-\label{sec:preprocessing}
+\subsection{Raw Data Statistics and Characteristics}
+\label{sec:raw-data}
+
+\begin{compactoutline}
+  \outlineitem{Data Volume Analysis -- Daily data sizes, total trajectory counts}
+  \outlineitem{Basic Statistical Properties -- Trip durations, distances, spatial coverage}
+  \outlineitem{Temporal Distribution -- Time-of-day patterns, weekly variations}
+  \outlineitem{Spatial Coverage -- Geographic extent, density distributions}
+\end{compactoutline}
+
+\subsection{Data Source and Privacy Issues}
+\label{sec:data-source}
+
+\begin{compactoutline}
+  \outlineitem{Data Source Documentation -- Origin, collection methodology, licensing}
+  \outlineitem{Privacy Risk Assessment -- Individual identification risks, sensitive locations}
+  \outlineitem{Regulatory Compliance -- Legal requirements and constraints}
+  \outlineitem{Pseudo-anonymisation Strategy -- Approach to privacy protection}
+\end{compactoutline}
+
+\subsection{Data Quality Assessment}
+\label{sec:quality-assessment}
 
 \begin{compactoutline}
   \outlineitem{Data Quality Issues Analysis -- Missing data, GPS accuracy, temporal gaps}
-  \outlineitem{Preprocessing Pipeline Implementation -- Cleaning, filtering, trajectory reconstruction}
-  \outlineitem{Quality Assessment Results -- Statistics on data quality improvements}
+  \outlineitem{Anomalous Data Detection -- Identification of erroneous trajectories}
+  \outlineitem{Exclusion Criteria -- Examples of excluded data with justifications}
+  \outlineitem{Data Completeness Analysis -- Coverage and representativeness evaluation}
+\end{compactoutline}
+
+\subsection{Preprocessing Pipeline}
+\label{sec:preprocessing}
+
+\begin{figure}[h]
+\centering
+% TODO: Add data preprocessing flowchart here
+\fbox{\parbox{0.8\textwidth}{\centering \vspace{2cm} \textbf{Data Preprocessing Flowchart} \\ \textit{(To be added)} \vspace{2cm}}}
+\caption{Data preprocessing pipeline flowchart showing the complete workflow from raw GPS data to processed trajectory datasets.}
+\label{fig:preprocessing-flowchart}
+\end{figure}
+
+\begin{compactoutline}
+  \outlineitem{Data Cleaning Framework -- Error correction and outlier removal}
+  \outlineitem{Trajectory Reconstruction -- Handling missing GPS points and temporal gaps}
+  \outlineitem{Parameter Selection -- Preprocessing parameters with justifications}
+  \outlineitem{Quality Control Measures -- Validation of preprocessing results}
+\end{compactoutline}
+
+\subsection{Processed Data Statistics}
+\label{sec:processed-data}
+
+\begin{compactoutline}
+  \outlineitem{Post-Processing Statistics -- Comparison with raw data characteristics}
+  \outlineitem{Quality Improvements -- Quantitative assessment of preprocessing impact}
+  \outlineitem{Data Reduction Analysis -- Volume and coverage after preprocessing}
+  \outlineitem{Validation Results -- Verification of data quality and integrity}
 \end{compactoutline}
 
 \section{Experimental Setup and Results}
