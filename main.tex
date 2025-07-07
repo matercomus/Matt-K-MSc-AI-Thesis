@@ -339,12 +339,10 @@ This integrated approach creates a research contribution that extends beyond ind
 \section{Data and Preprocessing}
 \label{sec:data-preprocessing}
 
-\subsection{Dataset Description and LibCity Framework Integration}
+\subsection{Dataset Description}
 \label{sec:data}
 
 The dataset used in this study consisted of Beijing taxi GPS data collected between 25.11.2019 and 01.12.2019. Each day contained approximately 16GB of raw GPS data, capturing the detailed movements of taxis throughout the metropolitan area. This large-scale dataset provided a rich source of real-world taxi routes for analysis and synthetic data generation.
-
-To ensure standardization and reproducibility, this research leverages the LibCity framework~\cite{libcitylong}, which provides standardized data formats and comprehensive tools for spatio-temporal data analysis. The LibCity framework enables seamless integration with multiple datasets and facilitates the implementation of classification and data generation extensions while maintaining compatibility with existing prediction tasks and evaluation frameworks.
 
 \subsection{Raw Data Statistics and Characteristics}
 \label{sec:raw-data}
@@ -391,6 +389,9 @@ To ensure standardization and reproducibility, this research leverages the LibCi
   \outlineitem{Data Cleaning Framework -- Error correction and outlier removal}
   \outlineitem{Trajectory Reconstruction -- Handling missing GPS points and temporal gaps}
   \outlineitem{LibCity Format Standardization -- Converting data to LibCity's standardized format for compatibility}
+
+  To ensure standardization and reproducibility, this research leverages the LibCity framework~\cite{libcitylong}, which provides standardized data formats and comprehensive tools for spatio-temporal data analysis. The LibCity framework enables seamless integration with multiple datasets and facilitates the implementation of classification and data generation extensions while maintaining compatibility with existing prediction tasks and evaluation frameworks.
+
   \outlineitem{Parameter Selection -- Preprocessing parameters with justifications}
   \outlineitem{Quality Control Measures -- Validation of preprocessing results}
 \end{compactoutline}
