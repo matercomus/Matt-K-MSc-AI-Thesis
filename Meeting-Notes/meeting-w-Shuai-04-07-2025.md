@@ -2,7 +2,7 @@
 
 ## TODO
 - Data agreement
-- Data pre-procrssing documentation
+- Data [pre-procrssing documentation](./pre-processing-documentation.md)
 - Methodology
 - Next meeting to happen on campus in the lab
 
