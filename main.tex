@@ -250,8 +250,10 @@ This integrated approach creates a research contribution that extends beyond ind
 \label{sec:iso}
 
 \begin{compactoutline}
+  \outlineitem{LibCity Framework Integration -- Implementation of classification as extension to LibCity}
   \outlineitem{Algorithm Implementation -- isolation forest adaptation for trajectory data}
   \outlineitem{Key Adaptations for Trajectory Data -- Feature engineering and distance metrics}
+  \outlineitem{Framework Compatibility -- Ensuring anomaly detection works with LibCity data formats}
 \end{compactoutline}
 
 \subsubsection{Statistical Pattern Extraction}
@@ -300,9 +302,11 @@ This integrated approach creates a research contribution that extends beyond ind
 \label{sec:generation-framework}
 
 \begin{compactoutline}
+  \outlineitem{LibCity Framework Extension -- Implementation of data generation as extension to LibCity}
   \outlineitem{Statistical Model Architecture -- Core generation approach and implementation}
   \outlineitem{Graph-Based Trajectory Generation -- Forms graphs methodology}
   \outlineitem{Pattern Preservation -- Maintaining essential trajectory characteristics}
+  \outlineitem{Dataset Compatibility -- Ensuring generated data works with LibCity's existing datasets}
 \end{compactoutline}
 
 \subsubsection{Privacy Concerns and Protection}
@@ -335,10 +339,12 @@ This integrated approach creates a research contribution that extends beyond ind
 \section{Data and Preprocessing}
 \label{sec:data-preprocessing}
 
-\subsection{Dataset Description}
+\subsection{Dataset Description and LibCity Framework Integration}
 \label{sec:data}
 
 The dataset used in this study consisted of Beijing taxi GPS data collected between 25.11.2019 and 01.12.2019. Each day contained approximately 16GB of raw GPS data, capturing the detailed movements of taxis throughout the metropolitan area. This large-scale dataset provided a rich source of real-world taxi routes for analysis and synthetic data generation.
+
+To ensure standardization and reproducibility, this research leverages the LibCity framework~\cite{libcitylong} (\url{https://libcity.ai/}), which provides standardized data formats and comprehensive tools for spatio-temporal data analysis. The LibCity framework enables seamless integration with multiple datasets and facilitates the implementation of classification and data generation extensions while maintaining compatibility with existing prediction tasks and evaluation frameworks.
 
 \subsection{Raw Data Statistics and Characteristics}
 \label{sec:raw-data}
@@ -377,13 +383,14 @@ The dataset used in this study consisted of Beijing taxi GPS data collected betw
 \centering
 % TODO: Add data preprocessing flowchart here
 \fbox{\parbox{0.8\textwidth}{\centering \vspace{2cm} \textbf{Data Preprocessing Flowchart} \\ \textit{(To be added)} \vspace{2cm}}}
-\caption{Data preprocessing pipeline flowchart showing the complete workflow from raw GPS data to processed trajectory datasets.}
+\caption{Data preprocessing pipeline flowchart showing the complete workflow from raw GPS data to LibCity-standardized trajectory datasets.}
 \label{fig:preprocessing-flowchart}
 \end{figure}
 
 \begin{compactoutline}
   \outlineitem{Data Cleaning Framework -- Error correction and outlier removal}
   \outlineitem{Trajectory Reconstruction -- Handling missing GPS points and temporal gaps}
+  \outlineitem{LibCity Format Standardization -- Converting data to LibCity's standardized format for compatibility}
   \outlineitem{Parameter Selection -- Preprocessing parameters with justifications}
   \outlineitem{Quality Control Measures -- Validation of preprocessing results}
 \end{compactoutline}
@@ -405,8 +412,10 @@ The dataset used in this study consisted of Beijing taxi GPS data collected betw
 \label{sec:exp-design}
 
 \begin{compactoutline}
+  \outlineitem{LibCity Integration -- Leveraging LibCity's evaluation tools and result visualization capabilities}
   \outlineitem{Evaluation Phases -- Real data analysis, synthetic generation, validation}
   \outlineitem{Anomaly Detection Method Comparison -- Baseline vs. proposed approach}
+  \outlineitem{Cross-Dataset Validation -- Testing with multiple LibCity-compatible datasets}
 \end{compactoutline}
 
 \subsection{Anomaly Detection Results}
@@ -453,6 +462,8 @@ The dataset used in this study consisted of Beijing taxi GPS data collected betw
 
 \begin{compactoutline}
   \outlineitem{Primary Contributions -- Novel synthetic generation framework, privacy-preserving anomaly detection}
+  \outlineitem{Framework Extension -- Classification and data generation extensions to LibCity framework}
+  \outlineitem{Standardization Benefits -- Enabling cross-dataset compatibility and reproducible research}
 \end{compactoutline}
 
 \subsection{Research Impact and Applications}
