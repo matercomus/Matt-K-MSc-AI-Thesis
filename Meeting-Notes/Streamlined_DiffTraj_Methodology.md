@@ -3,11 +3,11 @@
 
 ---
 
-## **Slide 1: Problem Statement & Motivation**
+## **Problem Statement & Motivation**
 
 ### **The Urban Mobility Challenge**
-- **Data Scarcity**: Anomalous taxi events are rare (~1-5% of all trajectories)¹
-- **Privacy Concerns**: Real GPS trajectories contain sensitive personal information²
+- **Data Scarcity**: Anomalous taxi events are rare (~1-5% of all trajectories) [[Anomalous_Taxi_Trajectory_Generation_.md#addressing-data-scarcity-and-imbalance]](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#addressing-data-scarcity-and-imbalance)
+- **Privacy Concerns**: Real GPS trajectories contain sensitive personal information [[Methodology_Anomalous_Taxi_Trajectory_Generation_.md#6-privacy-considerations]](Meeting-Notes/Methodology_Anomalous_Taxi_Trajectory_Generation_.md#6-privacy-considerations)
 - **Detection Limitations**: Traditional anomaly detection lacks sufficient training data
 
 ### **Why Synthetic Data?**
@@ -20,19 +20,19 @@
 
 ---
 
-## **Slide 2: What Are Anomalous Taxi Trajectories?**
+## **What Are Anomalous Taxi Trajectories?**
 
 ### **Beyond Statistical Outliers**
 > *"Anomalous taxi trajectories are not merely statistical outliers but are defined as deviations from typical or regular driving patterns"* [[Anomalous_Taxi_Trajectory_Generation_.md#2-introduction]](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#2-introduction)
 
 ### **Two Primary Categories:**
 
-#### **🎯 Subjective Anomalies** (Intentional)
+#### **Subjective Anomalies** (Intentional)
 - **Taxi Fraud**: Unnecessary detours to overcharge passengers
 - **Route Manipulation**: Deliberately longer paths
 - **Characteristic**: Significant increase in trajectory length
 
-#### **🌍 Objective Anomalies** (Environmental)
+#### **Objective Anomalies** (Environmental)
 - **Traffic Events**: Accidents, congestion, road closures
 - **Characteristic**: Increased travel time, normal distance
 
@@ -48,16 +48,15 @@
 
 ---
 
-## **Slide 3: Why DiffTraj? Technical Foundation**
+## **Why DiffTraj? Technical Foundation**
 
 ### **Diffusion Models for Trajectory Generation**
 > *"DMs excel at capturing complex data distributions and generating high-fidelity samples, making them particularly well-suited for modeling the stochastic and intricate characteristics inherent in human behavior"* [[Methodology_Anomalous_Taxi_Trajectory_Generation_.md#1-introduction]](Meeting-Notes/Methodology_Anomalous_Taxi_Trajectory_Generation_.md#1-introduction)
 
 ### **DiffTraj Architecture**
-```
-Real Trajectory → Forward Process (+ Noise) → White Noise
-White Noise → Reverse Process (- Noise) → Synthetic Trajectory
-```
+**Two-Stage Process:**
+- **Forward Process**: Real Trajectory → (+Noise) → White Noise  
+- **Reverse Process**: White Noise → (-Noise) → Synthetic Trajectory
 
 #### **Key Components:**
 - **Traj-UNet**: 1D-CNN-based residual network with attention
@@ -65,6 +64,8 @@ White Noise → Reverse Process (- Noise) → Synthetic Trajectory
 - **Privacy by Design**: Generates from noise, never replicates real trajectories
 
 ### **Advantages Over Alternatives**
+> *Reference: [Anomalous_Taxi_Trajectory_Generation_.md#generative-models-for-synthetic-trajectory-generation](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#generative-models-for-synthetic-trajectory-generation)*
+
 | Feature | DiffTraj | GANs | VAEs |
 |---------|----------|------|------|
 | **Training Stability** | ✅ High | ⚠️ Unstable | ✅ Stable |
@@ -74,14 +75,14 @@ White Noise → Reverse Process (- Noise) → Synthetic Trajectory
 
 ---
 
-## **Slide 4: Our Multi-Dataset Approach**
+## **Our Multi-Dataset Approach**
 
 ### **Cross-City Validation Strategy**
 *Comprehensive evaluation across diverse urban environments*
 
 #### **Available Datasets:**
 1. **Beijing T-Drive** (Public)
-   - 10,357 taxis, 15M GPS points, 1 week
+   - 10,357 taxis, 15M GPS points, 1 week [[Anomalous_Taxi_Trajectory_Generation_.md#key-datasets-and-their-characteristics]](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#key-datasets-and-their-characteristics)
    - Established DiffTraj benchmark
    
 2. **Chengdu & Xi'an** (DiffTraj Paper)
@@ -90,7 +91,7 @@ White Noise → Reverse Process (- Noise) → Synthetic Trajectory
 3. **Porto Taxi** (Potential)
    - European urban patterns for international validation
    
-4. **BJUT Private Beijing** (Your Dataset)
+4. **BJUT Private Beijing** (Private)
    - Unique validation against public Beijing data
 
 ### **Research Advantage**
@@ -103,7 +104,7 @@ White Noise → Reverse Process (- Noise) → Synthetic Trajectory
 
 ---
 
-## **Slide 5: Methodology Overview - 3-Month Timeline**
+## **Methodology Overview - 3-Month Timeline**
 
 ### **Streamlined Approach: Rule-Based Focus**
 > *"Timeline Constraint: 3 months (July 8 - October 8, 2025) - focus on rule-based methods only, leave advanced techniques for future work"*
@@ -122,25 +123,17 @@ Month 1: Foundation → Month 2: Core Contribution → Month 3: Integration
 
 ---
 
-## **Slide 6: Month 1 - Foundation Setup (Jul 8 - Aug 8)**
+## **Month 1 - Foundation Setup (Jul 8 - Aug 8)**
 
 ### **Parallel Implementation Strategy**
 
 #### **Week 1-2: DiffTraj & Detection Setup**
-```python
-# Concurrent Development
-├── DiffTraj Implementation
-│   ├── GitHub code adaptation [github.com/Yasoz/DiffTraj]
-│   ├── Multi-dataset preprocessing (Beijing, Chengdu, Xi'an)
-│   └── Initial model training
-└── Anomaly Detection Baseline
-    ├── Isolation Forest (sklearn)
-    ├── Basic feature extraction
-    └── Performance benchmarking
-```
+**Concurrent Development:**
+- **DiffTraj Implementation**: GitHub code adaptation, multi-dataset preprocessing, initial model training
+- **Anomaly Detection Baseline**: Isolation Forest implementation, basic feature extraction, performance benchmarking
 
 #### **Week 3-4: Manual Labeling & Validation**
-- **Ground Truth Creation**: 50-100 trajectories per dataset
+- **Ground Truth Creation**: 50-100 trajectories per dataset (manual labeling for validation)
 - **Abp1-4 Classification**: Manual categorization using behavior patterns
 - **Cross-Dataset Validation**: Consistency testing
 
@@ -151,7 +144,7 @@ Month 1: Foundation → Month 2: Core Contribution → Month 3: Integration
 
 ---
 
-## **Slide 7: Month 2 - Anomaly Generation (Aug 8 - Sep 8) 🔥**
+## **Month 2 - Anomaly Generation (Aug 8 - Sep 8)**
 *CORE RESEARCH CONTRIBUTION*
 
 ### **Rule-Based Anomaly Injection Framework**
@@ -159,26 +152,17 @@ Month 1: Foundation → Month 2: Core Contribution → Month 3: Integration
 #### **Taxonomy Implementation**
 > *Based on [Methodology_Anomalous_Taxi_Trajectory_Generation_.md - Table 2](Meeting-Notes/Methodology_Anomalous_Taxi_Trajectory_Generation_.md#31-defining-anomalies-in-taxi-trajectories)*
 
-```python
-class AnomalyInjector:
-    def inject_spatial_deviation(trajectory, detour_factor=1.5):
-        # Route deviations, circuitous paths
-        
-    def inject_temporal_anomaly(trajectory, delay_factor=2.0):
-        # Duration extensions, traffic delays
-        
-    def inject_kinematic_outlier(trajectory, speed_factor=1.8):
-        # Speed violations, abrupt changes
-        
-    def inject_hybrid_anomaly(trajectory, patterns=['spatial', 'temporal']):
-        # Combined anomaly types
-```
+**Anomaly Injection Methods:**
+- **Spatial Deviations**: Route deviations and circuitous paths
+- **Temporal Anomalies**: Duration extensions and traffic delays  
+- **Kinematic Outliers**: Speed violations and abrupt changes
+- **Hybrid Anomalies**: Combined anomaly types
 
 #### **Specific Implementation Targets**
-1. **Route Deviations**: Insert detours increasing distance by 20-50%
-2. **Speed Anomalies**: Modify velocity profiles (excessive speed/sudden stops)
-3. **Stop Anomalies**: Add unexpected or extended stops (5-30 minutes)
-4. **Duration Extensions**: Simulate traffic delays or fraudulent driving
+1. **Route Deviations**: Insert detours increasing distance by 20-50% [[Anomalous_Taxi_Trajectory_Generation_.md#rule-based-perturbation-methods]](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#rule-based-perturbation-methods)
+2. **Speed Anomalies**: Modify velocity profiles (excessive speed/sudden stops) [[Anomalous_Taxi_Trajectory_Generation_.md#rule-based-perturbation-methods]](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#rule-based-perturbation-methods)
+3. **Stop Anomalies**: Add unexpected or extended stops (5-30 minutes) [[Methodology_Anomalous_Taxi_Trajectory_Generation_.md#31-defining-anomalies-in-taxi-trajectories]](Meeting-Notes/Methodology_Anomalous_Taxi_Trajectory_Generation_.md#31-defining-anomalies-in-taxi-trajectories)
+4. **Duration Extensions**: Simulate traffic delays or fraudulent driving [[Anomalous_Taxi_Trajectory_Generation_.md#defining-anomalies-in-taxi-trajectories-characteristics-and-types]](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#defining-anomalies-in-taxi-trajectories-characteristics-and-types)
 
 #### **Week-by-Week Progress**
 - **Week 1**: Basic injection algorithms for all 4 Abp patterns
@@ -188,28 +172,17 @@ class AnomalyInjector:
 
 ---
 
-## **Slide 8: Month 3 - Integration & Evaluation (Sep 8 - Oct 8)**
+## **Month 3 - Integration & Evaluation (Sep 8 - Oct 8)**
 
 ### **Comprehensive Evaluation Framework**
 
 #### **Multi-Dimensional Assessment**
 > *Reference: [Methodology_Anomalous_Taxi_Trajectory_Generation_.md#5-evaluation](Meeting-Notes/Methodology_Anomalous_Taxi_Trajectory_Generation_.md#5-evaluation-framework)*
 
-```
-Evaluation Pipeline:
-├── Synthetic Quality Assessment
-│   ├── SDMetrics: Resemblance, Utility, Privacy
-│   ├── LibCity: Downstream task performance
-│   └── Statistical Similarity Tests
-├── Detection Performance
-│   ├── Precision, Recall, F1-Score, ROC-AUC
-│   ├── Cross-city generalization testing
-│   └── Abp1-4 pattern-specific metrics
-└── Cross-Dataset Validation
-    ├── Beijing Public vs. Private comparison
-    ├── Inter-city pattern transfer analysis
-    └── Statistical significance testing
-```
+**Evaluation Components:**
+- **Synthetic Quality Assessment**: SDMetrics analysis (resemblance, utility, privacy), LibCity downstream task performance, statistical similarity tests
+- **Detection Performance**: Precision, Recall, F1-Score, ROC-AUC, cross-city generalization testing, Abp1-4 pattern-specific metrics  
+- **Cross-Dataset Validation**: Beijing public vs. private comparison, inter-city pattern transfer analysis, statistical significance testing
 
 #### **Implementation Schedule**
 - **Week 1**: End-to-end pipeline integration
@@ -219,42 +192,23 @@ Evaluation Pipeline:
 
 ---
 
-## **Slide 9: Technical Implementation Details**
+## **Technical Implementation Details**
 
-### **Software Architecture**
+### **Core Components**
+- **Base Trajectory Generation**: DiffTraj model adaptation and training
+- **Anomaly Injection**: Rule-based perturbation methods
+- **Detection System**: Isolation Forest baseline with custom metrics
+- **Evaluation Framework**: SDMetrics for synthetic data quality, cross-city validation
 
-#### **Core Components**
-```python
-# Project Structure
-anomalous_trajectory_generation/
-├── diffusion/
-│   ├── difftraj_model.py          # Base trajectory generation
-│   ├── anomaly_injector.py        # Rule-based perturbations
-│   └── conditional_generator.py   # Guided generation
-├── detection/
-│   ├── isolation_forest.py        # Baseline detector
-│   ├── reconstruction_scorer.py   # DiffTraj-based scoring
-│   └── evaluation_metrics.py      # Performance assessment
-├── datasets/
-│   ├── beijing_tdrive/            # Public Beijing data
-│   ├── chengdu_xian/             # Additional Chinese cities
-│   ├── porto/                    # European validation
-│   └── beijing_private/          # Your private dataset
-└── evaluation/
-    ├── sdmetrics_eval.py         # Synthetic data quality
-    ├── cross_city_analysis.py    # Generalization testing
-    └── visualization.py          # Trajectory plotting
-```
-
-### **Dependencies & Tools**
+### **Key Tools & Dependencies**
 - **DiffTraj**: PyTorch implementation from [GitHub](https://github.com/Yasoz/DiffTraj)
-- **Detection**: scikit-learn (Isolation Forest), custom metrics
-- **Evaluation**: SDMetrics, LibCity (optional), matplotlib/plotly
-- **Data**: Preprocessing pipelines for multi-format datasets
+- **Detection**: scikit-learn (Isolation Forest), custom evaluation metrics
+- **Evaluation**: SDMetrics library, LibCity framework (optional)
+- **Visualization**: matplotlib/plotly for trajectory plotting and analysis
 
 ---
 
-## **Slide 10: Evaluation Strategy**
+## **Evaluation Strategy**
 
 ### **Multi-Faceted Validation Approach**
 
@@ -267,16 +221,12 @@ anomalous_trajectory_generation/
 - **Privacy**: Disclosure protection analysis
 
 #### **2. Anomaly Detection Performance**
-```python
-# Key Metrics for Imbalanced Data
-metrics = {
-    'precision': true_positives / (true_positives + false_positives),
-    'recall': true_positives / (true_positives + false_negatives),
-    'f1_score': 2 * (precision * recall) / (precision + recall),
-    'roc_auc': area_under_roc_curve(),
-    'pr_auc': area_under_precision_recall_curve()  # Better for imbalanced
-}
-```
+**Key Metrics for Imbalanced Data:**
+- **Precision**: Proportion of correctly identified anomalies
+- **Recall**: Fraction of true anomalies successfully detected  
+- **F1-Score**: Harmonic mean of precision and recall
+- **ROC-AUC**: Area under receiver operating characteristic curve
+- **PR-AUC**: Area under precision-recall curve (better for imbalanced datasets) [[Anomalous_Taxi_Trajectory_Generation_.md#performance-metrics-for-anomaly-detection]](Meeting-Notes/Anomalous_Taxi_Trajectory_Generation_.md#performance-metrics-for-anomaly-detection)
 
 #### **3. Cross-City Generalization**
 - **Train on Beijing → Test on Chengdu/Xi'an**
@@ -290,7 +240,7 @@ metrics = {
 
 ---
 
-## **Slide 11: Expected Deliverables & Impact**
+## **Expected Deliverables & Impact**
 
 ### **Research Outputs**
 
@@ -300,13 +250,11 @@ metrics = {
 - **Quality Assured**: SDMetrics and LibCity validated
 
 #### **2. Open-Source Framework**
-```
-AnomalyTrajGen/
-├── Generation Pipeline: DiffTraj + Rule-based injection
-├── Detection Baseline: Isolation Forest + custom metrics
-├── Evaluation Suite: Cross-city, cross-dataset validation
-└── Documentation: Implementation guides, tutorials
-```
+**AnomalyTrajGen Components:**
+- **Generation Pipeline**: DiffTraj + rule-based injection methods
+- **Detection Baseline**: Isolation Forest + custom evaluation metrics
+- **Evaluation Suite**: Cross-city and cross-dataset validation tools
+- **Documentation**: Implementation guides and tutorials
 
 #### **3. Research Contributions**
 - **Cross-City Validation**: First comprehensive multi-city anomaly study
@@ -321,7 +269,7 @@ AnomalyTrajGen/
 
 ---
 
-## **Slide 12: Risk Mitigation & Future Directions**
+## **Risk Mitigation & Future Directions**
 
 ### **Risk Management**
 
@@ -358,30 +306,8 @@ AnomalyTrajGen/
 
 ---
 
-## **Slide 13: Implementation Timeline Summary**
 
-### **90-Day Sprint: July 8 - October 8, 2025**
-
-```
-                    Month 1          Month 2          Month 3
-Week:           1  2  3  4      5  6  7  8      9  10 11 12
-                │  │  │  │      │  │  │  │      │  │  │  │
-DiffTraj Setup  ████████                              
-IForest Base    ████████                              
-Manual Labels      ████████                           
-Anomaly Inject           ██  ████████                 
-Quality Test                 ████████                 
-Evaluation                           ██  ████████     
-Documentation                              ████████   
-Thesis Writing                                ████████
-```
-
-### **Critical Milestones**
-- **Week 4**: Working DiffTraj + IForest + labeled data
-- **Week 8**: Rule-based anomaly generation complete
-- **Week 12**: Comprehensive evaluation and documentation
-
-### **Success Criteria**
+## **Success Criteria**
 ✅ **Technical**: Multi-dataset DiffTraj generation + rule-based anomaly injection  
 ✅ **Research**: Cross-city validation + public/private comparison  
 ✅ **Documentation**: Complete methodology + reproducible code  
@@ -400,13 +326,3 @@ Thesis Writing                                ████████
 - **T-Drive Dataset**: Microsoft Research Beijing taxi data
 - **SDMetrics Library**: Synthetic data evaluation framework
 - **LibCity Framework**: Urban trajectory analysis toolkit
-
-### **Citation Notes**
-¹ *Data scarcity statistics from anomaly detection literature*  
-² *Privacy concerns from GPS trajectory research*  
-*All specific quotes and references linked to supporting documentation above*
-
----
-
-**Contact & Questions**
-*Ready to dive into synthetic anomalous trajectory generation!*
