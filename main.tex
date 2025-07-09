@@ -323,7 +323,13 @@ This phase uses an unsupervised approach to discover and categorize anomalous pa
 
 \begin{description}
     \item[Unsupervised Anomaly Detection] A lightweight anomaly detection algorithm (such as Isolation Forest, Autoencoder, or One-Class SVM) is applied to the \texttt{synthetic\_normal} dataset to identify outliers without requiring pre-existing labels. Modern diffusion-based anomaly detection frameworks like DiffTAD~\cite{liDiffTADDenoisingDiffusion2024} also use Isolation Forest as a baseline for performance comparison, highlighting its relevance.
-    \item[Rule-Based Curation and Categorization] The detected \texttt{potential\_anomalies} are filtered and classified into interpretable categories (e.g., speeding, off-road, unusual stops) using heuristic rules based on kinematic and spatial properties.
+    \item[Rule-Based Curation and Categorization] The detected \texttt{potential\_anomalies} are filtered and classified into interpretable categories using a taxonomy of heuristic rules based on kinematic and spatial properties. Thresholds for route length and travel time are set following the statistical approach of Wang et al.~\cite{wangStatisticalFrameworkTaxi2020,wangDetectingAnomalousTrajectories2018}, where a trajectory is considered anomalous if its length or duration exceeds the mean of normal trajectories for its origin-destination pair by more than an empirically determined margin (e.g., $L_\rho$ for length, $T_\rho$ for time). Specifically:
+        \begin{itemize}[leftmargin=*]
+            \item \textbf{Route Deviation:} Path length $> NL_{value} + L_\rho$, where $NL_{value}$ is the mean normal route length and $L_\rho$ is a margin (e.g., 5 km) as in~\cite{wangDetectingAnomalousTrajectories2018}.
+            \item \textbf{Temporal Delay:} Travel time $> NT_{value} + T_\rho$, where $NT_{value}$ is the mean normal travel time and $T_\rho$ is a margin (e.g., 5 min).
+            \item \textbf{Kinematic Outliers:} The trajectory violates physical or legal driving norms (e.g., speed $>$ 120 km/h, stationary periods $>$ 15 min at non-terminal locations).
+            \item \textbf{Off-Road Driving:} Trajectory points are located beyond a reasonable distance from any known road segment, indicating GPS errors or highly unusual vehicle movement.
+        \end{itemize}
     \item[Labeled Anomaly Subsets] This curation process produces labeled anomaly datasets (e.g., \texttt{anomalies\_speeding}, \texttt{anomalies\_off\_road}) that are ready for model retraining.
 \end{description}
 
@@ -333,7 +339,7 @@ This phase uses an unsupervised approach to discover and categorize anomalous pa
 The final phase closes the loop by retraining the diffusion model on the enriched dataset to learn and amplify the discovered anomalous patterns, enabling controlled generation.
 
 \begin{description}
-    \item[Enriched Data Retraining] The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10%) to prevent mode collapse and maintain diversity.
+    \item[Enriched Data Retraining] The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10\%) to prevent mode collapse and maintain diversity.
     \item[Iterative Amplification] This process---generation, detection, curation, and retraining---can be repeated multiple times. Each iteration further amplifies and diversifies the model's ability to generate complex and varied anomalies.
     \item[Controlled Anomaly Generation] The refined model supports conditional sampling (e.g., \texttt{difftraj.sample(condition="speeding")}), enabling the targeted generation of specific, high-quality anomalies for downstream tasks.
 \end{description}
