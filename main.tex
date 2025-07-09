@@ -242,50 +242,49 @@ This research introduces an iterative framework for generating controllable and 
 
 The initial phase focuses on creating a high-fidelity synthetic dataset of normal trajectories, which serves as the foundation for the anomaly mining process.
 
-\begin{compactoutline}
-    \outlineitem{Core Generation Model (\textbf{DiffTraj}): The DiffTraj architecture---a 1D-CNN-based residual network with attention---is adopted for its demonstrated training stability and ability to generate high-quality, realistic trajectories.}
-    \outlineitem{Training on Normal Data: The model is trained solely on a dataset of real, normal taxi trajectories to capture the underlying patterns of typical urban mobility.}
-    \outlineitem{Output Dataset: This phase produces a synthetic trajectory dataset, \texttt{synthetic\_normal}, which statistically resembles the real normal data but contains no direct copies, thereby ensuring privacy by design.}
-\end{compactoutline}
+\textbf{Core Generation Model (\textbf{DiffTraj}).} The DiffTraj architecture---a 1D-CNN-based residual network with attention---is adopted for its demonstrated training stability and ability to generate high-quality, realistic trajectories.
+
+\textbf{Training on Normal Data.} The model is trained solely on a dataset of real, normal taxi trajectories to capture the underlying patterns of typical urban mobility.
+
+\textbf{Output Dataset.} This phase produces a synthetic trajectory dataset, \texttt{synthetic\_normal}, which statistically resembles the real normal data but contains no direct copies, thereby ensuring privacy by design.
 
 \subsection{Phase 2: Unsupervised Anomaly Mining and Curation}
 \label{sec:anomaly-mining}
 
 This phase uses an unsupervised approach to discover and categorize anomalous patterns within the baseline synthetic data.
 
-\begin{compactoutline}
-    \outlineitem{Unsupervised Anomaly Detection: A lightweight anomaly detection algorithm (such as Isolation Forest, Autoencoder, or One-Class SVM) is applied to the \texttt{synthetic\_normal} dataset to identify outliers without requiring pre-existing labels.}
-    \outlineitem{Rule-Based Curation and Categorization: The detected \texttt{potential\_anomalies} are filtered and classified into interpretable categories (e.g., speeding, off-road, unusual stops) using heuristic rules based on kinematic and spatial properties.}
-    \outlineitem{Labeled Anomaly Subsets: This curation process produces labeled anomaly datasets (e.g., \texttt{anomalies\_speeding}, \texttt{anomalies\_off\_road}) that are ready for model retraining.}
-\end{compactoutline}
+\textbf{Unsupervised Anomaly Detection.} A lightweight anomaly detection algorithm (such as Isolation Forest, Autoencoder, or One-Class SVM) is applied to the \texttt{synthetic\_normal} dataset to identify outliers without requiring pre-existing labels.
+
+\textbf{Rule-Based Curation and Categorization.} The detected \texttt{potential\_anomalies} are filtered and classified into interpretable categories (e.g., speeding, off-road, unusual stops) using heuristic rules based on kinematic and spatial properties.
+
+\textbf{Labeled Anomaly Subsets.} This curation process produces labeled anomaly datasets (e.g., \texttt{anomalies\_speeding}, \texttt{anomalies\_off\_road}) that are ready for model retraining.
 
 \subsection{Phase 3: Iterative Refinement and Conditional Generation}
 \label{sec:iterative-refinement}
 
 The final phase closes the loop by retraining the diffusion model on the enriched dataset to learn and amplify the discovered anomalous patterns, enabling controlled generation.
 
-\begin{compactoutline}
-    \outlineitem{Enriched Data Retraining: The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10\%) to prevent mode collapse and maintain diversity.}
-    \outlineitem{Iterative Amplification: This process---generation, detection, curation, and retraining---can be repeated multiple times. Each iteration further amplifies and diversifies the model's ability to generate complex and varied anomalies.}
-    \outlineitem{Controlled Anomaly Generation: The refined model supports conditional sampling (e.g., \texttt{difftraj.sample(condition="speeding")}), enabling the targeted generation of specific, high-quality anomalies for downstream tasks.}
-\end{compactoutline}
+\textbf{Enriched Data Retraining.} The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10%) to prevent mode collapse and maintain diversity.
+
+\textbf{Iterative Amplification.} This process---generation, detection, curation, and retraining---can be repeated multiple times. Each iteration further amplifies and diversifies the model's ability to generate complex and varied anomalies.
+
+\textbf{Controlled Anomaly Generation.} The refined model supports conditional sampling (e.g., \texttt{difftraj.sample(condition="speeding")}), enabling the targeted generation of specific, high-quality anomalies for downstream tasks.
 
 \subsection{Model Selection and Justification}
 \label{sec:model-selection}
 
 The selection of the DiffTraj model and the iterative, bootstrapping methodology is grounded in a pragmatic assessment of technical advantages and research objectives.
 
-\begin{compactoutline}
-  \outlineitem{Generative Model Choice -- DiffTraj was selected over alternatives like GANs and VAEs for its superior training stability, high-fidelity sample generation, and inherent privacy-preserving design, which avoids direct replication of real data.}
-  \outlineitem{Rationale for Iterative Approach -- The proposed iterative framework was chosen for its key strategic benefits:
-    \begin{itemize}[leftmargin=*]
-        \item \textbf{No Labeled Data Required:} It bootstraps the anomaly generation process without needing a pre-labeled anomalous dataset, addressing a common bottleneck in anomaly detection research.
-        \item \textbf{High Control and Interpretability:} The rule-based curation ensures that generated anomalies correspond to clear, interpretable, and controllable categories.
-        \item \textbf{Scalability and Efficiency:} The approach is computationally less intensive than complex latent space manipulation techniques and allows the anomaly dataset to be iteratively expanded and refined.
-    \end{itemize}
-  }
-  \outlineitem{Trade-off Analysis -- This methodology prioritizes interpretability, control, and implementation feasibility. It serves as a robust foundation, acknowledging that more complex generative techniques like latent space adversarial training are deferred to future work.}
-\end{compactoutline}
+\textbf{Generative Model Choice.} DiffTraj was selected over alternatives like GANs and VAEs for its superior training stability, high-fidelity sample generation, and inherent privacy-preserving design, which avoids direct replication of real data.
+
+\textbf{Rationale for Iterative Approach.} The proposed iterative framework was chosen for its key strategic benefits:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{No Labeled Data Required:} It bootstraps the anomaly generation process without needing a pre-labeled anomalous dataset, addressing a common bottleneck in anomaly detection research.
+    \item \textbf{High Control and Interpretability:} The rule-based curation ensures that generated anomalies correspond to clear, interpretable, and controllable categories.
+    \item \textbf{Scalability and Efficiency:} The approach is computationally less intensive than complex latent space manipulation techniques and allows the anomaly dataset to be iteratively expanded and refined.
+\end{itemize}
+
+\textbf{Trade-off Analysis.} This methodology prioritizes interpretability, control, and implementation feasibility. It serves as a robust foundation, acknowledging that more complex generative techniques like latent space adversarial training are deferred to future work.
 
 \section{Data and Preprocessing}
 \label{sec:data-preprocessing}
