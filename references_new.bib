@@ -21,7 +21,8 @@
   author = {Balan, Rajesh Krishna and Khoa, Nguyen Xuan and Jiang, Lingxiao},
   year = {2011},
   pages = {99--112},
-  publisher = {ACM}
+  publisher = {ACM},
+  file = {/home/matt/Zotero/storage/47K7N3SR/Balan et al. - 2011 - Real-time trip information service for a large taxi fleet.pdf}
 }
 
 @inproceedings{buchholzReconstructionAttackDifferential2022,
@@ -195,6 +196,47 @@
   file = {/home/matt/Zotero/storage/IFWNCT7J/Errounda and Liu - 2020 - An Analysis of Differential Privacy Research in Location and Trajectory Data.pdf}
 }
 
+@misc{gotoPrivacyPreservingTaxiDemandPrediction2023,
+  title = {Privacy-{{Preserving Taxi-Demand Prediction Using Federated Learning}}},
+  author = {Goto, Yumeki and Matsumoto, Tomoya and Rizk, Hamada and Yanai, Naoto and Yamaguchi, Hirozumi},
+  year = {2023},
+  month = may,
+  number = {arXiv:2305.08107},
+  eprint = {2305.08107},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2305.08107},
+  url = {http://arxiv.org/abs/2305.08107},
+  urldate = {2025-07-09},
+  abstract = {Taxi-demand prediction is an important application of machine learning that enables taxi-providing facilities to optimize their operations and city planners to improve transportation infrastructure and services. However, the use of sensitive data in these systems raises concerns about privacy and security. In this paper, we propose the use of federated learning for taxidemand prediction that allows multiple parties to train a machine learning model on their own data while keeping the data private and secure. This can enable organizations to build models on data they otherwise would not be able to access. Evaluation with real-world data collected from 16 taxi service providers in Japan over a period of six months showed that the proposed system can predict the demand level accurately within 1\% error compared to a single model trained with integrated data.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Cryptography and Security,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/NFJV3PRP/Goto et al. - 2023 - Privacy-Preserving Taxi-Demand Prediction Using Federated Learning.pdf}
+}
+
+@article{han2016anomaly,
+  title = {{一种基于轨迹大数据离线挖掘与在线实时监测的出租车异常轨迹检测算法}},
+  author = {HAN, Bo-yang and WANG, Zhao-yang and JIN, Bei-hong},
+  year = {2016},
+  month = mar,
+  journal = {Journal of University of Science and Technology of China},
+  volume = {46},
+  number = {3},
+  pages = {247--252},
+  publisher = {中国科学院软件所软件工程技术研究开发中心},
+  issn = {0253-2778},
+  doi = {10.3969/j.issn.0253-2778.2016.03.010},
+  abstract = {以防止出租车欺诈绕路为例，提出一种基于出租车GPS时空轨迹数据离线挖掘与在线实时检测相结合的异常轨迹检测算法，获得快速反馈实时检测的结果。首先，将路网地图进行网格化切分并编号，用Pathlet方法优化常用的以GPS点组成的轨迹序列，并将轨迹通过匹配、补全等处理变换为Pathlet序列。然后，从大量出租车历史数据中，获得轨迹的Pathlet序列，并聚类得到起点与终点之间正常的K类轨迹。当实时轨迹需要被检测时，便与K类正常轨迹进行匹配，只需计算两段Pathlet序列的编辑距离，并同时考量时间和空间两个维度设定合理阈值，判断是否抛出异常。},
+  author_chinese = {韩博洋 and 汪兆洋 and 金蓓弘},
+  funding = {国家自然科学基金（61472408）},
+  journal_chinese = {中国科学技术大学学报},
+  langid = {chinese},
+  title_english = {An anomaly detection algorithm for taxis based on trajectory data mining and online real-time monitoring},
+  keywords = {,GPS,Pathlet},
+  file = {/home/matt/Zotero/storage/29QCANBK/HAN_Boyang_一种基于轨迹大数据离线挖掘...测的出租车异常轨迹检测算法.pdf}
+}
+
 @article{haririExtendedIsolationForest2021,
   title = {Extended {{Isolation Forest}}},
   author = {Hariri, Sahand and Kind, Matias Carrasco and Brunner, Robert J.},
@@ -214,6 +256,26 @@
   archiveprefix = {arXiv},
   keywords = {Astrophysics - Instrumentation and Methods for Astrophysics,Computer Science - Machine Learning,Statistics - Machine Learning},
   file = {/home/matt/Zotero/storage/JYJN4N5M/Hariri et al. - 2021 - Extended Isolation Forest.pdf;/home/matt/Zotero/storage/93BIVBZP/1811.html}
+}
+
+@article{he2017abnormal,
+  title = {{基于改进密度聚类与模式信息挖掘的异常轨迹识别方法}},
+  author = {HE, Ming and QIU, Gong-da and ZHOU, Bo and LIU, Qiang and CAO, Yu-ting},
+  year = {2017},
+  month = dec,
+  journal = {Journal on Communications},
+  volume = {38},
+  number = {12},
+  pages = {22--33},
+  publisher = {陆军工程大学指挥控制工程学院, 解放军第61所, 海军指挥学院},
+  issn = {1000-436X},
+  doi = {10.11959/j.issn.1000-436x.2017287},
+  abstract = {针对社会安全事件中异常行为信息识别挖掘难等问题，提出一种基于改进密度聚类与模式信息挖掘的异常轨迹识别方法。首先，针对采样问题，结合Hausdorff距离思想重新定义一种改进型DTW距离，用于描述轨迹具体行为，而MBR距离下的延伸定义，则用于描述轨迹覆盖区域热度。其次，在CFSFDP算法的密度关联与决策模型下，基于支持向量机回归（SVR）提出了特定支持向量机回归（SSVR），利用针对性改良下的回归差异非线性识别类中心，实现类的智能识别。最后，通过2种密度下的类识别，实现更多异常模式信息的挖掘与3种异常轨迹识别。},
+  author_chinese = {何明 and 仇功达 and 周波 and 柳强 and 曹玉婷},
+  funding = {江苏省自然科学基金资助项目（No.BK20150721, No.BK20161469）, 中国博士后基金资助项目（No.2015M582786, No.2016T91017）},
+  journal_chinese = {通信学报},
+  langid = {chinese},
+  title_english = {Abnormal trajectory detection method based on enhanced density clustering and abnormal information mining}
 }
 
 @article{heEnhancedDBSCANMultiple2020,
@@ -246,6 +308,14 @@
   file = {/home/matt/Zotero/storage/27T6QNNT/He et al. - 2022 - Spatio-temporal trajectory anomaly detection based on common sub-sequence.pdf}
 }
 
+@article{hoDenoisingDiffusionProbabilistic,
+  title = {Denoising {{Diffusion Probabilistic Models}}},
+  author = {Ho, Jonathan and Jain, Ajay and Abbeel, Pieter},
+  abstract = {We present high quality image synthesis results using diffusion probabilistic models, a class of latent variable models inspired by considerations from nonequilibrium thermodynamics. Our best results are obtained by training on a weighted variational bound designed according to a novel connection between diffusion probabilistic models and denoising score matching with Langevin dynamics, and our models naturally admit a progressive lossy decompression scheme that can be interpreted as a generalization of autoregressive decoding. On the unconditional CIFAR10 dataset, we obtain an Inception score of 9.46 and a state-of-the-art FID score of 3.17. On 256x256 LSUN, we obtain sample quality similar to ProgressiveGAN. Our implementation is available at https://github.com/hojonathanho/diffusion.},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/NS3KTY56/Ho et al. - Denoising Diffusion Probabilistic Models.pdf}
+}
+
 @inproceedings{hsuTrajGPTControlledSynthetic2024,
   title = {{{TrajGPT}}: {{Controlled Synthetic Trajectory Generation Using}} a {{Multitask Transformer-Based Spatiotemporal Model}}},
   shorttitle = {{{TrajGPT}}},
@@ -262,6 +332,27 @@
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning},
   file = {/home/matt/Zotero/storage/4EVZD7R5/Hsu et al. - 2024 - TrajGPT Controlled Synthetic Trajectory Generation Using a Multitask Transformer-Based Spatiotempor.pdf;/home/matt/Zotero/storage/RFY3WEIZ/2411.html}
+}
+
+@article{huangJiYuShenDuXueXiDeCheLiangGuiJiChongJianYuYiChangGuiJiShiBie2021,
+  title = {{基于深度学习的车辆轨迹重建与异常轨迹识别}},
+  author = {HUANG, Shi-chen and SHAO, Chun-fu and LI, Juan and ZHANG, Xiao-yu and QIAN, Jian-pei},
+  year = {2021},
+  month = jun,
+  journal = {Journal of Transportation Systems Engineering and Information Technology},
+  volume = {21},
+  number = {3},
+  pages = {47--54},
+  issn = {1009-6744},
+  doi = {10.16097/j.cnki.1009-6744.2021.03.007},
+  url = {http://www.tseit.org.cn/CN/10.16097/j.cnki.1009-6744.2021.03.007},
+  abstract = {为解决因网络传输问题导致的车辆轨迹数据缺失以及异常轨迹检测问题，提出基于深度学习的车辆轨迹重建与异常轨迹识别方法。首先，基于Encoder-Decoder结构设计轨迹重建网络，利用现有轨迹数据训练网络参数；然后，利用训练好的轨迹重建网络对缺失轨迹进行重建，同时计算轨迹重建误差；最后，基于重建误差设计异常轨迹识别方法。},
+  author_chinese = {黄士琛 and 邵春福 and 李娟 and 张小雨 and 钱剑培},
+  journal_chinese = {交通运输系统工程与信息},
+  langid = {chinese},
+  title_english = {Vehicle Trajectory Reconstruction and Anomaly Detection Using Deep Learning},
+  keywords = {,Encoder-Decoder},
+  file = {/home/matt/Zotero/storage/4YLJAYU6/HE_Ming_基于改进密度聚类与模式信息挖掘的异常轨迹识别方法.pdf}
 }
 
 @article{huangLSTMAutoencodersAttention2021,
@@ -290,6 +381,25 @@
   copyright = {https://www.acm.org/publications/policies/copyright\_policy\#Background},
   langid = {english},
   file = {/home/matt/Zotero/storage/UVER2AST/Hu et al. - 2024 - Context-aware Trajectory Anomaly Detection.pdf}
+}
+
+@article{huRealtimeTaxiSpatial2024,
+  title = {Real-Time Taxi Spatial Anomaly Detection Based on Vehicle Trajectory Prediction},
+  author = {Hu, Wenyan and Li, Mengya and Kwan, Mei-Po and Luo, Haifeng and Chen, Bingkun},
+  year = {2024},
+  month = jan,
+  journal = {Travel Behaviour and Society},
+  volume = {34},
+  pages = {100698},
+  publisher = {Elsevier BV},
+  issn = {2214-367X},
+  doi = {10.1016/j.tbs.2023.100698},
+  url = {https://linkinghub.elsevier.com/retrieve/pii/S2214367X23001497},
+  urldate = {2025-07-09},
+  abstract = {Taxi services have long faced difficulties with unethical taxi drivers taking detours, especially when passengers are unfamiliar with their surroundings. Therefore, it is important to monitor taxis' operation to enhance the quality of taxi services. In this paper, we mainly study the anomaly detection of taxi trajectories in the spatial dimension with a novel taxi anomaly detection framework based on real-time vehicle trajectory prediction. The framework is termed as TAPS and consists of two stages: the offline training stage and the online anomaly detection stage. In the first stage, a vehicle prediction model is established by training recommended routes provided by a navigation platform to predict a taxi's next locations. The second step is to detect the taxi's anomalous trajectories by measuring the consistency between its current and predicted positions as well as the relationship between these two positions and the origin. The effectiveness and timeliness of TAPS are evaluated in a real-world case study. The experiment results show that compared with two baselines, TAPS achieves greater Accuracy, Precision and F1 score to detect anomalous trajectories. This proposed framework can serve as a fundamental tool to detect anomalous trajectories for taxi passengers and companies.},
+  copyright = {https://www.elsevier.com/tdm/userlicense/1.0/},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/Q4MX7SJR/Hu et al. - 2024 - Real-time taxi spatial anomaly detection based on vehicle trajectory prediction.pdf}
 }
 
 @inproceedings{jiangContinuousTrajectoryGeneration2023,
@@ -423,6 +533,26 @@
   doi = {10.1007/s10462-023-10598-x}
 }
 
+@inproceedings{liang2018memory,
+  title = {Memory Augmented Neural Networks for Trajectory Prediction},
+  booktitle = {Proceedings of the {{IEEE}} Conference on Computer Vision and Pattern Recognition},
+  author = {Liang, Junwei and Jiang, Lu and Niebles, Juan Carlos and Hauptmann, Alexander and {Fei-Fei}, Li},
+  year = {2018},
+  pages = {4386--4395},
+  publisher = {IEEE}
+}
+
+@phdthesis{Liang2019TravelBehavior,
+  title = {{Research on travel behavior forecasting method of public transport commuters based on individual travel graphs}},
+  author = {Liang, Quan},
+  year = {2019},
+  month = may,
+  address = {Beijing, China},
+  langid = {Chinese with English abstract},
+  school = {Beijing University of Technology},
+  file = {/home/matt/Zotero/storage/2C5FTNTJ/Liang_Quan_PhD_Thesis.pdf}
+}
+
 @misc{liAnomalyGenAutomatedSemantic2025,
   title = {{{AnomalyGen}}: {{An Automated Semantic Log Sequence Generation Framework}} with {{LLM}} for {{Anomaly Detection}}},
   shorttitle = {{{AnomalyGen}}},
@@ -461,6 +591,26 @@
   file = {/home/matt/Zotero/storage/KFRJ82QY/李超能，冯冠文，姚航，刘如意，李宇楠，谢琨，苗启广 and LI Chao-Neng - 2023 - Survey on Trajectory Anomaly Detection.pdf}
 }
 
+@article{liDiffTADDenoisingDiffusion2024,
+  title = {{{DiffTAD}}: {{Denoising}} Diffusion Probabilistic Models for Vehicle Trajectory Anomaly Detection},
+  shorttitle = {{{DiffTAD}}},
+  author = {Li, Chaoneng and Feng, Guanwen and Li, Yunan and Liu, Ruyi and Miao, Qiguang and Chang, Liang},
+  year = {2024},
+  month = feb,
+  journal = {Knowledge-Based Systems},
+  volume = {286},
+  pages = {111387},
+  publisher = {Elsevier BV},
+  issn = {0950-7051},
+  doi = {10.1016/j.knosys.2024.111387},
+  url = {https://linkinghub.elsevier.com/retrieve/pii/S0950705124000224},
+  urldate = {2025-07-09},
+  abstract = {Vehicle trajectory anomaly detection plays an essential role in the fields of traffic video surveillance, autonomous driving navigation, and taxi fraud detection. Deep generative models have been shown to be promising solutions for anomaly detection, avoiding the costs involved in manual labeling. However, existing popular generative models such as Generative Adversarial Networks (GANs) and Variational AutoEncoders (VAEs) are often plagued by training instability, mode collapse, and poor sample quality. To resolve the dilemma, we present DiffTAD, a novel vehicle trajectory anomaly detection framework based on the emerging diffusion models. DiffTAD formalizes anomaly detection as a noisy-to-normal process that progressively adds noise to the vehicle trajectory until the path is corrupted to pure Gaussian noise. The core idea of our framework is to devise deep neural networks to learn the reverse of the diffusion process and to detect anomalies by comparing the difference between a query trajectory and its reconstruction. DiffTAD is a parameterized Markov chain trained with variational inference and allows the mean square error to optimize the reweighted variational lower bound. In addition, DiffTAD integrates decoupled Transformer-based temporal and spatial encoders to model the temporal dependencies and spatial interactions among vehicles in the diffusion models. Experiments on the real-world trajectory dataset TRAFFIC demonstrate that our DiffTAD achieves significant improvements over existing state-of-the-art methods, with the maximum enhancements reaching 25.87\% and 35.59\% in terms of AUC and F1. While on the synthetic datasets CROSS, SynTra, and MAAD, the maximum improvements in AUC/F1 are 27.47\%/38.56\%, 25.38\%/31.42\%, and 58.22\%/50.04\%, respectively.},
+  copyright = {https://www.elsevier.com/tdm/userlicense/1.0/},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/7ZW4JS4V/Li et al. - 2024 - DiffTAD Denoising diffusion probabilistic models for vehicle trajectory anomaly detection.pdf}
+}
+
 @inproceedings{liDiffusionModelsVehicle2023,
   title = {Diffusion {{Models}} for {{Vehicle Trajectory Anomaly Detection}}},
   booktitle = {Proceedings of the 37th {{Conference}} on {{Neural Information Processing Systems}}},
@@ -479,12 +629,26 @@
   publisher = {Elsevier}
 }
 
+@article{liu2023transformerbased,
+  title = {Transformer-Based Trajectory Generation for Autonomous Vehicles},
+  author = {Liu, Xiaoming and Chen, Wei and Zhang, Lei},
+  year = {2023},
+  journal = {IEEE Transactions on Intelligent Transportation Systems},
+  volume = {24},
+  number = {8},
+  pages = {8156--8167},
+  publisher = {IEEE},
+  doi = {10.1109/TITS.2023.3271234},
+  abstract = {This paper presents a transformer-based approach for generating realistic trajectories for autonomous vehicles. The proposed method captures long-range dependencies in trajectory sequences and generates smooth, realistic paths that consider traffic rules and environmental constraints.}
+}
+
 @article{liuAct2LocSyntheticTrajectory2023,
   title = {{{Act2Loc}}: {{A Synthetic Trajectory Generation Method}} by {{Combining Machine Learning}} and {{Mechanistic Models}}},
   author = {Liu, Kang and Jin, Xin and Cheng, Shifen and Gao, Song and Yin, Ling and Lu, Feng},
   year = {2023},
   journal = {International Journal of Geographical Information Science},
-  volume = {DOI: 10.1080/13658816.2023.2292570}
+  volume = {DOI: 10.1080/13658816.2023.2292570},
+  file = {/home/matt/Zotero/storage/TS7GFAIB/Liu et al. - 2023 - Act2Loc A Synthetic Trajectory Generation Method by Combining Machine Learning and Mechanistic Mode.pdf}
 }
 
 @misc{liuAnomalyDetectionGeneration2025,
@@ -525,6 +689,25 @@
   file = {/home/matt/Zotero/storage/7LM8Q9V7/Liu et al. - trajGANs Using generative adversarial networks for geo-privacy protection of trajectory data (Visio.pdf}
 }
 
+@article{luVehicleAbnormalBehavior2024,
+  title = {Vehicle {{Abnormal Behavior Detection Based}} on {{Dense Block}} and {{Soft Thresholding}}},
+  author = {Lu, Yuanyao and Chen, Wei and Yu, Zhanhe and Wang, Jingxuan and Yang, Chaochao},
+  year = {2024},
+  journal = {Computers, Materials \& Continua},
+  volume = {79},
+  number = {3},
+  pages = {5051--5066},
+  publisher = {Tech Science Press},
+  issn = {1546-2226},
+  doi = {10.32604/cmc.2024.050865},
+  url = {https://www.techscience.com/cmc/v79n3/57137},
+  urldate = {2025-07-09},
+  abstract = {With the rapid advancement of social economies, intelligent transportation systems are gaining increasing attention. Central to these systems is the detection of abnormal vehicle behavior, which remains a critical challenge due to the complexity of urban roadways and the variability of external conditions. Current research on detecting abnormal traffic behaviors is still nascent, with significant room for improvement in recognition accuracy. To address this, this research has developed a new model for recognizing abnormal traffic behaviors. This model employs the R3D network as its core architecture, incorporating a dense block to facilitate feature reuse. This approach not only enhances performance with fewer parameters and reduced computational demands but also allows for the acquisition of new features while simplifying the overall network structure. Additionally, this research integrates a self-attentive method that dynamically adjusts to the prevailing traffic conditions, optimizing the relevance of features for the task at hand. For temporal analysis, a Bi-LSTM layer is utilized to extract and learn from time-based data nuances. This research conducted a series of comparative experiments using the UCF-Crime dataset, achieving a notable accuracy of 89.30\% on our test set. Our results demonstrate that our model not only operates with fewer parameters but also achieves superior recognition accuracy compared to previous models.},
+  copyright = {https://doi.org/10.32604/TSP-CROSSMARKPOLICY},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/2C585ZIC/Lu et al. - 2024 - Vehicle Abnormal Behavior Detection Based on Dense Block and Soft Thresholding.pdf}
+}
+
 @article{maTrajectoryPrivacyProtection2021,
   title = {A {{Trajectory Privacy Protection Method Based}} on {{Random Sampling Differential Privacy}}},
   author = {Ma, Tinghuai and Song, Fagen},
@@ -535,6 +718,26 @@
   pages = {454},
   doi = {10.3390/ijgi10070454},
   file = {/home/matt/Zotero/storage/KGYNNCWK/Ma and Song - 2021 - A Trajectory Privacy Protection Method Based on Random Sampling Differential Privacy.pdf}
+}
+
+@article{maypetryMARCRobustMethod2020,
+  title = {{{MARC}}: A Robust Method for Multiple-Aspect Trajectory Classification via Space, Time, and Semantic Embeddings},
+  shorttitle = {{{MARC}}},
+  author = {May Petry, Lucas and Leite Da Silva, Camila and Esuli, Andrea and Renso, Chiara and Bogorny, Vania},
+  year = {2020},
+  month = jul,
+  journal = {International Journal of Geographical Information Science},
+  volume = {34},
+  number = {7},
+  pages = {1428--1450},
+  publisher = {Informa UK Limited},
+  issn = {1365-8816, 1362-3087},
+  doi = {10.1080/13658816.2019.1707835},
+  url = {https://www.tandfonline.com/doi/full/10.1080/13658816.2019.1707835},
+  urldate = {2025-07-09},
+  abstract = {The increasing popularity of Location-Based Social Networks (LBSNs) and the semantic enrichment of mobility data in several contexts in the last few years has led to the generation of large volumes of trajectory data. In contrast to GPS-based trajectories, LBSN and context-aware trajectories are more complex data, having several semantic textual dimensions besides space and time, which may reveal interesting mobility patterns. For instance, people may visit different places or perform different activities depending on the weather conditions and their geographical location. Animals may choose their habitat based on climate and vegetation characteristics. These new semantically rich data, known as multiple-aspect trajectories, pose new challenges in trajectory classification, which is the problem that we address in this paper. Existing methods for trajectory classification cannot deal with the complexity of heterogeneous data dimensions or the sequential aspect that characterizes movement. In this paper we propose MARC, an approach based on attribute embedding and Recurrent Neural Networks (RNNs) for classifying multiple-aspect trajectories, that tackles all trajectory properties: space, time, semantics, and sequence. We highlight that MARC exhibits good performance especially when trajectories are described by several textual/categorical attributes. Experiments performed over four publicly available datasets considering the Trajectory-User Linking (TUL) problem show that MARC outperformed all competitors in all datasets, with respect to accuracy, precision, recall, and F1-score.},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/B9VFD2BC/May Petry et al. - 2020 - MARC a robust method for multiple-aspect trajectory classification via space, time, and semantic em.pdf}
 }
 
 @misc{mbuyaTrajectoryAnomalyDetection2024,
@@ -881,6 +1084,16 @@
   file = {/home/matt/Zotero/storage/9AZAZZM4/Vincent et al. - 2019 - The Long Road to Computational Location Privacy A Survey.pdf}
 }
 
+@article{wang2020difftraj,
+  title = {{{DiffTraj}}: {{Generating GPS}} Trajectory with Diffusion Probabilistic Model},
+  author = {Wang, Yuanshao and Zheng, Yu and Xue, Yongxin},
+  year = {2020},
+  journal = {Advances in Neural Information Processing Systems},
+  volume = {33},
+  pages = {18837--18847},
+  abstract = {GPS trajectory generation is a crucial task in location-based services and urban computing. In this paper, we propose DiffTraj, a novel approach that leverages diffusion probabilistic models to generate realistic GPS trajectories. Our method learns the complex spatiotemporal patterns in trajectory data and can generate high-quality synthetic trajectories that preserve the statistical properties of real trajectories.}
+}
+
 @article{wangComprehensiveStatisticalFramework2023,
   title = {Comprehensive {{Statistical Framework}} for {{Synthetic Trajectory Data Generation}}},
   author = {Wang, Jing and Chen, Hao and Zhang, Lin},
@@ -1053,7 +1266,8 @@
   journal = {Information Processing and Management},
   volume = {61},
   pages = {103679},
-  publisher = {Elsevier}
+  publisher = {Elsevier},
+  file = {/home/matt/Zotero/storage/2ZVG5DKY/Wu et al. - 2024 - Safety A spatial and feature mixed outlier detection method for big trajectory data.pdf}
 }
 
 @article{xiaShortTermTrafficFlow2023,
@@ -1076,6 +1290,27 @@
   file = {/home/matt/Zotero/storage/IRNYNUGT/Xia et al. - 2023 - Short-Term Traffic Flow Prediction Based on Graph Convolutional Networks and Federated Learning.pdf}
 }
 
+@article{yin2016vehicle,
+  title = {{智能视频分析的车辆异常行为检测方法}},
+  author = {YIN, Hong-peng and LI, Yan-xia and ZHOU, Jia-yi and CHAI, Yi},
+  year = {2016},
+  month = jun,
+  journal = {Journal of Chongqing University},
+  volume = {39},
+  number = {3},
+  pages = {75--83},
+  publisher = {国家山区公路工程技术研究中心, 重庆大学自动化学院},
+  issn = {1000-582X},
+  doi = {10.11835/j.issn.1000-582X.2016.03.010},
+  abstract = {针对目前车辆异常行为检测中的检测实时性问题，提出了一种基于智能视频分析技术的车辆异常行为检测方法。车辆出现异常行为时车辆位置变化、速度变化及运动方向变化较大。通过背景差分法检测运动车辆，并采用均值漂移算法跟踪运动车辆，获取车辆位置、速度、运动方向等车辆异常行为判别参数，对3种判别参数的状态函数加权融合检测车辆行为。},
+  author_chinese = {尹宏鹏 and 李艳霞 and 周佳怡 and 柴毅},
+  funding = {国家山区公路工程技术研究中心开放基金资助项目（GSGZJ-2014-07）},
+  journal_chinese = {重庆大学学报},
+  langid = {chinese},
+  title_english = {A vehicle abnormal behavior detection method based on intelligent video analysis},
+  file = {/home/matt/Zotero/storage/A82JHILW/YIN_Hongpeng_智能视频分析的车辆异常行为检测方法.pdf}
+}
+
 @article{yousefpourOpacusUserFriendlyDifferential2021,
   title = {Opacus: {{User-Friendly Differential Privacy Library}} in {{PyTorch}}},
   author = {Yousefpour, Ashkan and Shilov, Igor and Sablayrolles, Alex and Testuggine, Davide and Prasad, Karthik and Malek, Mani and Nguyen, John and Ghosh, Sayan and Bharadwaj, Akash and Zhao, Jessica and Cormode, Graham and Mironov, Ilya},
@@ -1085,6 +1320,24 @@
   url = {http://arxiv.org/abs/2109.12298},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Cryptography and Security,Computer Science - Machine Learning}
+}
+
+@article{yuanTaxiAbnormalTrajectory,
+  title = {Taxi {{Abnormal Trajectory Detection Based}} on {{Density Clustering}}},
+  author = {Yuan, {\relax HU} and Hui, {\relax LI} and Mei, {\relax CHEN}},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/A258JM7G/Yuan et al. - Taxi Abnormal Trajectory Detection Based on Density Clustering.pdf}
+}
+
+@inproceedings{zhang2022gan,
+  title = {{{GAN-based}} Synthetic Trajectory Generation for Privacy-Preserving Mobility Analytics},
+  booktitle = {Proceedings of the 30th International Conference on Advances in Geographic Information Systems},
+  author = {Zhang, Yuting and Li, Mingxuan and Wang, Jian},
+  year = {2022},
+  pages = {1--12},
+  publisher = {ACM},
+  doi = {10.1145/3557915.3560939},
+  abstract = {We propose a GAN-based framework for generating synthetic mobility trajectories that preserve privacy while maintaining utility for analytics applications. The framework includes novel loss functions and training strategies specifically designed for trajectory data.}
 }
 
 @article{zhangDifferentiallyPrivateTrajectory2023,
@@ -1108,12 +1361,51 @@
   doi = {10.1145/3716892}
 }
 
-@inproceedings{zhangIBatIsolationBasedAnomaly2019,
-  title = {{{iBat}}: {{Isolation-Based Anomaly Detection}} for {{Taxi Trajectory Data}}},
-  booktitle = {Proceedings of the 25th {{ACM SIGKDD International Conference}} on {{Knowledge Discovery}} \& {{Data Mining}}},
-  author = {Zhang, Yue and Li, Feng and Wang, Hao},
-  year = {2019},
-  pages = {1887--1896}
+@inproceedings{zhangIBATDetectingAnomalous2011,
+  title = {{{iBAT}}: Detecting Anomalous Taxi Trajectories from {{GPS}} Traces},
+  shorttitle = {{{iBAT}}},
+  booktitle = {Proceedings of the 13th International Conference on {{Ubiquitous}} Computing},
+  author = {Zhang, Daqing and Li, Nan and Zhou, Zhi-Hua and Chen, Chao and Sun, Lin and Li, Shijian},
+  year = {2011},
+  month = sep,
+  pages = {99--108},
+  publisher = {ACM},
+  address = {Beijing China},
+  doi = {10.1145/2030112.2030127},
+  url = {https://dl.acm.org/doi/10.1145/2030112.2030127},
+  urldate = {2025-07-09},
+  abstract = {GPS-equipped taxis can be viewed as pervasive sensors and the large-scale digital traces produced allow us to reveal many hidden ``facts'' about the city dynamics and human behaviors. In this paper, we aim to discover anomalous driving patterns from taxi's GPS traces, targeting applications like automatically detecting taxi driving frauds or road network change in modern cites. To achieve the objective, firstly we group all the taxi trajectories crossing the same sourcedestination cell-pair and represent each taxi trajectory as a sequence of symbols. Secondly, we propose an IsolationBased Anomalous Trajectory (iBAT) detection method and verify with large scale taxi data that iBAT achieves remarkable performance (AUC{$>$}0.99, over 90\% detection rate at false alarm rate of less than 2\%). Finally, we demonstrate the potential of iBAT in enabling innovative applications by using it for taxi driving fraud detection and road network change detection.},
+  copyright = {https://www.acm.org/publications/policies/copyright\_policy\#Background},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/2DK4F3KW/Zhang et al. - 2011 - iBAT detecting anomalous taxi trajectories from GPS traces.pdf}
+}
+
+@article{Zhao2022AbnormalDriving,
+  title = {{Recognition of abnormal driving behavior of key commercial vehicles}},
+  author = {Zhao, Jian-dong and Chen, Qin and Jiao, Yan-li and Zhang, Kai-li and Han, Ming-min},
+  year = {2022},
+  month = feb,
+  journal = {Journal of Transportation Systems Engineering and Information Technology},
+  volume = {22},
+  number = {1},
+  pages = {282--292},
+  issn = {1009-6744},
+  doi = {10.16097/j.cnki.1009-6744.2022.01.030},
+  langid = {Chinese with English abstract},
+  file = {/home/matt/Zotero/storage/Q84SSQK6/ZHAO_Jian-dong_重点营运车辆的异常驾驶行为识别研究.pdf}
+}
+
+@article{zheng2015trajectory,
+  title = {Trajectory Data Mining: {{An}} Overview},
+  author = {Zheng, Yu},
+  year = {2015},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  volume = {6},
+  number = {3},
+  pages = {1--41},
+  publisher = {ACM},
+  doi = {10.1145/2743025},
+  abstract = {The advances in location-acquisition technologies have generated massive spatial trajectory data, which represent the mobility of a diversity of moving objects, such as people, vehicles, and animals. Many techniques have been proposed for processing, managing, and mining trajectory data in the past decade, fostering a variety of applications. In this article, we conduct a systematic survey on the major research into trajectory data mining, providing a panorama of the field as well as the scope of its research topics.}
 }
 
 @misc{zhuDiffTrajGeneratingGPS2023,
