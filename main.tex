@@ -235,97 +235,56 @@ This integrated approach creates a research contribution that extends beyond ind
 \section{Methodology}
 \label{sec:methodology}
 
-\subsection{Methodology of Abnormal Detection}
-\label{sec:abnormal-detection}
+This research introduces an iterative framework for generating controllable and diverse synthetic anomalies. The methodology bootstraps anomaly generation without requiring pre-labeled anomaly data, instead relying on an unsupervised detector and rule-based curation to iteratively refine the generation model. The process consists of three main phases designed to enrich the synthetic dataset with specific, interpretable anomalies.
 
-\subsubsection{Isolation Forest for Trajectory Analysis}
-\label{sec:iso}
+\subsection{Phase 1: Baseline Synthetic Data Generation}
+\label{sec:baseline-generation}
+
+The initial phase focuses on creating a high-fidelity synthetic dataset of normal trajectories, which serves as the foundation for the anomaly mining process.
 
 \begin{compactoutline}
-  \outlineitem{LibCity Framework Integration -- Implementation of classification as extension to LibCity}
-  \outlineitem{Algorithm Implementation -- isolation forest adaptation for trajectory data}
-  \outlineitem{Key Adaptations for Trajectory Data -- Feature engineering and distance metrics}
-  \outlineitem{Framework Compatibility -- Ensuring anomaly detection works with LibCity data formats}
+    \outlineitem{Core Generation Model (\textbf{DiffTraj}): The DiffTraj architecture---a 1D-CNN-based residual network with attention---is adopted for its demonstrated training stability and ability to generate high-quality, realistic trajectories.}
+    \outlineitem{Training on Normal Data: The model is trained solely on a dataset of real, normal taxi trajectories to capture the underlying patterns of typical urban mobility.}
+    \outlineitem{Output Dataset: This phase produces a synthetic trajectory dataset, \texttt{synthetic\_normal}, which statistically resembles the real normal data but contains no direct copies, thereby ensuring privacy by design.}
 \end{compactoutline}
 
-\subsubsection{Statistical Pattern Extraction}
-\label{sec:pattern-extraction}
+\subsection{Phase 2: Unsupervised Anomaly Mining and Curation}
+\label{sec:anomaly-mining}
+
+This phase uses an unsupervised approach to discover and categorize anomalous patterns within the baseline synthetic data.
 
 \begin{compactoutline}
-  \outlineitem{Spatial Distributions -- Origin-destination patterns, route density maps}
-  \outlineitem{Temporal Patterns -- Time-of-day effects, seasonal variations}
-  \outlineitem{Behavioral Characteristics -- Driver decision patterns, route preferences}
-  \outlineitem{Anomaly Signatures -- Characteristic patterns of anomalous behavior}
+    \outlineitem{Unsupervised Anomaly Detection: A lightweight anomaly detection algorithm (such as Isolation Forest, Autoencoder, or One-Class SVM) is applied to the \texttt{synthetic\_normal} dataset to identify outliers without requiring pre-existing labels.}
+    \outlineitem{Rule-Based Curation and Categorization: The detected \texttt{potential\_anomalies} are filtered and classified into interpretable categories (e.g., speeding, off-road, unusual stops) using heuristic rules based on kinematic and spatial properties.}
+    \outlineitem{Labeled Anomaly Subsets: This curation process produces labeled anomaly datasets (e.g., \texttt{anomalies\_speeding}, \texttt{anomalies\_off\_road}) that are ready for model retraining.}
 \end{compactoutline}
 
-\subsubsection{Enhanced Anomaly Detection Framework}
-\label{sec:improve}
+\subsection{Phase 3: Iterative Refinement and Conditional Generation}
+\label{sec:iterative-refinement}
+
+The final phase closes the loop by retraining the diffusion model on the enriched dataset to learn and amplify the discovered anomalous patterns, enabling controlled generation.
 
 \begin{compactoutline}
-  \outlineitem{Exception Handling Framework}
-  \outlineitem{Traffic-Induced Deviations -- Real-time congestion handling}
-  \outlineitem{Passenger-Requested Deviations -- Legitimate route changes}
-  \outlineitem{Construction and Event Impacts -- Temporary route modifications}
-  \outlineitem{Multi-Scale Analysis -- Segment-level vs. trip-level anomaly detection}
+    \outlineitem{Enriched Data Retraining: The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10\%) to prevent mode collapse and maintain diversity.}
+    \outlineitem{Iterative Amplification: This process---generation, detection, curation, and retraining---can be repeated multiple times. Each iteration further amplifies and diversifies the model's ability to generate complex and varied anomalies.}
+    \outlineitem{Controlled Anomaly Generation: The refined model supports conditional sampling (e.g., \texttt{difftraj.sample(condition="speeding")}), enabling the targeted generation of specific, high-quality anomalies for downstream tasks.}
 \end{compactoutline}
 
-\subsubsection{Indicators Discussion}
-\label{sec:indicators}
+\subsection{Model Selection and Justification}
+\label{sec:model-selection}
+
+The selection of the DiffTraj model and the iterative, bootstrapping methodology is grounded in a pragmatic assessment of technical advantages and research objectives.
 
 \begin{compactoutline}
-  \outlineitem{Anomaly Detection Indicators -- Performance metrics and evaluation criteria}
-  \outlineitem{Visualized Examples -- Concrete examples of detected anomalies}
-  \outlineitem{Indicator Interpretation -- Understanding and validating detection results}
-\end{compactoutline}
-
-\subsubsection{Efficiency Discussion}
-\label{sec:efficiency}
-
-\begin{compactoutline}
-  \outlineitem{Computational Efficiency -- Runtime and memory performance analysis}
-  \outlineitem{Scalability Analysis -- Performance with varying dataset sizes}
-  \outlineitem{Visualized Examples -- Efficiency comparisons and bottleneck analysis}
-\end{compactoutline}
-
-\subsection{Trajectory Generation}
-\label{sec:trajectory-generation}
-
-\subsubsection{Generation Framework}
-\label{sec:generation-framework}
-
-\begin{compactoutline}
-  \outlineitem{LibCity Framework Extension -- Implementation of data generation as extension to LibCity}
-  \outlineitem{Statistical Model Architecture -- Core generation approach and implementation}
-  \outlineitem{Graph-Based Trajectory Generation -- Forms graphs methodology}
-  \outlineitem{Pattern Preservation -- Maintaining essential trajectory characteristics}
-  \outlineitem{Dataset Compatibility -- Ensuring generated data works with LibCity's existing datasets}
-\end{compactoutline}
-
-\subsubsection{Privacy Concerns and Protection}
-\label{sec:privacy-concerns}
-
-\begin{compactoutline}
-  \outlineitem{Privacy Risk Assessment -- Identification of privacy vulnerabilities}
-  \outlineitem{Privacy Preservation Mechanisms -- Differential privacy, k-anonymity integration}
-  \outlineitem{Worst Case Scenario Analysis -- Privacy implications of synthetic data creation}
-\end{compactoutline}
-
-\subsubsection{Comparison and Preference}
-\label{sec:comparison}
-
-\begin{compactoutline}
-  \outlineitem{Approach Comparison -- Evaluation of different generation methods}
-  \outlineitem{Preference Justification -- Rationale for chosen methodology}
-  \outlineitem{Trade-off Analysis -- Privacy vs. utility considerations}
-\end{compactoutline}
-
-\subsubsection{Quality Assurance Framework}
-\label{sec:quality-assurance}
-
-\begin{compactoutline}
-  \outlineitem{Validation Metrics -- Statistical and behavioral validation methods}
-  \outlineitem{Testing Procedures -- Systematic evaluation of synthetic data quality}
-  \outlineitem{Utility Preservation -- Ensuring research value of synthetic datasets}
+  \outlineitem{Generative Model Choice -- DiffTraj was selected over alternatives like GANs and VAEs for its superior training stability, high-fidelity sample generation, and inherent privacy-preserving design, which avoids direct replication of real data.}
+  \outlineitem{Rationale for Iterative Approach -- The proposed iterative framework was chosen for its key strategic benefits:
+    \begin{itemize}[leftmargin=*]
+        \item \textbf{No Labeled Data Required:} It bootstraps the anomaly generation process without needing a pre-labeled anomalous dataset, addressing a common bottleneck in anomaly detection research.
+        \item \textbf{High Control and Interpretability:} The rule-based curation ensures that generated anomalies correspond to clear, interpretable, and controllable categories.
+        \item \textbf{Scalability and Efficiency:} The approach is computationally less intensive than complex latent space manipulation techniques and allows the anomaly dataset to be iteratively expanded and refined.
+    \end{itemize}
+  }
+  \outlineitem{Trade-off Analysis -- This methodology prioritizes interpretability, control, and implementation feasibility. It serves as a robust foundation, acknowledging that more complex generative techniques like latent space adversarial training are deferred to future work.}
 \end{compactoutline}
 
 \section{Data and Preprocessing}
