@@ -242,22 +242,15 @@ This research introduces an iterative framework for generating controllable and 
 \begin{algorithm}[h!]
 \caption{Iterative Anomaly Generation Framework}\label{alg:iterative-generation}
 \begin{algorithmic}[1]
-\Require
-$D_{real}$: Dataset of real normal trajectories.
-$N$: Number of refinement iterations.
-$M$: Number of trajectories to generate per iteration.
-$Detector$: Unsupervised anomaly detection model.
-$Rules$: Heuristic rules for anomaly categorization.
-\Ensure
-$G_N$: Final generative model for conditional anomaly generation.
-$D_{anomalous}$: Labeled dataset of synthetic anomalies.
+\Require $D_{real}, N, M, Detector, Rules$
+\Ensure $G_N, D_{anomalous}$
 
 \State Initialize and train generative model $G_0$ on $D_{real}$.
 \State $D_{enriched} \gets D_{real}$.
 \State $D_{anomalous} \gets \emptyset$.
 
 \For{$i \gets 1$ to $N$}
-    \State $D_{new\_anomalies} \gets \text{MineAnomalies}(G_{i-1}, M, Detector, Rules)$. \Comment{See Algorithm~\ref{alg:anomaly-mining}}
+    \State $D_{new\_anomalies} \gets \text{MineAnomalies}(G_{i-1}, M, Detector, Rules)$.
     \State $D_{anomalous} \gets D_{anomalous} \cup D_{new\_anomalies}$.
     \State $D_{enriched} \gets D_{enriched} \cup D_{new\_anomalies}$.
     \State Initialize and train new model $G_i$ on $D_{enriched}$.
@@ -269,13 +262,8 @@ $D_{anomalous}$: Labeled dataset of synthetic anomalies.
 \begin{algorithm}[h!]
 \caption{Unsupervised Anomaly Mining and Curation (`MineAnomalies`)}\label{alg:anomaly-mining}
 \begin{algorithmic}[1]
-\Require
-$G_{in}$: Input generative model.
-$M$: Number of trajectories to generate.
-$Detector$: Unsupervised anomaly detection model.
-$Rules$: Heuristic rules for anomaly categorization.
-\Ensure
-$D_{new\_anomalies}$: Labeled dataset of new synthetic anomalies.
+\Require $G_{in}, M, Detector, Rules$
+\Ensure $D_{new\_anomalies}$
 
 \State $D_{synthetic} \gets$ Generate $M$ trajectories using $G_{in}$.
 \State Train $Detector$ on $D_{synthetic}$.
