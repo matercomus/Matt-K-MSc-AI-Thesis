@@ -1,6 +1,7 @@
 .cursor/
 literature/
 other/
+scripts/
 
 # Latex generated files
 *.aux
