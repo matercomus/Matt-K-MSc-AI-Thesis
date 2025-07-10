@@ -482,12 +482,12 @@ The privacy guarantees of the synthetic data are evaluated through a series of a
 \subsection{Ablation Study}
 \label{sec:ablation}
 
-To quantify the impact of key components in the framework, we performed two ablation experiments:
+To quantify the impact of key components in the framework, we plan to perform two ablation experiments:
 \begin{itemize}
-    \item \textbf{No Rule-Based Curation:} Removing the rule-based curation step and relying solely on the unsupervised detector led to a drop in anomaly detection F1-score from 0.81 to 0.74, and the proportion of interpretable anomalies decreased from 92\% to 61\%.
-    \item \textbf{No Iterative Refinement:} Using a single-pass (non-iterative) approach reduced the number of unique anomaly categories generated from 6 to 3, and the overall anomaly detection F1-score dropped from 0.81 to 0.76.
+    \item \textbf{No Rule-Based Curation:} We expect that removing the rule-based curation step and relying solely on the unsupervised detector will lead to a drop in anomaly detection F1-score (e.g., from 0.81 to 0.74), and the proportion of interpretable anomalies is expected to decrease significantly (e.g., from 92\% to 61\%).
+    \item \textbf{No Iterative Refinement:} We anticipate that using a single-pass (non-iterative) approach will reduce the number of unique anomaly categories generated (e.g., from 6 to 3), and the overall anomaly detection F1-score is expected to drop (e.g., from 0.81 to 0.76).
 \end{itemize}
-These results demonstrate that both rule-based curation and iterative refinement are critical for achieving high anomaly interpretability, diversity, and detection performance.
+These anticipated results would demonstrate that both rule-based curation and iterative refinement are critical for achieving high anomaly interpretability, diversity, and detection performance.
 
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
