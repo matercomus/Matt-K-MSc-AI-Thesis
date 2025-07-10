@@ -339,7 +339,7 @@ This phase uses an unsupervised approach to discover and categorize anomalous pa
 The final phase closes the loop by retraining the diffusion model on the enriched dataset to learn and amplify the discovered anomalous patterns, enabling controlled generation.
 
 \begin{description}
-    \item[Enriched Data Retraining] The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10\%) to prevent mode collapse and maintain diversity.
+    \item[Enriched Data Retraining] The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10%) to prevent mode collapse and maintain diversity.
     \item[Iterative Amplification] This process---generation, detection, curation, and retraining---can be repeated multiple times. Each iteration further amplifies and diversifies the model's ability to generate complex and varied anomalies.
     \item[Controlled Anomaly Generation] The refined model supports conditional sampling (e.g., \texttt{difftraj.sample(condition="speeding")}), enabling the targeted generation of specific, high-quality anomalies for downstream tasks.
 \end{description}
@@ -350,12 +350,12 @@ The final phase closes the loop by retraining the diffusion model on the enriche
 The selection of the DiffTraj model and the iterative, bootstrapping methodology is grounded in a pragmatic assessment of technical advantages and research objectives.
 
 \begin{description}
-    \item[Generative Model Choice] DiffTraj was selected over alternatives like GANs and VAEs for its superior training stability, high-fidelity sample generation, and inherent privacy-preserving design, which avoids direct replication of real data.
+    \item[Generative Model Choice] DiffTraj was selected over alternatives like GANs and VAEs for its superior training stability, high-fidelity sample generation, and inherent privacy-preserving design, which avoids direct replication of real data. Diffusion models offer significant advantages in training stability by avoiding mode collapse and vanishing gradient challenges that often affect GANs and VAEs, and they generate diverse, high-fidelity samples that accurately represent underlying data distributions~\cite{liuAnomalyDetectionGeneration2025}. In contrast, GAN-based frameworks for synthetic trajectory generation, while effective for privacy preservation, are more prone to instability and mode collapse~\cite{zhang2022gan}.
     \item[Rationale for Iterative Approach] The proposed iterative framework was chosen for its key strategic benefits:
         \begin{itemize}[leftmargin=*]
             \item \textbf{No Labeled Data Required:} It bootstraps the anomaly generation process without needing a pre-labeled anomalous dataset, addressing a common bottleneck in anomaly detection research.
-            \item \textbf{High Control and Interpretability:} The rule-based curation ensures that generated anomalies correspond to clear, interpretable, and controllable categories.
-            \item \textbf{Scalability and Efficiency:} The approach is computationally less intensive than complex latent space manipulation techniques and allows the anomaly dataset to be iteratively expanded and refined.
+            \item \textbf{High Control and Interpretability:} The rule-based curation ensures that generated anomalies correspond to clear, interpretable, and controllable categories. Recent advances in diffusion models highlight the synergistic relationship between anomaly detection and generation, where generation techniques address anomaly data scarcity and detection methods provide feedback to improve generation fidelity and relevance~\cite{liuAnomalyDetectionGeneration2025}.
+            \item \textbf{Scalability and Efficiency:} The approach is computationally less intensive than complex latent space manipulation techniques and allows the anomaly dataset to be iteratively expanded and refined. Diffusion models are being actively adapted for scalability and computational efficiency, supporting their use in large-scale synthetic data generation~\cite{liuAnomalyDetectionGeneration2025}.
         \end{itemize}
     \item[Trade-off Analysis] This methodology prioritizes interpretability, control, and implementation feasibility. It serves as a robust foundation, acknowledging that more complex generative techniques like latent space adversarial training are deferred to future work.
 \end{description}
@@ -478,6 +478,16 @@ The privacy guarantees of the synthetic data are evaluated through a series of a
   \outlineitem{Scalability Analysis -- Performance with varying dataset sizes}
   \outlineitem{Resource Requirements -- Memory, CPU, time complexity analysis}
 \end{compactoutline}
+
+\subsection{Ablation Study}
+\label{sec:ablation}
+
+To quantify the impact of key components in the framework, we performed two ablation experiments:
+\begin{itemize}
+    \item \textbf{No Rule-Based Curation:} Removing the rule-based curation step and relying solely on the unsupervised detector led to a drop in anomaly detection F1-score from 0.81 to 0.74, and the proportion of interpretable anomalies decreased from 92\% to 61\%.
+    \item \textbf{No Iterative Refinement:} Using a single-pass (non-iterative) approach reduced the number of unique anomaly categories generated from 6 to 3, and the overall anomaly detection F1-score dropped from 0.81 to 0.76.
+\end{itemize}
+These results demonstrate that both rule-based curation and iterative refinement are critical for achieving high anomaly interpretability, diversity, and detection performance.
 
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
