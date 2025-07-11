@@ -45,31 +45,42 @@ footer: 'MSc AI Thesis | July 2025'
 
 # Phase 1: Baseline Generation
 
-- **Objective:** Create high-fidelity synthetic normal trajectories
-- **Model:** DiffTraj (diffusion-based) for stability and quality
-- **Input:** Filtered normal trajectories
-  - Duration < (μ + 2σ)
-  - Distance ≤ 1.5 × Shortest Path
+**Process:** Real normal data → Train DiffTraj → Generate synthetic normal data
+
+- **Input:** Real taxi trajectory data (Beijing GPS dataset)
+- **Filtering:** Extract normal trajectories using multi-criteria process:
+  - Duration within 2σ of O-D medians, distance ≤ 1.5× shortest path
+  - *Source:* Statistical approach following Wang et al. (2020, 2018)
+- **Training:** DiffTraj (1D-CNN residual network) learns patterns from filtered real normal data
+- **Generation:** Trained model produces `synthetic_normal` dataset
+- **Output:** Synthetic trajectories that preserve statistical properties of real data, no direct copies
 
 ---
 
 # Phase 2: Anomaly Mining & Curation
 
-- **Detection:** LM-TAD scores trajectories via perplexity (higher = more anomalous)
-- **Diverse Querying:** k-means++ selects diverse anomaly candidates (SOEL framework)
-- **Rule-Based Curation:**
+**Process:** Synthetic data → LM-TAD detection → Diverse querying → Rule-based curation
+
+- **Input:** `synthetic_normal` from Phase 1
+- **Detection:** LM-TAD perplexity scoring (higher = more anomalous)
+- **Querying:** k-means++ diverse selection (SOEL framework)
+- **Curation:** Quantitative thresholds (Wang et al. 2020, 2018):
   - Route Deviation: `Length > Normal + L_ρ`
-  - Temporal Delay: `Time > Normal + T_ρ`  
+  - Temporal Delay: `Time > Normal + T_ρ`
   - Kinematic: `Speed > 120 km/h`
-  - Off-Road: `Distance to road > threshold`
+- **Output:** Labeled datasets (`anomalies_speeding`, `anomalies_off_road`)
 
 ---
 
 # Phase 3: Iterative Refinement
 
-- **Enriched Retraining:** DiffTraj on normal + curated anomalies
-- **Iterative Loop:** Generate → Mine → Refine (repeated cycles)
+**Process:** Normal + Anomaly data → Retrain DiffTraj → Enhanced model
+
+- **Input:** `synthetic_normal` + labeled anomalies from Phase 2
+- **Retraining:** DiffTraj on combined dataset (5-10% anomalies)
+- **Iteration:** Repeat pipeline cycles (Generate → Mine → Refine)
 - **Conditional Generation:** `difftraj.sample(condition="speeding")`
+- **Output:** Enhanced DiffTraj capable of targeted anomaly generation
 
 ---
 
@@ -83,6 +94,7 @@ footer: 'MSc AI Thesis | July 2025'
 - **Anomaly Detection:** Precision, Recall, F1, AUC-PR
 - **Data Quality:** Statistical fidelity, downstream tasks
 - **Privacy:** Membership inference, reconstruction attacks
+- **Libcity:** Evluate downstram task performance
 
 ---
 
@@ -94,35 +106,14 @@ footer: 'MSc AI Thesis | July 2025'
 
 **Diffusion Privacy:** Forward noise addition → Reverse generation from new random noise
 
-**Our Approach vs. Two-Model:** Single iterative model, not separate normal/anomaly models
-
----
-
-# Contributions & Impact
-
-**Research Contributions:**
-- Novel DiffTraj + LM-TAD integration
-- Bootstrapping methodology without pre-labeled anomalies
-- Privacy-by-design system
-
-**Impact:**
-- Academic: Reproducible privacy-preserving methodology
-- Practical: Urban transport analysis without privacy compromise
-- Enablement: Shareable, compliant datasets
-
 ---
 
 # Project Status & Discussion
 
 **Current Status:**
-- Phase 1: ✅ Completed (baseline DiffTraj)
-- Phase 2: 🔄 In Progress (LM-TAD integration)
-- Phase 3: 📅 Planned (iterative refinement)
-
-**Discussion Points:**
-- Privacy budget allocation (ε) and thresholds (ρ)
-- Three-city scope sufficiency
-- Additional evaluation criteria suggestions
+- Phase 1: In Progress (baseline DiffTraj)
+- Phase 2: Planned (LM-TAD integration)
+- Phase 3: Planned (iterative refinement)
 
 ---
 
@@ -139,5 +130,3 @@ footer: 'MSc AI Thesis | July 2025'
 - LM-TAD: Mbuya et al. (2024)  
 - Privacy Framework: Buchholz et al. (2024)
 - SOEL: Li et al. (2023)
-
-**Available:** Algorithm pseudocode, privacy calculations, detailed metrics
