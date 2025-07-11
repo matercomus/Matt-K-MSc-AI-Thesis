@@ -507,7 +507,7 @@ The quality of the generated synthetic data is assessed using a standardized fra
 \begin{description}
     \item[Standardized Quality Assessment] The \textbf{SDMetrics} library is employed to systematically evaluate the synthetic data. This includes assessing statistical resemblance to real data (Resemblance), utility for machine learning tasks (Utility), and protection against disclosure (Privacy).
     \item[Statistical Fidelity] Distribution comparison tests (e.g., Kolmogorov-Smirnov, Jensen-Shannon divergence) are used to quantitatively measure the statistical similarity between the real and synthetic trajectory data distributions for key properties like trip duration and distance, an approach consistent with the evaluation in~\cite{zhuDiffTrajGeneratingGPS2023}.
-    \item[Downstream Task Performance] The utility of the synthetic data is further validated by evaluating the performance of downstream models (e.g., travel time estimation, destination prediction) trained on the synthetic data versus models trained on real data, leveraging the LibCity framework's benchmark tasks. This mirrors the evaluation strategy in~\cite{zhuDiffTrajGeneratingGPS2023}, where synthetic data utility was tested on an inflow/outflow prediction task.
+    \item[Downstream Task Performance] The utility of the synthetic data is further validated by evaluating the performance of downstream models (e.g., travel time estimation, destination prediction, route classification) trained on the synthetic data versus models trained on real data. This evaluation approach is consistent with the utility assessment strategy in~\cite{zhuDiffTrajGeneratingGPS2023}, where synthetic data utility was demonstrated through downstream prediction tasks.
 \end{description}
 
 \subsection{Privacy Preservation Assessment}
@@ -547,28 +547,31 @@ These anticipated results would demonstrate that both rule-based curation and it
 \begin{compactoutline}
   \outlineitem{Primary Contributions -- Novel synthetic generation framework, privacy-preserving anomaly detection}
   \outlineitem{Integrated Framework -- Novel integration of DiffTraj generation with LM-TAD anomaly detection for privacy-preserving trajectory research}
-  \outlineitem{Standardization Benefits -- Enabling cross-dataset compatibility and reproducible research}
+  \outlineitem{Cross-City Validation -- Demonstrated framework generalizability across diverse urban environments (Beijing, Chengdu, Xi'an)}
 \end{compactoutline}
 
 \subsection{Research Impact and Applications}
 
 \begin{compactoutline}
-  \outlineitem{Academic Impact -- Contributions to trajectory analysis and privacy research}
-  \outlineitem{Practical Applications -- Urban transportation, ride-sharing platforms}
+  \outlineitem{Academic Impact -- Novel DiffTraj-LM-TAD integration methodology, privacy-preserving trajectory research advancement}
+  \outlineitem{Practical Applications -- Urban transportation anomaly detection, ride-sharing route optimization, taxi fleet management}
+  \outlineitem{Research Enablement -- Privacy-compliant datasets for trajectory analysis, reproducible anomaly detection evaluation frameworks}
 \end{compactoutline}
 
 \subsection{Limitations and Challenges}
 
 \begin{compactoutline}
-  \outlineitem{Current Limitations -- Computational complexity, geographical specificity}
-  \outlineitem{Technical Challenges -- Privacy-utility trade-offs, scalability issues}
+  \outlineitem{Current Limitations -- Computational complexity of iterative refinement, dependency on manual rule-based curation}
+  \outlineitem{Technical Challenges -- Privacy-utility trade-offs, balancing anomaly diversity with generation quality}
+  \outlineitem{Implementation Challenges -- DiffTraj-LM-TAD integration complexity, parameter sensitivity across different urban contexts}
 \end{compactoutline}
 
 \subsection{Future Research Directions}
 
 \begin{compactoutline}
-  \outlineitem{Methodological Extensions -- Advanced generative models, multi-modal data}
-  \outlineitem{Evaluation Framework Extensions -- Additional privacy metrics, real-world validation}
+  \outlineitem{Methodological Extensions -- Automated rule-based curation, conditional generation refinements, multi-modal trajectory data integration}
+  \outlineitem{Privacy Enhancement -- Advanced differential privacy mechanisms, federated learning integration for cross-city collaboration}
+  \outlineitem{Evaluation Framework Extensions -- Long-term temporal pattern validation, real-time anomaly detection deployment, large-scale urban network evaluation}
 \end{compactoutline}
 
 \subsection{Concluding Remarks}
