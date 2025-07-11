@@ -31,15 +31,83 @@ footer: 'MSc AI Thesis | July 2025'
 
 ---
 
-# Privacy by Design Principles
+# Core Model 1: DiffTraj
 
-- **Core Innovation:** Bootstrap diverse, controllable anomalies without pre-labeled data
-- **Guiding Principle:** Multiple privacy mechanisms integrated throughout pipeline
+**Diffusion Probabilistic Model for GPS Trajectory Generation** (Zhu et al., 2023)
 
-**Three Complementary Mechanisms:**
-- **Differential Privacy (DP-SGD):** Formal guarantees via bounded trajectory influence
-- **Trajectory-Level Protection:** Entire trajectory as atomic privacy unit  
-- **Synthetic Decoupling:** New samples from learned distributions, not copies
+- **Architecture:** 1D-CNN-based residual network with attention (Trajectory UNet)
+- **Core Process:** Reconstruct and synthesize trajectories from white noise through reverse denoising
+- **Key Advantage:** Superior training stability vs GANs, avoids mode collapse
+- **Privacy Benefit:** Generates from learned distributions, not direct copies
+- **Performance:** Outperforms other methods in geo-distribution evaluations
+- **Compatibility:** Works directly with continuous GPS coordinates
+
+---
+
+# Core Model 2: LM-TAD  
+
+**Language Model for Trajectory Anomaly Detection** (Mbuya et al., 2024)
+
+- **Architecture:** Autoregressive causal-attention transformer model
+- **Core Concept:** Treats trajectories as sequences of tokens (like language statements)
+- **Detection Method:** Perplexity scoring - higher perplexity = more anomalous
+- **Key Features:** User-specific tokens, online detection via attention caching
+- **Interpretability:** Surprisal rate localizes specific anomalous locations
+- **Performance:** State-of-the-art on synthetic and real-world datasets
+- **Compatibility:** Handles GPS coordinates, staypoints, activity types
+
+---
+
+# Core Framework: SOEL
+
+**Deep Anomaly Detection under Labeling Budget Constraints** (Li et al., 2023)
+
+- **Core Problem:** Selecting informative data points for expert feedback
+- **Approach:** Optimal data coverage under labeling budget constraints
+- **Method:** k-means++ initialization for maximally diverse selection
+- **Theoretical Foundation:** Conditions under which anomaly scores generalize
+- **Application in Framework:** Extract feature vectors → k-means++ selection → diverse trajectory candidates
+- **Benefit:** Maximizes labeling efficiency and generalization in semi-supervised settings
+- **Result:** State-of-the-art semi-supervised AD performance
+
+---
+
+# Model Choice Rationale
+
+**Why DiffTraj over GANs/VAEs:**
+- **Training Stability:** Avoids mode collapse and vanishing gradients
+- **High Fidelity:** Generates diverse samples representing data distributions
+- **Privacy Design:** Inherent protection through distribution sampling
+- **Proven Performance:** Demonstrated superiority in trajectory generation
+
+**Why LM-TAD over Traditional Methods:**
+- **No Labeled Data:** Unsupervised approach addresses data scarcity
+- **Interpretability:** Perplexity provides clear anomaly scores
+- **Versatility:** Handles diverse trajectory representations
+- **Online Capability:** Efficient real-time detection
+
+**Why Iterative Approach:**
+- **Bootstrapping:** No pre-labeled anomaly dataset required
+- **Control:** Rule-based curation ensures interpretable categories
+- **Scalability:** Computationally efficient vs complex latent methods
+
+---
+
+# Privacy by Design: Multi-Layer Protection
+
+**Challenge:** Traditional privacy methods destroy spatio-temporal relationships (Buchholz et al., 2024)
+
+**Three Integrated Mechanisms:**
+
+- **Differential Privacy:** DP-SGD with privacy budget ε₁=2.0, ε₂=1.0, ε₃=0.5
+  - *Source:* PATE-GAN principles (Jordon et al., 2019)
+
+- **Trajectory-Level Protection:** Entire trajectory as atomic unit
+  - *Source:* Optimal approach (Buchholz et al., 2024)
+  - Prevents correlation attacks
+
+- **Synthetic Decoupling:** Generation from learned distributions, not copies
+  - *Source:* Generative privacy foundation (Liu et al., 2018)
 
 ---
 
