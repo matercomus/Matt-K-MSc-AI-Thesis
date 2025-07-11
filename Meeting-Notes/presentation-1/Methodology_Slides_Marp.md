@@ -25,19 +25,16 @@ Vrije Universiteit Amsterdam
 
 ---
 
-## The Core Challenge
+## The Core Challenge in Trajectory Research
 
-🚕 **Real taxi trajectory data** contains sensitive location information
-- As few as **4 spatio-temporal points** can identify 95% of individuals
-- Reveals home, work, and personal POIs
-- Creates barriers for anomaly detection research
+**High Utility vs. Strong Privacy**
+Real-world trajectory data is essential for research but is also highly sensitive. As few as four spatio-temporal points can uniquely identify an individual, exposing sensitive locations and creating a significant privacy risk.
 
-🔒 **Traditional privacy methods** destroy essential patterns
-- k-anonymity, differential privacy degrade spatio-temporal relationships
-- Anomaly detection algorithms require these exact patterns
-- **Privacy vs. Utility trade-off**
+**The Privacy-Utility Paradox**
+Standard privacy-preserving methods (e.g., k-anonymity, generalization) often degrade the subtle spatio-temporal patterns that anomaly detection algorithms rely on, rendering the data less useful.
 
-📊 **Research gap:** No framework exists for privacy-preserving trajectory anomaly generation
+**The Research Gap**
+There is a need for a framework that can generate high-fidelity synthetic trajectory data which is both useful for anomaly detection research and provides strong, verifiable privacy guarantees.
 
 ---
 
@@ -50,27 +47,22 @@ Vrije Universiteit Amsterdam
 
 ![Framework Overview](mermaid-diagram.svg)
 
-**Key Innovation:** Bootstraps anomaly generation without pre-labeled data
+**Key Innovation:** The framework bootstraps the generation of diverse and controllable anomalies without requiring a pre-labeled dataset of anomalous trajectories.
 
 ---
 
 ## Guiding Principle: Privacy by Design
 
-### 🔐 **Differential Privacy Integration**
-- DP-SGD during training
-- Privacy budget: ε₁=2.0, ε₂=1.0, ε₃=0.5
+The framework's methodology is built upon multiple, complementary privacy protection mechanisms.
 
-### 🛡️ **Trajectory-Level Protection**
-- Entire trajectories as atomic units
-- Prevents correlation attacks
+**Differential Privacy Integration**
+Utilizes Differentially Private Stochastic Gradient Descent (DP-SGD) during model training to provide formal privacy guarantees.
 
-### 🔀 **Synthetic Data Decoupling**
-- Generated from learned distributions
-- No individual reconstruction possible
+**Trajectory-Level Protection**
+Treats entire trajectories as the atomic unit of privacy, preventing correlation attacks that exploit intra-trajectory dependencies.
 
-### ⚔️ **Attack Resistance**
-- Defense against membership inference
-- Protection against reconstruction attacks
+**Synthetic Data Decoupling**
+The generative model learns statistical distributions from real data, ensuring synthetic trajectories are entirely new and not copies, which is a fundamental privacy guarantee.
 
 ---
 
@@ -81,65 +73,57 @@ Vrije Universiteit Amsterdam
 
 ## Phase 1: Baseline Synthetic Data Generation
 
-### Input: Filtered Normal Trajectories
-- Multi-criteria filtering (duration, distance, temporal patterns)
-- Statistical thresholds applied
-- Clean foundation dataset
+**Objective:** To create a high-fidelity synthetic dataset of normal trajectory patterns.
 
-### Model: DiffTraj
-- **1D-CNN-based diffusion model**
-- Superior training stability vs GANs
-- No direct copying → **inherent privacy protection**
+**Input Data**
+Real-world trajectories are filtered using a multi-criteria process to isolate a dataset of verifiably normal routes.
 
-### Output: High-fidelity synthetic normal trajectories
+**Core Generation Model: DiffTraj**
+A diffusion-based model is used for its training stability and its proven ability to generate realistic, high-quality trajectories.
 
----
-
-## Phase 2: Unsupervised Anomaly Mining
-
-### 🤖 LM-TAD Anomaly Detection
-- Autoregressive transformer treating trajectories as token sequences
-- **Perplexity-based scoring:** Higher perplexity = more anomalous
-- No pre-labeled data required
-
-### 🎯 Diverse Querying (k-means++ Selection)
-- Based on SOEL framework
-- Maximally diverse trajectories in feature space
-- Efficient manual review
+**Primary Output**
+A synthetic dataset that statistically resembles the real normal data, serving as the foundation for the next phase.
 
 ---
 
-## Phase 2 (cont.): Rule-Based Categorization
+## Phase 2: Unsupervised Anomaly Mining & Curation
 
-### 📏 **Route Deviation**
-Path length > Normal + threshold (e.g., +5km)
+**Objective:** To discover, categorize, and label anomalous patterns from the generated data.
 
-### ⏱️ **Temporal Delay** 
-Travel time > Normal + threshold (e.g., +5min)
+**Unsupervised Anomaly Detection (LM-TAD)**
+An autoregressive language model scores trajectories based on perplexity; higher scores indicate greater deviation from learned normal patterns.
 
-### 🚗 **Kinematic Outliers**
-Speed violations, unusual stopping patterns
+**Diverse Querying for Labeling (SOEL-based)**
+To maximize labeling efficiency, k-means++ selection is used to identify a maximally diverse subset of potential anomalies for review.
 
-### 🛣️ **Off-Road Driving**
-GPS points away from road network
+---
 
-**Result:** Categorized, interpretable anomaly datasets
+## Phase 2 (cont.): Rule-Based Curation
+
+**Objective:** To classify the diverse anomalies into interpretable categories.
+
+**Anomaly Categories**
+- **Route Deviation:** Path length significantly exceeds the norm for a given origin-destination pair.
+- **Temporal Delay:** Travel time is substantially longer than the typical duration.
+- **Kinematic Outliers:** Trajectory violates physical or legal norms (e.g., excessive speed, unusual stationary periods).
+- **Off-Road Driving:** Trajectory points deviate from the known road network.
+
+**Result:** A curated and labeled set of interpretable synthetic anomalies.
 
 ---
 
 ## Phase 3: Iterative Refinement & Conditional Generation
 
-### 🔄 Enriched Retraining
-- DiffTraj trained on Normal + Curated Anomalies
-- Careful balance to prevent mode collapse
+**Objective:** To enrich the generative model with the ability to create specific anomalies.
 
-### 📈 Iterative Amplification
-- Multiple cycles: Generate → Detect → Curate → Retrain
-- Progressive improvement in anomaly diversity
+**Enriched Data Retraining**
+The DiffTraj model is retrained on a dataset combining the original normal data with the newly curated, labeled anomalies.
 
-### 🎛️ Controlled Generation
-- Final model supports conditional sampling
-- `difftraj.sample(condition="speeding")`
+**Iterative Amplification**
+The entire three-phase process can be repeated. Each cycle enhances the model's ability to generate more complex and varied anomalies.
+
+**Controlled Anomaly Generation**
+The final, refined model supports conditional sampling, enabling the targeted generation of specific anomaly types for downstream tasks.
 
 ---
 
@@ -150,36 +134,27 @@ GPS points away from road network
 
 ## Experimental Design: Cross-City Validation
 
-### 🏙️ **Primary Development**
-Beijing taxi dataset (Nov 25 - Dec 1, 2019)
+**Primary Framework Development**
+The core framework is developed and optimized using the large-scale Beijing taxi dataset.
 
-### 🌏 **Independent Validation**
-- **Chengdu** and **Xi'an** datasets
-- Separate models, privacy budgets, training
-- Tests generalizability across urban environments
+**Independent Pipeline Replication**
+To assess generalizability, the entire framework is independently executed on datasets from Chengdu and Xi'an.
 
-### 📊 **Per-City Approach**
-- Fair comparison across different mobility patterns
-- No joint multi-city training complexity
+**Per-City Analysis**
+This approach allows for a robust evaluation of framework transferability across diverse urban environments, each with unique mobility patterns.
 
 ---
 
 ## Evaluation Framework
 
-### 🎯 **Anomaly Detection Performance**
-- Precision, Recall, F1-Score
-- AUC-ROC and AUC-PR curves
-- Category-specific performance
+**Anomaly Detection Performance**
+Assessed using metrics suitable for imbalanced datasets, including Precision, Recall, F1-Score, and the Area Under the PR Curve (AUC-PR).
 
-### 📈 **Synthetic Data Quality**
-- SDMetrics assessment (Resemblance, Utility, Privacy)
-- Statistical fidelity (KS-test, Jensen-Shannon)
-- Downstream task validation
+**Synthetic Data Quality**
+Evaluated with the SDMetrics library, statistical distribution tests (e.g., Kolmogorov-Smirnov), and by measuring performance on downstream machine learning tasks.
 
-### 🔒 **Privacy Preservation**
-- Membership inference attack resistance
-- Trajectory reconstruction evaluation
-- Privacy-utility trade-off quantification
+**Privacy Preservation Assessment**
+The strength of the privacy guarantees is tested via simulated membership inference attacks and trajectory reconstruction attacks.
 
 ---
 
@@ -188,46 +163,30 @@ Beijing taxi dataset (Nov 25 - Dec 1, 2019)
 
 ---
 
-## Technical Contributions
+## Primary Research Contributions
 
-### 🆕 **Novel Integration**
-First framework combining DiffTraj generation with LM-TAD detection
+**A Novel Integrated Framework**
+The first to integrate a diffusion-based generative model (DiffTraj) with a language model-based anomaly detector (LM-TAD) for this purpose.
 
-### 🔄 **Bootstrapping Approach** 
-Generates diverse anomalies without pre-labeled data
+**A Bootstrapping Methodology**
+A process that generates diverse, labeled anomalies without requiring pre-existing anomaly data, addressing a key bottleneck in the field.
 
-### 🔐 **Privacy-by-Design**
-Multiple complementary mechanisms integrated throughout
-
-### 🎯 **Interpretable Anomalies**
-Rule-based curation ensures controllable outputs
-
----
-
-## Methodological Advantages
-
-✅ **No Labeled Data Required** - Addresses research bottleneck  
-✅ **High Control** - Interpretable anomaly categories  
-✅ **Scalable** - Computationally efficient approach  
-✅ **Generalizable** - Cross-city validation demonstrates adaptability  
+**A Privacy-by-Design Approach**
+A system that combines multiple privacy mechanisms to ensure robust protection while maintaining data utility.
 
 ---
 
 ## Expected Research Impact
 
-### 🎓 **Academic Impact**
-- Novel methodology for privacy-preserving trajectory research
-- First integration of diffusion models with language model anomaly detection
-- Framework for reproducible anomaly detection evaluation
+**Academic Contribution**
+- Provides a new methodology for privacy-preserving trajectory research.
+- Establishes a framework for reproducible evaluation of anomaly detection algorithms.
 
-### 🏢 **Practical Applications**
-- Urban transportation anomaly detection
-- Ride-sharing route optimization
-- Taxi fleet management systems
+**Practical Applications**
+- Enables research and development for urban transport systems, including route optimization and fleet management, without compromising user privacy.
 
-### 📊 **Research Enablement**
-- Privacy-compliant datasets for trajectory analysis
-- Addresses data protection requirements
+**Research Enablement**
+- Delivers privacy-compliant datasets that can be shared openly, fostering further innovation in trajectory analysis.
 
 ---
 
@@ -236,73 +195,63 @@ Rule-based curation ensures controllable outputs
 
 ---
 
-## Timeline & Current Status
+## Project Timeline & Current Status
 
-### ✅ **Phase 1 Implementation** (Completed)
-- DiffTraj baseline model development
-- Normal trajectory filtering and training
+**Phase 1: Baseline Generation (Completed)**
+- The core DiffTraj model has been developed and trained on filtered normal trajectory data.
 
-### 🔄 **Phase 2 Development** (In Progress)
-- LM-TAD integration and anomaly mining
-- Rule-based curation system implementation
+**Phase 2: Anomaly Mining (In Progress)**
+- Integration of the LM-TAD model and implementation of the rule-based curation system is underway.
 
-### 📅 **Phase 3 Integration** (Planned)
-- Iterative refinement framework
-- Conditional generation capabilities
+**Phase 3: Iterative Refinement (Planned)**
+- The iterative retraining loop and conditional generation capabilities are the next development steps.
 
 ---
 
 ## Remaining Milestones
 
-### 📅 **Cross-City Validation** (Planned)
-- Chengdu and Xi'an dataset evaluation
-- Generalizability assessment
+**Cross-City Validation**
+- Execute the full pipeline on the Chengdu and Xi'an datasets to evaluate model generalizability.
 
-### 📅 **Privacy Evaluation** (Planned)
-- Attack simulation and resistance testing
-- Privacy-utility trade-off analysis
+**Privacy Evaluation**
+- Conduct rigorous attack simulations to quantify the privacy-utility trade-off of the generated datasets.
 
-### 📝 **Thesis Completion** (Target: June 2025)
-- Results analysis and writing
-- Final evaluation and discussion
+**Thesis Completion (Target: June 2025)**
+- Complete the final analysis of results, write the discussion and conclusion, and prepare the final document.
 
 ---
 
-## Questions for Coordinators
+## Points for Discussion
 
-### 🔧 **Technical Questions**
-1. **Model Integration:** Feedback on DiffTraj-LM-TAD compatibility
-2. **Privacy Budget:** Appropriateness of DP parameter choices
-3. **Evaluation Metrics:** Adequacy of assessment framework
+**Technical & Methodological**
+1.  Are the proposed privacy budget allocations for differential privacy appropriate?
+2.  Feedback on the rule-based curation system for anomaly categorization.
+3.  Is the three-city scope sufficient for demonstrating framework generalizability?
 
-### 🎯 **Methodological Considerations**
-1. **Iterative Approach:** Complexity vs. performance trade-offs
-2. **Rule-Based Curation:** Automation vs. manual oversight balance
-3. **Cross-City Scope:** Sufficiency of three-city evaluation
+**Research Scope & Direction**
+1.  Considering the timeline, are there areas to prioritize or de-scope?
+2.  Suggestions for additional evaluation criteria or downstream tasks.
+3.  Potential target journals or conferences for publication.
 
 ---
 
 <!-- _class: lead -->
-# Thank You & Questions
+# Thank You
 
-**Thank you for your attention!**
-
-📧 **Contact:** m.k.kedzia@student.vu.nl  
-📄 **Thesis Repository:** [Available upon request]  
-🔗 **Literature Review:** Comprehensive analysis of 50+ papers
+**Questions & Discussion**
 
 ---
 
 ## Backup Slides
 
-### Key References
-- **DiffTraj:** Zhu et al. (2023) - Diffusion Probabilistic Model for GPS Trajectories
-- **LM-TAD:** Mbuya et al. (2024) - Language Models for Trajectory Anomaly Detection  
-- **Privacy Framework:** Buchholz et al. (2024) - Trajectory Privacy Systematisation
-- **SOEL Framework:** Li et al. (2023) - Deep Anomaly Detection for Time Series
+**Key References**
+- **DiffTraj:** Zhu et al. (2023) - *DiffTraj: Generating GPS Trajectory with Diffusion Probabilistic Model*
+- **LM-TAD:** Mbuya et al. (2024) - *Trajectory Anomaly Detection with Language Models*
+- **Privacy Framework:** Buchholz et al. (2024) - *A Systematisation of Knowledge for Trajectory Privacy*
+- **SOEL Framework:** Li et al. (2023) - *Deep Anomaly Detection for Time Series*
 
-### Technical Details Available
-- Algorithm pseudocode
-- Privacy budget calculations
-- Detailed evaluation metrics
-- Cross-city dataset specifications 
+**Technical Details Available**
+- Algorithm Pseudocode
+- Privacy Budget Calculations
+- Detailed Evaluation Metrics
+- Cross-City Dataset Specifications 
