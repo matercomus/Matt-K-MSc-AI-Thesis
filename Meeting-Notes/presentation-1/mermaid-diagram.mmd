@@ -1,0 +1,9 @@
+
+flowchart LR
+    A[Real Normal<br/>Trajectories] --> B[Phase 1:<br/>DiffTraj<br/>Generation]
+    B --> C[Phase 2:<br/>LM-TAD<br/>Anomaly Mining]
+    C --> D[Phase 3:<br/>Iterative<br/>Refinement]
+    D --> E[Synthetic Anomaly<br/>Dataset]
+    
+    %% Iterative loop
+    D -.-> B
