@@ -353,6 +353,24 @@ The final phase closes the loop by retraining the diffusion model on the enriche
     \item[Controlled Anomaly Generation] The refined model supports conditional sampling (e.g., \texttt{difftraj.sample(condition="speeding")}), enabling the targeted generation of specific, high-quality anomalies for downstream tasks.
 \end{description}
 
+\subsection{Privacy Protection Implementation}
+\label{sec:privacy-implementation}
+
+Building on the privacy protection requirements identified in the literature review (Section~\ref{sec:privacy-review}), this framework implements multiple complementary privacy mechanisms to ensure strong privacy guarantees throughout the synthetic data generation pipeline.
+
+\begin{compactoutline}
+  \outlineitem{Differential Privacy Integration -- DP-SGD during DiffTraj training, noise injection mechanisms}
+  \outlineitem{Trajectory-Level Privacy Protection -- Instance-level privacy units, trajectory anonymization techniques}
+  \outlineitem{Synthetic Data Privacy Guarantees -- Generative approach benefits, decoupling from real data}
+  \outlineitem{K-Anonymity and Generalization -- Spatial and temporal generalization, origin-destination grouping}
+  \outlineitem{Privacy-Preserving Anomaly Detection -- LM-TAD privacy considerations, token-level protection}
+  \outlineitem{Attack Resistance Mechanisms -- Membership inference protection, reconstruction attack mitigation}
+  \outlineitem{Privacy Budget Management -- Epsilon allocation across pipeline phases, privacy accounting}
+  \outlineitem{Cross-City Generalization Privacy -- Transfer learning privacy implications, model sharing protocols}
+  \outlineitem{Evaluation and Validation -- Privacy attack simulations, utility-privacy trade-off measurement}
+  \outlineitem{Regulatory Compliance -- GDPR considerations, data minimization principles}
+\end{compactoutline}
+
 \subsection{Model Selection and Justification}
 \label{sec:model-selection}
 
