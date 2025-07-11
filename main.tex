@@ -242,7 +242,7 @@ This research introduces an iterative framework for generating controllable and 
 \begin{algorithm}[h!]
 \caption{Iterative Anomaly Generation Framework}\label{alg:iterative-generation}
 \begin{algorithmic}[1]
-\Require $D_{real}, N, M, Detector, Rules$
+\Require $D_{real}, N, M, LM\text{-}TAD, Rules$
 \Ensure $G_N, D_{anomalous}$
 
 \State Initialize and train generative model $G_0$ on $D_{real}$.
@@ -250,7 +250,7 @@ This research introduces an iterative framework for generating controllable and 
 \State $D_{anomalous} \gets \emptyset$.
 
 \For{$i \gets 1$ to $N$}
-    \State $D_{new\_anomalies} \gets \text{MineAnomalies}(G_{i-1}, M, Detector, Rules)$.
+    \State $D_{new\_anomalies} \gets \text{MineAnomalies}(G_{i-1}, M, LM\text{-}TAD, Rules)$.
     \State $D_{anomalous} \gets D_{anomalous} \cup D_{new\_anomalies}$.
     \State $D_{enriched} \gets D_{enriched} \cup D_{new\_anomalies}$.
     \State Initialize and train new model $G_i$ on $D_{enriched}$.
@@ -262,12 +262,12 @@ This research introduces an iterative framework for generating controllable and 
 \begin{algorithm}[h!]
 \caption{Unsupervised Anomaly Mining and Curation (`MineAnomalies`)}\label{alg:anomaly-mining}
 \begin{algorithmic}[1]
-\Require $G_{in}, M, Detector, Rules$
+\Require $G_{in}, M, LM\text{-}TAD, Rules$
 \Ensure $D_{new\_anomalies}$
 
 \State $D_{synthetic} \gets$ Generate $M$ trajectories using $G_{in}$.
-\State Train $Detector$ on $D_{synthetic}$.
-\State $D_{potential} \gets$ Identify outliers in $D_{synthetic}$ using $Detector$.
+\State Train $LM\text{-}TAD$ on $D_{synthetic}$ using autoregressive language modeling.
+\State $D_{potential} \gets$ Identify outliers in $D_{synthetic}$ using $LM\text{-}TAD$ perplexity scores.
 \State $D_{new\_anomalies} \gets \emptyset$.
 \For{each $traj$ in $D_{potential}$}
     \State $label \gets \text{Categorize}(traj, Rules)$.
@@ -297,7 +297,7 @@ G_{i} & The generative model at iteration \(i\). \\
 G_{in} & The input generative model for the anomaly mining process. \\
 N & The total number of iterative refinement cycles to perform. \\
 M & The number of synthetic trajectories to generate in each iteration. \\
-Detector & The unsupervised machine learning model used to identify outliers. \\
+LM\text{-}TAD & The autoregressive transformer-based language model used for trajectory anomaly detection. \\
 Rules & A set of heuristics used to categorize potential anomalies. \\
 traj & A single trajectory data structure. \\
 label & The specific anomaly category assigned to a trajectory. \\
