@@ -409,6 +409,26 @@
   file = {/home/matt/Zotero/storage/Q4MX7SJR/Hu et al. - 2024 - Real-time taxi spatial anomaly detection based on vehicle trajectory prediction.pdf}
 }
 
+@misc{jeongAnomalyBERTSelfSupervisedTransformer2023,
+  title = {{{AnomalyBERT}}: {{Self-Supervised Transformer}} for {{Time Series Anomaly Detection}} Using {{Data Degradation Scheme}}},
+  shorttitle = {{{AnomalyBERT}}},
+  author = {Jeong, Yungi and Yang, Eunseok and Ryu, Jung Hyun and Park, Imseong and Kang, Myungjoo},
+  year = {2023},
+  month = may,
+  number = {arXiv:2305.04468},
+  eprint = {2305.04468},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2305.04468},
+  url = {http://arxiv.org/abs/2305.04468},
+  urldate = {2025-07-11},
+  abstract = {Mechanical defects in real situations affect observation values and cause abnormalities in multivariate time series, such as sensor values or network data. To perceive abnormalities in such data, it is crucial to understand the temporal context and interrelation between variables simultaneously. The anomaly detection task for time series, especially for unlabeled data, has been a challenging problem, and we address it by applying a suitable data degradation scheme to selfsupervised model training. We define four types of synthetic outliers and propose the degradation scheme in which a portion of input data is replaced with one of the synthetic outliers. Inspired by the self-attention mechanism, we design a Transformer-based architecture to recognize the temporal context and detect unnatural sequences with high efficiency. Our model converts multivariate data points into temporal representations with relative position bias and yields anomaly scores from these representations. Our method, AnomalyBERT, shows a great capability of detecting anomalies contained in complex time series and surpasses previous state-of-the-art methods on five real-world benchmarks. Our code is available at https://github.com/Jhryu30/AnomalyBERT.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/CCAJI478/Jeong et al. - 2023 - AnomalyBERT Self-Supervised Transformer for Time Series Anomaly Detection using Data Degradation Sc.pdf}
+}
+
 @inproceedings{jiangContinuousTrajectoryGeneration2023,
   title = {Continuous {{Trajectory Generation Based}} on {{Two-Stage GAN}}},
   booktitle = {Proceedings of the {{AAAI Conference}} on {{Artificial Intelligence}}},
@@ -1062,6 +1082,25 @@
   abstract = {Sparsity of the data needed to learn about the anomalies is often a key challenge that is faced when it comes to training deep supervised models for the task of Anomaly Detection (AD). Generating synthetic data by applying pre-determined transformations that conform to a set of known invariances has shown to improve performance of such deep models. In this work we present C-GATS to show that one can learn a much larger invariance space using the available sparse data by training a conditional generative model to do Data Augmentation (DA) for anomalous Time Series (TS) in a model-agnostic way. Particularly, we factorize an anomalous TS sequence into 3 attributes--- normal sub-sequence, anomalous sub-sequence, and position of the anomaly and model each of them separately. This factorization helps exploit samples from the dominant class i.e normal TS to train a generative model for the sparse class i.e anomalous TS. We provide an exhaustive study to showcase that C-GATS not only learns to generate different types of anomalies (eg: point anomalies and level-shift) but those generated anomalies improve performance of multiple SOTA TS AD models on a set of popular public TS AD benchmark datasets.},
   langid = {english},
   file = {/home/matt/Zotero/storage/59X8LYU4/Singh et al. - 2022 - C-GATS Conditional Generation of Anomalous Time Series.pdf}
+}
+
+@article{siTrajBERTBERTBasedTrajectory2024,
+  title = {{{TrajBERT}}: {{BERT-Based Trajectory Recovery With Spatial-Temporal Refinement}} for {{Implicit Sparse Trajectories}}},
+  shorttitle = {{{TrajBERT}}},
+  author = {Si, Junjun and Yang, Jin and Xiang, Yang and Wang, Hanqiu and Li, Li and Zhang, Rongqing and Tu, Bo and Chen, Xiangqun},
+  year = {2024},
+  month = may,
+  journal = {IEEE Transactions on Mobile Computing},
+  volume = {23},
+  number = {5},
+  pages = {4849--4860},
+  issn = {1558-0660},
+  doi = {10.1109/TMC.2023.3297115},
+  url = {https://ieeexplore.ieee.org/abstract/document/10189092},
+  urldate = {2025-07-11},
+  abstract = {In the realm of human mobility data analysis, a multitude of constraints result in the publication of sparse, non-uniform implicit trajectories without explicit location information, such as coordinates. Researchers have dedicated substantial efforts towards trajectory recovery, aiming to densify trajectories and gain a more comprehensive understanding of human mobility. However, existing trajectory recovery methods focus on explicit trajectories, and require extensive historical data to capture users' mobility patterns. Nevertheless, implicit trajectories are usually more sparse than explicit trajectories. Addressing these challenges, we propose TrajBERT, an innovative BERT-based trajectory recovery method with spatial-temporal refinement. TrajBERT employs the Transformer encoder to learn mobility patterns bi-directionally and enhances the predictions by cross-stage temporal refinement. Subsequently, we design an output layer with global spatial refinement with a novel spatial-temporal aware loss function. To evaluate the performance of TrajBERT, we conduct a series of experiments on real-world datasets. Remarkably, TrajBERT yields at least 8.2\% performance improvement compared to the state-of-the-art trajectory recovery approachs. Furthermore, TrajBERT successfully mitigates the cold start problem commonly experienced with new users lacking historical trajectories. It also shows superior robustness when faced with extremely sparse trajectories, thus demonstrating its potential as a practical tool in the field of human mobility analysis.},
+  keywords = {Bidirectional control,Data models,Predictive models,Roads,spatial-temporal data mining,Trajectory,trajectory mining,trajectory reconstruction,Trajectory recovery,Transformers,Urban areas},
+  file = {/home/matt/Zotero/storage/BIZJ9UXY/Si et al. - 2024 - TrajBERT BERT-Based Trajectory Recovery With Spatial-Temporal Refinement for Implicit Sparse Trajec.pdf}
 }
 
 @article{songModellingScalingProperties2010,
