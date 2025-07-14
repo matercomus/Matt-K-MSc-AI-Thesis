@@ -245,18 +245,34 @@
 
 % --- Rule-Based Anomaly Classification ---
 \begin{frame}{Rule-Based Anomaly Classification}
-  \begin{block}{Four Anomalous Behavior Patterns \cite{wangDetectingAnomalousTrajectories2018}}
-    \small
-    Given anomalous trajectory $A_r$ with length $AL_r$ and time $AT_r$, and normal trajectory averages $NL_{value}$ and $NT_{value}$:
-    
-    \vspace{0.5em}
-    \begin{itemize}
-      \item \textbf{Abp1}: $AL_r \leq NL_{value} + L_\rho$ and $AT_r \leq NT_{value} + T_\rho$
-      \item \textbf{Abp2}: $AL_r \leq NL_{value} + L_\rho$ and $AT_r > NT_{value} + T_\rho$  
-      \item \textbf{Abp3}: $AL_r > NL_{value} + L_\rho$ and $AT_r \leq NT_{value} + T_\rho$
-      \item \textbf{Abp4}: $AL_r > NL_{value} + L_\rho$ and $AT_r > NT_{value} + T_\rho$
-    \end{itemize}
-  \end{block}
+  % Use columns for side-by-side layout
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.42\textwidth}
+      \begin{block}{Variable Definitions}
+        \scriptsize
+        \begin{tabular}{@{}l p{.65\linewidth}@{}}
+          $AL_r$ & Length of anomalous trajectory $A_r$ \\
+          $AT_r$ & Duration (time) of anomalous trajectory $A_r$ \\
+          $NL_{value}$ & Avg. length of normal trajectories \\
+          $NT_{value}$ & Avg. duration of normal trajectories \\
+          $L_\rho$ & Length threshold (tolerance) \\
+          $T_\rho$ & Time threshold (tolerance) \\
+        \end{tabular}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Four Anomalous Behavior Patterns \cite{wangDetectingAnomalousTrajectories2018}}
+        \scriptsize
+        Given $A_r$ with $AL_r$, $AT_r$, and normal averages $NL_{value}$, $NT_{value}$:
+        \begin{itemize}
+          \item \textbf{Abp1}: $AL_r \leq NL_{value} + L_\rho$ and $AT_r \leq NT_{value} + T_\rho$
+          \item \textbf{Abp2}: $AL_r \leq NL_{value} + L_\rho$ and $AT_r > NT_{value} + T_\rho$
+          \item \textbf{Abp3}: $AL_r > NL_{value} + L_\rho$ and $AT_r \leq NT_{value} + T_\rho$
+          \item \textbf{Abp4}: $AL_r > NL_{value} + L_\rho$ and $AT_r > NT_{value} + T_\rho$
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
   
   \vspace{0.5em}
   \begin{alertblock}{Pattern Interpretation}
