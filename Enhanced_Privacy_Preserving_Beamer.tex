@@ -115,389 +115,222 @@
   {\usebeamerfont{date}\small Thesis Progress Presentation -- July 2025}
 \end{frame}
 
-% --- Section: Introduction ---
-\section{Introduction}
-
-\begin{frame}{The Core Challenge}
-  \begin{block}{}
+% --- Problem & Solution ---
+\begin{frame}{The Challenge}
+  \begin{alertblock}{Privacy vs. Utility Paradox}
     \centering
-    \Large \textbf{Privacy vs. Utility Paradox}
-    
-    \vspace{1em}
-    \begin{tikzpicture}[scale=0.8]
-      % Privacy vs Utility scale
-      \draw[thick] (0,0) -- (6,0);
-      \draw[fill=VUBlue] (0,0) circle (0.2);
-      \draw[fill=RichGold] (6,0) circle (0.2);
-      \node[below, font=\small] at (0,0) {Privacy};
-      \node[below, font=\small] at (6,0) {Utility};
-      \draw[thick,->,VUBlue] (3,0.3) -- (3,0.8);
-      \node[above,VUBlue, font=\small] at (3,0.8) {Traditional Trade-off};
-    \end{tikzpicture}
-    
-    \vspace{1em}
-    \textcolor{Charcoal}{\small Standard privacy methods degrade spatio-temporal patterns}
-  \end{block}
-\end{frame}
-
-\begin{frame}{Key Problems}
-  \begin{block}{}
-    \begin{itemize}
-      \item \highlight{Data Scarcity}: Limited access to real trajectory datasets
-      \item \highlight{Privacy Barriers}: Sensitive location information blocks research
-      \item \highlight{Detection Limitations}: Need preserved patterns for anomaly detection
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}{Our Innovation}
-  \begin{alertblock}{}
-    \centering
-    \Large \textbf{Privacy by Design} \\
-    \vspace{0.5em}
-    $+$ \\
-    \vspace{0.5em}
-    \textbf{High Utility} \\
-    \vspace{0.5em}
-    $+$ \\
-    \vspace{0.5em}
-    \textbf{Anomaly Detection Ready}
+    \Large Traditional privacy methods degrade spatio-temporal patterns needed for anomaly detection \cite{buchholzSystematisationKnowledgeTrajectory2024}
   \end{alertblock}
-\end{frame}
-
-% --- Section: Methodology ---
-\section{Methodology}
-
-\begin{frame}{Framework Overview}
-  \begin{block}{}
-    \centering
-    \Large \textbf{3-Phase Bootstrap Framework}
-  \end{block}
   
   \vspace{1em}
-  \begin{center}
-    \begin{tikzpicture}[node distance=3cm, every node/.style={align=center}]
-      % Nodes
-      \node[draw, fill=LightGray, rounded corners, minimum width=3cm, minimum height=1.5cm] (phase1) {\textbf{\phase{1}}\\\scriptsize Baseline\\Generation};
-      \node[draw, fill=LightGray, rounded corners, right=of phase1, minimum width=3cm, minimum height=1.5cm] (phase2) {\textbf{\phase{2}}\\\scriptsize Anomaly\\Mining};
-      \node[draw, fill=LightGray, rounded corners, right=of phase2, minimum width=3cm, minimum height=1.5cm] (phase3) {\textbf{\phase{3}}\\\scriptsize Enhanced\\Model};
-      % Arrows
-      \draw[thick, VUBlue,->, >=stealth] (phase1) -- (phase2);
-      \draw[thick, VUBlue,->, >=stealth] (phase2) -- (phase3);
-    \end{tikzpicture}
-  \end{center}
-  
-  \vspace{1em}
-  \begin{block}{}
+  \begin{block}{Our Solution: Bootstrap Approach}
     \centering
+    \textbf{Privacy by Design} + \textbf{High Utility} + \textbf{Anomaly Detection Ready}
+    
+    \vspace{0.5em}
     \textit{``Bootstraps anomaly generation without pre-labeled dataset''}
   \end{block}
 \end{frame}
 
-\begin{frame}{Key Innovation: Bootstrap Approach}
-  \begin{block}{Why This Works}
-    \begin{itemize}
-      \item \textbf{Iterative Learning}: Each cycle improves understanding
-      \item \textbf{Controlled Generation}: Rule-based curation
-      \item \textbf{Privacy First}: From distributions, not copies
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-% --- Section: Core Models ---
-\section{Core Models}
-
-\begin{frame}{DiffTraj: Diffusion-Based Generation}
-  \begin{block}{}
-    \centering
-    \Large \textbf{White Noise} $\rightarrow$ \textbf{Reverse Denoising} $\rightarrow$ \textbf{Realistic Trajectory}
-    
-    \vspace{0.5em}
-    \small \cite{zhuDiffTrajGeneratingGPS2023}
-  \end{block}
-  
-  \vspace{1em}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Architecture}
-        \begin{itemize}
-          \item 1D-CNN residual network
-          \item Attention mechanisms
-          \item GPS coordinate compatible
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \hspace{0.04\textwidth}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Advantages}
-        \begin{itemize}
-          \item Training stability
-          \item High-fidelity samples
-          \item Inherent privacy protection
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{LM-TAD: Language Model for Trajectories}
-  \begin{block}{}
-    \centering
-    \Large \textbf{GPS Trajectory} $\rightarrow$ \textbf{Token Sequence} $\rightarrow$ \textbf{Perplexity Score}
-    
-    \vspace{0.5em}
-    \small \cite{mbuyaTrajectoryAnomalyDetection2024}
-  \end{block}
-  
-  \vspace{1em}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Process}
-        \begin{itemize}
-          \item Autoregressive prediction
-          \item Transformer architecture
-          \item Interpretable scoring
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \hspace{0.04\textwidth}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Perfect for Bootstrap}
-        \begin{itemize}
-          \item No labeled data required
-          \item Online detection capability
-          \item Clear anomaly explanations
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% --- Section: Privacy Framework ---
-\section{Privacy Framework}
-
-\begin{frame}{Three-Layer Defense}
+% --- Core Process Overview ---
+\begin{frame}{3-Phase Bootstrap Framework}
   \begin{center}
-    \begin{tikzpicture}[scale=0.9]
-      % Layer 1
-      \draw[fill=LightGray, draw=VUBlue, thick] (0,0) rectangle (8,1.5);
-      \node at (4,0.75) {\textbf{Layer 1: Differential Privacy (DP-SGD)}};
+    \begin{tikzpicture}[
+      node distance=2.5cm,
+      every node/.style={align=center, font=\small},
+      box/.style={draw, fill=LightGray, rounded corners, minimum width=3.5cm, minimum height=2cm, thick},
+      arrow/.style={thick, VUBlue, ->, >=stealth, line width=2pt}
+    ]
       
-      % Layer 2
-      \draw[fill=LightGray, draw=AbsoluteZero, thick] (0,2) rectangle (8,3.5);
-      \node at (4,2.75) {\textbf{Layer 2: Trajectory-Level Protection}};
+      % Phase boxes
+      \node[box] (phase1) {\textbf{\large Phase 1}\\\textbf{Baseline Generation}\\\vspace{0.3cm}\scriptsize Input: Real normal data\\Output: Synthetic normal};
       
-      % Layer 3
-      \draw[fill=LightGray, draw=ScienceBlue, thick] (0,4) rectangle (8,5.5);
-      \node at (4,4.75) {\textbf{Layer 3: Synthetic Decoupling}};
+      \node[box, right=of phase1] (phase2) {\textbf{\large Phase 2}\\\textbf{Anomaly Mining}\\\vspace{0.3cm}\scriptsize Input: Synthetic normal\\Output: Labeled anomalies};
+      
+      \node[box, right=of phase2] (phase3) {\textbf{\large Phase 3}\\\textbf{Enhanced Model}\\\vspace{0.3cm}\scriptsize Input: Normal + Anomalies\\Output: Enhanced DiffTraj};
+      
+      % Arrows
+      \draw[arrow] (phase1) -- (phase2);
+      \draw[arrow] (phase2) -- (phase3);
+      
+      % Feedback loop
+      \draw[arrow, dashed] (phase3) to[bend right=60] (phase1);
+      \node[below=0.5cm of phase2, font=\scriptsize\color{VUBlue}] {Iterative Refinement};
+      
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+% --- Phase 1 Detail ---
+\begin{frame}{Phase 1: Baseline Generation}
+  \begin{center}
+    \begin{tikzpicture}[
+      node distance=3cm,
+      every node/.style={align=center},
+      data/.style={draw, fill=ScienceBlue!20, rounded corners, minimum width=2cm, minimum height=1cm},
+      process/.style={draw, fill=AbsoluteZero, text=white, rounded corners, minimum width=2.5cm, minimum height=1cm},
+      arrow/.style={thick, VUBlue, ->, >=stealth}
+    ]
+      
+      \node[data] (input) {\textbf{Real Normal}\\Taxi Trajectories};
+      \node[process, right=of input] (difftraj) {\textbf{DiffTraj}\\Training};
+      \node[data, right=of difftraj] (output) {\textbf{Synthetic Normal}\\Trajectories};
+      
+      \draw[arrow] (input) -- (difftraj);
+      \draw[arrow] (difftraj) -- (output);
+      
+      % Labels
+      \node[below=0.5cm of input, font=\scriptsize] {Filtered for typical patterns};
+      \node[below=0.5cm of difftraj, font=\scriptsize] {Diffusion model \cite{zhuDiffTrajGeneratingGPS2023}};
+      \node[below=0.5cm of output, font=\scriptsize] {Privacy-preserved};
+      
+    \end{tikzpicture}
+  \end{center}
+  
+  \vspace{1em}
+  \begin{block}{Key Innovation: Differential Privacy}
+    DP-SGD with privacy budget $\varepsilon = 2.0$ ensures bounded influence of individual trajectories
+  \end{block}
+\end{frame}
+
+% --- Phase 2 Detail ---
+\begin{frame}{Phase 2: Anomaly Mining}
+  \begin{center}
+    \begin{tikzpicture}[
+      node distance=2.5cm,
+      every node/.style={align=center},
+      data/.style={draw, fill=ScienceBlue!20, rounded corners, minimum width=2cm, minimum height=1cm},
+      process/.style={draw, fill=AbsoluteZero, text=white, rounded corners, minimum width=2cm, minimum height=1cm},
+      arrow/.style={thick, VUBlue, ->, >=stealth}
+    ]
+      
+      \node[data] (input) {\textbf{Synthetic Normal}\\Trajectories};
+      \node[process, right=of input] (lmtad) {\textbf{LM-TAD}\\Scoring};
+      \node[process, right=of lmtad] (rules) {\textbf{Rule-Based}\\Curation};
+      \node[data, below=1cm of rules] (output) {\textbf{Labeled}\\Anomalies};
+      
+      \draw[arrow] (input) -- (lmtad);
+      \draw[arrow] (lmtad) -- (rules);
+      \draw[arrow] (rules) -- (output);
+      
+      % Labels
+      \node[below=0.3cm of lmtad, font=\scriptsize] {Perplexity scores \cite{mbuyaTrajectoryAnomalyDetection2024}};
+      \node[above=0.3cm of rules, font=\scriptsize] {Route deviation,\\Speed violations};
+      
+    \end{tikzpicture}
+  \end{center}
+  
+  \vspace{1em}
+  \begin{block}{Unsupervised Detection}
+    LM-TAD treats trajectories as token sequences, identifying anomalies through language modeling perplexity
+  \end{block}
+\end{frame}
+
+% --- Phase 3 Detail ---
+\begin{frame}{Phase 3: Enhanced Model}
+  \begin{center}
+    \begin{tikzpicture}[
+      node distance=2.5cm,
+      every node/.style={align=center},
+      data/.style={draw, fill=ScienceBlue!20, rounded corners, minimum width=2cm, minimum height=1cm},
+      process/.style={draw, fill=AbsoluteZero, text=white, rounded corners, minimum width=2.5cm, minimum height=1cm},
+      arrow/.style={thick, VUBlue, ->, >=stealth}
+    ]
+      
+      \node[data] (normal) {\textbf{Synthetic}\\Normal};
+      \node[data, below=1cm of normal] (anomaly) {\textbf{Labeled}\\Anomalies};
+      \node[process, right=3cm of normal] (retrain) {\textbf{Retrain}\\DiffTraj};
+      \node[data, right=of retrain] (output) {\textbf{Enhanced}\\Model};
+      
+      \draw[arrow] (normal) -- (retrain);
+      \draw[arrow] (anomaly) -- (retrain);
+      \draw[arrow] (retrain) -- (output);
+      
+      % Merge indicator
+      \node[above=0.3cm of retrain, font=\scriptsize] {5-10\% anomalies};
+      \node[below=0.3cm of output, font=\scriptsize] {Conditional generation};
+      
+    \end{tikzpicture}
+  \end{center}
+  
+  \vspace{1em}
+  \begin{block}{Iterative Improvement}
+    Enhanced model generates both normal and anomalous trajectories with improved diversity and realism
+  \end{block}
+\end{frame}
+
+% --- Privacy Framework ---
+\begin{frame}{Privacy-by-Design Framework}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.8]
+      % Three layers
+      \draw[fill=LightGray, draw=VUBlue, thick, rounded corners] (0,0) rectangle (10,1.5);
+      \node at (5,0.75) {\large\textbf{Layer 1: Differential Privacy (DP-SGD)}};
+      
+      \draw[fill=LightGray, draw=AbsoluteZero, thick, rounded corners] (0,2) rectangle (10,3.5);
+      \node at (5,2.75) {\large\textbf{Layer 2: Trajectory-Level Protection}};
+      
+      \draw[fill=LightGray, draw=ScienceBlue, thick, rounded corners] (0,4) rectangle (10,5.5);
+      \node at (5,4.75) {\large\textbf{Layer 3: Synthetic Decoupling}};
+      
+      % Privacy budgets
+      \node[right] at (10.2,0.75) {\footnotesize $\varepsilon_1=2.0, \varepsilon_2=1.0, \varepsilon_3=0.5$};
+      \node[right] at (10.2,2.75) {\footnotesize Entire trajectory as privacy unit};
+      \node[right] at (10.2,4.75) {\footnotesize Generation from distributions};
+      
     \end{tikzpicture}
   \end{center}
   
   \vspace{1em}
   \begin{alertblock}{}
     \centering
-    \textit{``Traditional privacy methods destroy spatio-temporal relationships''}
+    Multi-layer defense prevents both membership inference and reconstruction attacks \cite{buchholzSystematisationKnowledgeTrajectory2024}
   \end{alertblock}
 \end{frame}
 
-\begin{frame}{Differential Privacy Integration}
+% --- Evaluation & Results ---
+\begin{frame}{Evaluation Framework}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{block}{DP-SGD Parameters}
+      \begin{block}{Datasets}
         \begin{itemize}
-          \item \textbf{Phase 1}: $\varepsilon = 2.0$
-          \item \textbf{Phase 2}: $\varepsilon = 1.0$
-          \item \textbf{Phase 3}: $\varepsilon = 0.5$
+          \item \textbf{Beijing}: Primary development
+          \item \textbf{Chengdu}: Cross-city validation
+          \item \textbf{Xi'an}: Urban diversity testing
         \end{itemize}
       \end{block}
     \end{column}
     \hspace{0.04\textwidth}
     \begin{column}{0.48\textwidth}
-      \begin{block}{Protection}
+      \begin{block}{Metrics}
         \begin{itemize}
-          \item Bounded influence
-          \item Membership inference prevention
-          \item Noise addition during training
+          \item \textbf{Detection}: Precision, Recall, F1
+          \item \textbf{Quality}: SDMetrics suite
+          \item \textbf{Privacy}: Attack resistance
         \end{itemize}
       \end{block}
     \end{column}
   \end{columns}
 \end{frame}
 
-% --- Section: Implementation Phases ---
-\section{Implementation}
-
-\begin{frame}{Phase 1: Baseline Generation}
-  \begin{block}{}
-    \centering
-    \Large \textbf{Real Normal Data} $\rightarrow$ \textbf{Train DiffTraj} $\rightarrow$ \textbf{Synthetic Normal}
-  \end{block}
-  
-  \vspace{1em}
-  \begin{block}{Smart Filtering}
-    \begin{itemize}
-      \item \textbf{Duration}: Within $2\sigma$ of O-D medians
-      \item \textbf{Distance}: $\leq 1.5 \times$ shortest path
-      \item \textbf{Temporal}: Typical patterns only
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}{Phase 2: Anomaly Mining}
-  \begin{block}{}
-    \centering
-    \Large \textbf{Synthetic Normal} $\rightarrow$ \textbf{LM-TAD} $\rightarrow$ \textbf{Labeled Anomalies}
-  \end{block}
-  
-  \vspace{1em}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{LM-TAD Scoring}
-        \begin{itemize}
-          \item Perplexity calculation
-          \item Higher = more anomalous
-          \item Interpretable results
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \hspace{0.04\textwidth}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Rule-Based Curation}
-        \begin{itemize}
-          \item Route deviation rules
-          \item Temporal delay detection
-          \item Kinematic constraints
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Phase 3: Iterative Refinement}
-  \begin{block}{}
-    \centering
-    \Large \textbf{Normal + Anomalies} $\rightarrow$ \textbf{Retrain DiffTraj} $\rightarrow$ \textbf{Enhanced Model}
-  \end{block}
-  
-  \vspace{1em}
-  \begin{block}{Process Components}
-    \begin{itemize}
-      \item \textbf{Enriched Training}: 5-10\% anomalies
-      \item \textbf{Iterative Cycles}: Generate $\rightarrow$ Mine $\rightarrow$ Refine
-      \item \textbf{Conditional Generation}: Context-aware synthesis
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-% --- Section: Evaluation ---
-\section{Evaluation}
-
-\begin{frame}{Experimental Design}
-  \begin{block}{Cross-City Validation}
-    \begin{table}[h]
-      \centering
-      \begin{tabular}{lll}
-        \toprule
-        \textbf{Dataset} & \textbf{Role} & \textbf{Purpose} \\
-        \midrule
-        \textbf{Beijing} & Primary & Framework development \\
-        \textbf{Chengdu} & Validation & Cross-city generalization \\
-        \textbf{Xi'an} & Validation & Urban diversity testing \\
-        \bottomrule
-      \end{tabular}
-    \end{table}
-  \end{block}
-\end{frame}
-
-\begin{frame}{Evaluation Metrics}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.32\textwidth}
-      \begin{block}{Detection Performance}
-        \begin{itemize}
-          \item Precision
-          \item Recall
-          \item F1-Score
-          \item AUC-PR
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \hspace{0.02\textwidth}
-    \begin{column}{0.32\textwidth}
-      \begin{block}{Data Quality}
-        \begin{itemize}
-          \item Resemblance
-          \item Utility
-          \item Privacy
-          \item SDMetrics
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \hspace{0.02\textwidth}
-    \begin{column}{0.32\textwidth}
-      \begin{block}{Privacy Protection}
-        \begin{itemize}
-          \item Membership inference
-          \item Reconstruction attacks
-          \item Privacy budgets
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% --- Section: Contributions ---
-\section{Contributions}
-
+% --- Key Contributions ---
 \begin{frame}{Key Contributions}
-  \begin{block}{Technical Innovations}
+  \begin{block}{}
     \begin{enumerate}
-      \item \textbf{Integrated Framework}: First DiffTraj + LM-TAD combination
-      \item \textbf{Bootstrap Methodology}: Anomaly generation without labels
-      \item \textbf{Multi-Layer Privacy}: Comprehensive protection strategy
+      \item \textbf{First integrated DiffTraj + LM-TAD framework} for privacy-preserving trajectory generation
+      \item \textbf{Bootstrap methodology} that generates anomalies without pre-labeled datasets
+      \item \textbf{Multi-layer privacy protection} preserving spatio-temporal patterns for anomaly detection
     \end{enumerate}
   \end{block}
   
   \vspace{1em}
-  \begin{block}{Research Impact}
-    \begin{itemize}
-      \item Novel privacy-preserving trajectory research
-      \item Reproducible evaluation framework
-      \item Open-source implementation
-    \end{itemize}
-  \end{block}
+  \begin{alertblock}{Current Status}
+    \centering
+    Phase 1 implementation in progress | Phases 2-3 planned for completion by thesis defense
+  \end{alertblock}
 \end{frame}
 
-\begin{frame}{Project Timeline}
-  \begin{block}{Implementation Progress}
-    \begin{itemize}
-      \item \phase{1}: \textcolor{AbsoluteZero}{\textbf{In Progress}} (baseline DiffTraj)
-      \item \phase{2}: \textbf{Planned} (LM-TAD integration)
-      \item \phase{3}: \textbf{Planned} (iterative refinement)
-    \end{itemize}
-  \end{block}
-  
-  \vspace{1em}
-  \begin{block}{Next Steps}
-    \begin{enumerate}
-      \item Complete Phase 1 baseline
-      \item Implement LM-TAD integration
-      \item Develop rule-based curation
-      \item Cross-city validation
-    \end{enumerate}
-  \end{block}
-\end{frame}
-
-\begin{frame}{Expected Outcomes}
-  \begin{block}{Deliverables}
-    \begin{itemize}
-      \item \textbf{Synthetic Datasets}: Privacy-preserving anomaly data
-      \item \textbf{Open Framework}: Reproducible research pipeline
-      \item \textbf{Evaluation Results}: Comprehensive performance analysis
-      \item \textbf{Research Publication}: Novel methodology contribution
-    \end{itemize}
-  \end{block}
-\end{frame}
-
+% --- Thank You ---
 \begin{frame}[plain]
   \centering
   \Huge \textbf{Thank You}
@@ -505,31 +338,17 @@
   \vspace{0.5em}
   \Large \textbf{Questions \& Discussion}
   
-  \vspace{1em}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Key Takeaways}
-        \begin{itemize}
-          \item \textbf{Privacy-Preserving}: Multi-layer protection
-          \item \textbf{Bootstrap Approach}: No labeled data required
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \hspace{0.04\textwidth}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{}
-        \begin{itemize}
-          \item \textbf{Practical Framework}: Real-world applications
-          \item \textbf{Open Research}: Reproducible and extensible
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
+  \vspace{2em}
+  \begin{block}{}
+    \centering
+    \textbf{Privacy-Preserving} | \textbf{Bootstrap Approach} | \textbf{Real-World Applications}
+  \end{block}
 \end{frame}
 
+% --- References ---
 \begin{frame}[allowframebreaks]{References}
   \begin{block}{}
-    \small
+    \footnotesize
     \printbibliography[heading=none]
   \end{block}
 \end{frame}
