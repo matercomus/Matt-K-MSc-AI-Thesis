@@ -1,0 +1,514 @@
+\documentclass[aspectratio=169,xcolor={dvipsnames}]{beamer}
+
+% XeLaTeX packages
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{biblatex}
+
+% Bibliography
+\addbibresource{references_new.bib}
+
+% Modern theme configuration
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Define modern colors
+\definecolor{VUBlue}{RGB}{0,87,183}
+\definecolor{VUOrange}{RGB}{255,127,0}
+\definecolor{DarkGray}{RGB}{64,64,64}
+\definecolor{LightGray}{RGB}{240,240,240}
+\definecolor{AccentBlue}{RGB}{0,120,215}
+
+% Set theme colors
+\setbeamercolor{frametitle}{bg=VUBlue, fg=white}
+\setbeamercolor{title}{fg=VUBlue}
+\setbeamercolor{structure}{fg=VUBlue}
+\setbeamercolor{alerted text}{fg=VUOrange}
+\setbeamercolor{block title}{bg=VUBlue, fg=white}
+\setbeamercolor{block body}{bg=LightGray}
+
+% Font settings
+\setmainfont{Liberation Sans}
+\setsansfont{Liberation Sans}
+\setmonofont{Liberation Mono}[Scale=0.9]
+
+% Custom commands
+\newcommand{\highlight}[1]{\textcolor{VUOrange}{\textbf{#1}}}
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\phase}[1]{\textcolor{AccentBlue}{\textbf{Phase #1}}}
+
+% Configure listings
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{LightGray},
+  frame=single,
+  breaklines=true
+}
+
+% Title page info
+\title{Privacy-Preserving Synthetic Trajectory Generation}
+\subtitle{An Integrated DiffTraj-LM-TAD Framework for Taxi Route Anomaly Detection}
+\author{Mateusz Kędzia}
+\institute{MSc Artificial Intelligence \\ Vrije Universiteit Amsterdam}
+\date{Thesis Progress Presentation -- July 2025}
+
+% Custom title page
+\defbeamertemplate*{title page}{customized}[1][]
+{%
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    \begin{beamercolorbox}[sep=8pt,center,#1]{title}
+      \usebeamerfont{title}\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%     
+    \end{beamercolorbox}%
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=8pt,center,#1]{author}
+      \usebeamerfont{author}\insertauthor
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,#1]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,#1]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}\vskip0.5em
+  \endgroup
+  \vfill
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{The Core Challenge}
+  \begin{alertblock}{Privacy vs. Utility Paradox}
+    \begin{itemize}
+      \item \highlight{High Utility Data}: Trajectory data is incredibly valuable for research
+      \item \highlight{High Privacy Risk}: Personally identifiable location patterns
+      \item \highlight{Traditional Trade-off}: Privacy protection destroys spatio-temporal patterns
+    \end{itemize}
+  \end{alertblock}
+  
+  \vspace{1em}
+  \begin{center}
+    \large\textit{``Standard privacy methods degrade spatio-temporal patterns needed for anomaly detection''}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Research Gap}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Key Problems}
+        \begin{itemize}
+          \item \textbf{Data Scarcity}: Limited access to real trajectory datasets
+          \item \textbf{Privacy Barriers}: Sensitive location information blocks research
+          \item \textbf{Detection Limitations}: Need preserved patterns for effective anomaly detection
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{alertblock}{Our Innovation}
+        \centering
+        \textbf{Privacy by Design} \\
+        $+$ \\
+        \textbf{High Utility} \\
+        $+$ \\
+        \textbf{Anomaly Detection Ready}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{The Solution: 3-Phase Framework}
+  \begin{block}{Framework Overview}
+    \centering
+    \phase{1}: Normal Baseline $\rightarrow$ \phase{2}: Anomaly Mining $\rightarrow$ \phase{3}: Enhanced Model
+  \end{block}
+  
+  \vspace{1em}
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{cll}
+      \toprule
+      \textbf{Phase} & \textbf{Input} & \textbf{Output} \\
+      \midrule
+      \textbf{1} & Real normal data & \code{synthetic\_normal} \\
+      \textbf{2} & Synthetic normal & Labeled anomalies \\
+      \textbf{3} & Normal + Anomalies & Enhanced model \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Key Innovation: Bootstrap Approach}
+  \begin{alertblock}{Bootstrap Methodology}
+    \centering
+    \large\textit{``Bootstraps anomaly generation without pre-labeled dataset''}
+  \end{alertblock}
+  
+  \vspace{1em}
+  \begin{block}{Why This Works}
+    \begin{itemize}
+      \item \textbf{Iterative Learning}: Each cycle improves understanding
+      \item \textbf{Controlled Generation}: Rule-based curation
+      \item \textbf{Privacy First}: From distributions, not copies
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Core Model 1: DiffTraj \cite{zhuDiffTrajGeneratingGPS2023}}
+  \begin{block}{Diffusion-Based Generation}
+    \centering
+    \textit{``Diffusion Probabilistic Model for GPS Trajectory Generation''}
+  \end{block}
+  
+  \vspace{1em}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \begin{block}{Key Process}
+        \centering
+        \textbf{White Noise} $\rightarrow$ \textbf{Reverse Denoising} $\rightarrow$ \textbf{Realistic Trajectory}
+      \end{block}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{block}{Architecture}
+        \begin{itemize}
+          \item 1D-CNN-based residual network with attention
+          \item Works directly with continuous GPS coordinates
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Why DiffTraj?}
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{lccc}
+      \toprule
+      \textbf{Feature} & \textbf{DiffTraj} & \textbf{GANs} & \textbf{VAEs} \\
+      \midrule
+      Training Stability & \highlight{Excellent} & Mode collapse & Good \\
+      Sample Quality & \highlight{High-fidelity} & Good & Blurry \\
+      Privacy Protection & \highlight{Inherent} & Risk & Risk \\
+      Controllability & \highlight{Conditional} & Limited & Good \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Core Model 2: LM-TAD \cite{mbuyaTrajectoryAnomalyDetection2024}}
+  \begin{block}{Language Model for Trajectories}
+    \centering
+    \textit{``Treats trajectories as sequences of tokens''}
+  \end{block}
+  
+  \vspace{1em}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \begin{block}{Process}
+        \centering
+        \textbf{GPS Trajectory} $\rightarrow$ \textbf{Token Sequence} $\rightarrow$ \textbf{Transformer} $\rightarrow$ \textbf{Perplexity Score}
+      \end{block}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{block}{Key Features}
+        \begin{itemize}
+          \item \textbf{Autoregressive}: Predicts next location
+          \item \textbf{Perplexity Scoring}: Higher = more anomalous
+          \item \textbf{Interpretable}: Clear anomaly explanations
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Why LM-TAD?}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Perfect for Bootstrapping}
+        \begin{itemize}
+          \item \textbf{No Labeled Data Required}
+          \item \textbf{Interpretable Scores}
+          \item \textbf{Online Detection Capability}
+          \item \textbf{GPS Compatible}
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{alertblock}{State-of-the-Art Performance}
+        \begin{itemize}
+          \item Demonstrated on synthetic and real-world datasets
+          \item User-specific anomaly detection
+          \item Efficient attention caching
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Core Framework: SOEL \cite{liDeepAnomalyDetection2023}}
+  \begin{block}{Smart Anomaly Selection}
+    \centering
+    \textit{``Selecting informative data points for expert feedback''}
+  \end{block}
+  
+  \vspace{1em}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \begin{block}{Process}
+        \centering
+        \textbf{Feature Extraction} $\rightarrow$ \textbf{k-means++} $\rightarrow$ \textbf{Diverse Candidates}
+      \end{block}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{block}{Benefits}
+        \begin{itemize}
+          \item \textbf{Optimal Coverage}: Maximizes diversity
+          \item \textbf{Labeling Efficiency}: Most information from limited labels
+          \item \textbf{Proven Theory}: Conditions for generalization
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Privacy by Design \cite{buchholzSystematisationKnowledgeTrajectory2024}}
+  \begin{alertblock}{The Challenge}
+    \centering
+    \textit{``Traditional privacy methods destroy spatio-temporal relationships''}
+  \end{alertblock}
+  
+  \vspace{1em}
+  \begin{block}{Our Three-Layer Defense}
+    \begin{enumerate}
+      \item \textbf{Differential Privacy}: DP-SGD with privacy budgets
+      \item \textbf{Trajectory-Level Protection}: Entire trajectory as unit
+      \item \textbf{Synthetic Decoupling}: Generation from distributions
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Layer 1: Differential Privacy}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{DP-SGD Integration}
+        \begin{itemize}
+          \item \textbf{Privacy Budgets}: $\varepsilon_1=2.0$, $\varepsilon_2=1.0$, $\varepsilon_3=0.5$
+          \item \textbf{Bounded Influence}: Individual trajectory impact limited
+          \item \textbf{Source}: PATE-GAN principles
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Protection Mechanism}
+        \begin{itemize}
+          \item Noise addition during training
+          \item Prevents membership inference attacks
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Phase 1: Baseline Generation}
+  \begin{block}{Building the Foundation}
+    \centering
+    \textbf{Real Normal Data} $\rightarrow$ \textbf{Train DiffTraj} $\rightarrow$ \textbf{Synthetic Normal Data}
+  \end{block}
+  
+  \vspace{1em}
+  \begin{block}{Smart Filtering}
+    \begin{itemize}
+      \item \textbf{Duration}: Within $2\sigma$ of O-D medians
+      \item \textbf{Distance}: $\leq 1.5 \times$ shortest path
+      \item \textbf{Temporal}: Typical patterns only
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Phase 2: Anomaly Mining}
+  \begin{block}{Unsupervised Detection Process}
+    \centering
+    \code{synthetic\_normal} $\rightarrow$ \textbf{LM-TAD} $\rightarrow$ \textbf{Perplexity Scoring}
+  \end{block}
+  
+  \vspace{1em}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Step 1: LM-TAD Scoring}
+        \begin{itemize}
+          \item \textbf{Input}: \code{synthetic\_normal} trajectories
+          \item \textbf{Process}: Autoregressive language modeling
+          \item \textbf{Output}: Perplexity scores (higher = more anomalous)
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Step 2: Rule-Based Curation}
+        \begin{itemize}
+          \item \textbf{Route Deviation}: Length $>$ Normal $+ L_\rho$
+          \item \textbf{Temporal Delay}: Time $>$ Normal $+ T_\rho$
+          \item \textbf{Kinematic}: Speed $> 120$ km/h
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Phase 3: Iterative Refinement}
+  \begin{block}{Closing the Loop}
+    \centering
+    \textbf{Normal + Anomalies} $\rightarrow$ \textbf{Retrain DiffTraj} $\rightarrow$ \textbf{Enhanced Model}
+  \end{block}
+  
+  \vspace{1em}
+  \begin{block}{Process Components}
+    \begin{itemize}
+      \item \textbf{Enriched Training}: 5-10\% anomalies
+      \item \textbf{Iterative Cycles}: Generate $\rightarrow$ Mine $\rightarrow$ Refine
+      \item \textbf{Conditional Generation}: \code{difftraj.sample(condition="speeding")}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Experimental Design}
+  \begin{block}{Cross-City Validation}
+    \begin{table}[h]
+      \centering
+      \begin{tabular}{lll}
+        \toprule
+        \textbf{Dataset} & \textbf{Role} & \textbf{Purpose} \\
+        \midrule
+        \textbf{Beijing} & Primary & Framework development \\
+        \textbf{Chengdu} & Validation & Cross-city generalization \\
+        \textbf{Xi'an} & Validation & Urban diversity testing \\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Evaluation Framework}
+  \begin{block}{Three-Dimensional Assessment}
+    \begin{enumerate}
+      \item \textbf{Anomaly Detection Performance}
+      \begin{itemize}
+        \item Precision, Recall, F1, AUC-PR
+      \end{itemize}
+      
+      \item \textbf{Data Quality Assessment}
+      \begin{itemize}
+        \item SDMetrics (Resemblance, Utility, Privacy)
+      \end{itemize}
+      
+      \item \textbf{Privacy Protection}
+      \begin{itemize}
+        \item Membership inference attacks
+        \item Reconstruction attacks
+      \end{itemize}
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Key Contributions}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Technical Innovations}
+        \begin{enumerate}
+          \item \textbf{Integrated Framework}: First DiffTraj + LM-TAD combination
+          \item \textbf{Bootstrap Methodology}: Anomaly generation without labels
+          \item \textbf{Multi-Layer Privacy}: Comprehensive protection strategy
+        \end{enumerate}
+      \end{block}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Research Impact}
+        \begin{itemize}
+          \item Novel privacy-preserving trajectory research
+          \item Reproducible evaluation framework
+          \item Open-source implementation
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Project Timeline}
+  \begin{block}{Implementation Progress}
+    \begin{itemize}
+      \item \phase{1}: \textcolor{VUOrange}{\textbf{In Progress}} (baseline DiffTraj)
+      \item \phase{2}: \textbf{Planned} (LM-TAD integration)
+      \item \phase{3}: \textbf{Planned} (iterative refinement)
+    \end{itemize}
+  \end{block}
+  
+  \vspace{1em}
+  \begin{block}{Next Steps}
+    \begin{enumerate}
+      \item Complete Phase 1 baseline
+      \item Implement LM-TAD integration
+      \item Develop rule-based curation
+      \item Cross-city validation
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Expected Outcomes}
+  \begin{block}{Deliverables}
+    \begin{itemize}
+      \item \textbf{Synthetic Datasets}: Privacy-preserving anomaly data
+      \item \textbf{Open Framework}: Reproducible research pipeline
+      \item \textbf{Evaluation Results}: Comprehensive performance analysis
+      \item \textbf{Research Publication}: Novel methodology contribution
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[plain]
+  \centering
+  \Huge \textbf{Thank You}
+  
+  \vspace{0.5em}
+  \Large \textbf{Questions \& Discussion}
+  
+  \vspace{1em}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Key Takeaways}
+        \begin{itemize}
+          \item \textbf{Privacy-Preserving}: Multi-layer protection
+          \item \textbf{Bootstrap Approach}: No labeled data required
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{}
+        \begin{itemize}
+          \item \textbf{Practical Framework}: Real-world applications
+          \item \textbf{Open Research}: Reproducible and extensible
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+  \printbibliography
+\end{frame}
+
+\end{document} 
