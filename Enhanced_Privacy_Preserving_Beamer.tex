@@ -373,28 +373,36 @@
 \end{frame}
 
 % --- Evaluation & Results ---
-\begin{frame}{Evaluation Framework}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Datasets}
+\begin{frame}{Evaluation Framework: Data \& Quality}
+    \begin{block}{1. Datasets: Benchmarking on Real-World Scenarios}
+        \small
+        The framework is evaluated using standard public taxi-route datasets, which are common benchmarks for trajectory analysis and generation research \cite{zhuDiffTrajGeneratingGPS2023}.
         \begin{itemize}
-          \item \textbf{Beijing}: Primary development
-          \item \textbf{Chengdu}: Cross-city validation
-          \item \textbf{Xi'an}: Urban diversity testing
+            \item \textbf{Beijing Taxi Trajectories:} The primary dataset for model development and training.
+            \item \textbf{Chengdu \& Xi'an:} Used for cross-city validation to test the model's generalization capabilities across different urban environments.
         \end{itemize}
-      \end{block}
-    \end{column}
-    \hspace{0.04\textwidth}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Metrics}
-        \begin{itemize}
-          \item \textbf{Detection}: Precision, Recall, F1
-          \item \textbf{Quality}: SDMetrics suite
-          \item \textbf{Privacy}: Attack resistance
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
+    \end{block}
+    
+    \vspace{1em}
+    
+    \begin{block}{2. Quality: Statistical Fidelity}
+        \small
+        We use the \textbf{SDMetrics} library to assess how well the synthetic data captures the statistical properties of the real data, including univariate distributions and bivariate correlations \cite{espinosaQualitySyntheticGenerated2023}.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Evaluation Framework: Utility \& Privacy}
+    \begin{block}{3. Utility: Detection Performance}
+        \small
+        The ultimate test is model utility. We measure \textbf{Precision, Recall, and F1-Score} to evaluate the anomaly detector's performance when trained on the enhanced synthetic dataset \cite{mbuyaTrajectoryAnomalyDetection2024}.
+    \end{block}
+
+    \vspace{1em}
+    
+    \begin{alertblock}{4. Privacy: Resilience to Attacks}
+        \small
+        The framework's privacy is validated by assessing its resilience against common threats, particularly \textbf{Membership Inference Attacks (MIA)}, ensuring that generated data does not leak information about the original training set \cite{buchholzSystematisationKnowledgeTrajectory2024}.
+    \end{alertblock}
 \end{frame}
 
 % --- Key Contributions ---
