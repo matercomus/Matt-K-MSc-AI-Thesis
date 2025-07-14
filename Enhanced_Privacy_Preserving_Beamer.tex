@@ -62,8 +62,8 @@
 \title{Privacy-Preserving Synthetic Trajectory Generation}
 \subtitle{An Integrated DiffTraj-LM-TAD Framework for Taxi Route Anomaly Detection}
 \author{Mateusz Kędzia}
-\institute{MSc Artificial Intelligence \\ Vrije Universiteit Amsterdam}
-\date{Thesis Progress Presentation -- July 2025}
+\institute{MSc AI \\ VUA / BJUT}
+\date{Thesis Methodology Presentation -- July 2025}
 
 % Custom title page
 \defbeamertemplate*{title page}{customized}[1][]
@@ -153,6 +153,46 @@
       \node[below=0.5cm of phase2, font=\scriptsize\color{VUBlue}] {Iterative Refinement};
     \end{tikzpicture}
   \end{center}
+\end{frame}
+
+% --- DiffTraj Slide ---
+\begin{frame}{Core Component 1: DiffTraj}
+    \begin{block}{Generative Trajectory Synthesis \cite{zhuDiffTrajGeneratingGPS2023}}
+        \small
+        DiffTraj uses a diffusion model, a type of generative model, to create realistic, privacy-preserving GPS trajectories.
+        \vspace{1em}
+        \begin{itemize}
+            \item \textbf{Forward Process:} Gradually adds Gaussian noise to real trajectories over many steps, eventually turning them into pure noise.
+            \item \textbf{Reverse Process:} A neural network (Traj-UNet) learns to reverse this process. It takes random noise and, step-by-step, removes the noise to generate a clean, synthetic trajectory.
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.5em}
+    \begin{alertblock}{Key Idea: Privacy from Noise}
+        \centering
+        \small
+        Since synthetic trajectories are generated from random noise, they are not a copy or perturbation of any single real trajectory. This provides strong privacy guarantees by design.
+    \end{alertblock}
+\end{frame}
+
+% --- LM-TAD Slide ---
+\begin{frame}{Core Component 2: LM-TAD}
+    \begin{block}{Anomaly Detection as a Language Problem \cite{mbuyaTrajectoryAnomalyDetection2024}}
+        \small
+        LM-TAD treats trajectories like sentences. Just as a language model learns grammar, LM-TAD learns the "grammar" of normal movement.
+        \vspace{1em}
+        \begin{itemize}
+            \item \textbf{Tokenization:} A trajectory (a sequence of GPS points) is converted into a sequence of discrete tokens, similar to words in a sentence.
+            \item \textbf{Perplexity Scoring:} The model calculates the \textit{perplexity} for a new trajectory. A high perplexity score means the sequence is "surprising" or unlikely, flagging it as a potential anomaly.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.5em}
+    \begin{alertblock}{Key Idea: Anomalies are "Ungrammatical" Trajectories}
+        \centering
+        \small
+        Anomalies are detected because they violate the learned probabilistic rules of normal movement, just like an ungrammatical sentence violates the rules of a language.
+    \end{alertblock}
 \end{frame}
 
 % --- Phase 1 Detail ---
