@@ -27,7 +27,7 @@
 \definecolor{ScienceBlue}{HTML}{0360C8}
 \definecolor{RustyNail}{HTML}{8E4F09}
 \definecolor{RichGold}{HTML}{9C5608}
-\definecolor{LightGray}{HTML}{F8F9FA}
+\definecolor{LightGray}{HTML}{E8E9EA}
 \definecolor{Charcoal}{HTML}{222831}
 
 % Set theme colors
@@ -37,6 +37,8 @@
 \setbeamercolor{alerted text}{fg=RustyNail}
 \setbeamercolor{block title}{bg=AbsoluteZero, fg=white}
 \setbeamercolor{block body}{bg=LightGray, fg=Charcoal}
+\setbeamercolor{alertblock title}{bg=RustyNail, fg=white}
+\setbeamercolor{alertblock body}{bg=LightGray, fg=Charcoal}
 
 % Font settings
 \setmainfont{Liberation Sans}
@@ -209,6 +211,9 @@
   \begin{block}{}
     \centering
     \Large \textbf{White Noise} $\rightarrow$ \textbf{Reverse Denoising} $\rightarrow$ \textbf{Realistic Trajectory}
+    
+    \vspace{0.5em}
+    \small \cite{zhuDiffTrajGeneratingGPS2023}
   \end{block}
   
   \vspace{1em}
@@ -239,6 +244,9 @@
   \begin{block}{}
     \centering
     \Large \textbf{GPS Trajectory} $\rightarrow$ \textbf{Token Sequence} $\rightarrow$ \textbf{Perplexity Score}
+    
+    \vspace{0.5em}
+    \small \cite{mbuyaTrajectoryAnomalyDetection2024}
   \end{block}
   
   \vspace{1em}
@@ -520,7 +528,10 @@
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
-  \printbibliography
+  \begin{block}{}
+    \small
+    \printbibliography[heading=none]
+  \end{block}
 \end{frame}
 
 \end{document} 
