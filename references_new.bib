@@ -95,6 +95,24 @@
   keywords = {Computer Science - Databases}
 }
 
+@misc{chenStabilizedEfficientDiffusion2025,
+  title = {Towards {{Stabilized}} and {{Efficient Diffusion Transformers}} through {{Long-Skip-Connections}} with {{Spectral Constraints}}},
+  author = {Chen, Guanjie and Zhao, Xinyu and Zhou, Yucheng and Qu, Xiaoye and Chen, Tianlong and Cheng, Yu},
+  year = {2025},
+  month = jul,
+  number = {arXiv:2411.17616},
+  eprint = {2411.17616},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2411.17616},
+  url = {http://arxiv.org/abs/2411.17616},
+  urldate = {2025-07-14},
+  abstract = {Diffusion Transformers (DiT) have emerged as a powerful architecture for image and video generation, offering superior quality and scalability. However, their practical application suffers from inherent dynamic feature instability, leading to error amplification during cached inference. Through systematic analysis, we identify the absence of long-range feature preservation mechanisms as the root cause of unstable feature propagation and perturbation sensitivity. To this end, we propose Skip-DiT, an image and video generative DiT variant enhanced with Long-Skip-Connections (LSCs) - the key efficiency component in U-Nets. Theoretical spectral norm and visualization analysis demonstrate how LSCs stabilize feature dynamics. Skip-DiT architecture and its stabilized dynamic feature enable an efficient statical caching mechanism that reuses deep features across timesteps while updating shallow components. Extensive experiments across the image and video generation tasks demonstrate that Skip-DiT achieves: (1) 4.4 times training acceleration and faster convergence, (2) 1.5-2 times inference acceleration with negligible quality loss and high fidelity to the original output, outperforming existing DiT caching methods across various quantitative metrics. Our findings establish Long-Skip-Connections as critical architectural components for stable and efficient diffusion transformers. Codes are provided in the https://github.com/OpenSparseLLMs/Skip-DiT.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/matt/Zotero/storage/AP45EDGJ/Chen et al. - 2025 - Towards Stabilized and Efficient Diffusion Transformers through Long-Skip-Connections with Spectral.pdf;/home/matt/Zotero/storage/BX9WEAT3/2411.html}
+}
+
 @article{chenTemporalContextAwareRoute2021,
   title = {Temporal {{Context-Aware Route Anomaly Detection}} in {{Urban Transportation}}},
   author = {Chen, Jie and Liu, Xiaohui},
@@ -104,6 +122,25 @@
   number = {8},
   pages = {4892--4903},
   publisher = {IEEE}
+}
+
+@misc{chenUnveilingFlawsExploring2024,
+  title = {Unveiling the {{Flaws}}: {{Exploring Imperfections}} in {{Synthetic Data}} and {{Mitigation Strategies}} for {{Large Language Models}}},
+  shorttitle = {Unveiling the {{Flaws}}},
+  author = {Chen, Jie and Zhang, Yupeng and Wang, Bingning and Zhao, Wayne Xin and Wen, Ji-Rong and Chen, Weipeng},
+  year = {2024},
+  month = jun,
+  number = {arXiv:2406.12397},
+  eprint = {2406.12397},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2406.12397},
+  url = {http://arxiv.org/abs/2406.12397},
+  urldate = {2025-07-14},
+  abstract = {Synthetic data has been proposed as a solution to address the issue of high-quality data scarcity in the training of large language models (LLMs). Studies have shown that synthetic data can effectively improve the performance of LLMs on downstream benchmarks. However, despite its potential benefits, our analysis suggests that there may be inherent flaws in synthetic data. The uniform format of synthetic data can lead to pattern overfitting and cause significant shifts in the output distribution, thereby reducing the model's instruction-following capabilities. Our work delves into these specific flaws associated with question-answer (Q-A) pairs, a prevalent type of synthetic data, and presents a method based on unlearning techniques to mitigate these flaws. The empirical results demonstrate the effectiveness of our approach, which can reverse the instruction-following issues caused by pattern overfitting without compromising performance on benchmarks at relatively low cost. Our work has yielded key insights into the effective use of synthetic data, aiming to promote more robust and efficient LLM training.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computation and Language},
+  file = {/home/matt/Zotero/storage/H4AWZSQQ/Chen et al. - 2024 - Unveiling the Flaws Exploring Imperfections in Synthetic Data and Mitigation Strategies for Large L.pdf;/home/matt/Zotero/storage/XTAWUUKB/2406.html}
 }
 
 @article{chuSimulatingHumanMobility2024,
@@ -155,6 +192,25 @@
   file = {/home/matt/Zotero/storage/LWSMVFAZ/Cunningham et al. - 2022 - GeoPointGAN Synthetic Spatial Data with Local Label Differential Privacy.pdf}
 }
 
+@misc{dohmatobTaleTailsModel2024,
+  title = {A {{Tale}} of {{Tails}}: {{Model Collapse}} as a {{Change}} of {{Scaling Laws}}},
+  shorttitle = {A {{Tale}} of {{Tails}}},
+  author = {Dohmatob, Elvis and Feng, Yunzhen and Yang, Pu and Charton, Francois and Kempe, Julia},
+  year = {2024},
+  month = may,
+  number = {arXiv:2402.07043},
+  eprint = {2402.07043},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2402.07043},
+  url = {http://arxiv.org/abs/2402.07043},
+  urldate = {2025-07-14},
+  abstract = {As AI model size grows, neural scaling laws have become a crucial tool to predict the improvements of large models when increasing capacity and the size of original (human or natural) training data. Yet, the widespread use of popular models means that the ecosystem of online data and text will co-evolve to progressively contain increased amounts of synthesized data. In this paper we ask: How will the scaling laws change in the inevitable regime where synthetic data makes its way into the training corpus? Will future models, still improve, or be doomed to degenerate up to total (model) collapse? We develop a theoretical framework of model collapse through the lens of scaling laws. We discover a wide range of decay phenomena, analyzing loss of scaling, shifted scaling with number of generations, the ''un-learning" of skills, and grokking when mixing human and synthesized data. Our theory is validated by large-scale experiments with a transformer on an arithmetic task and text generation using the large language model Llama2.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/UHQB2Y8F/Dohmatob et al. - 2024 - A Tale of Tails Model Collapse as a Change of Scaling Laws.pdf;/home/matt/Zotero/storage/2VQPFKVB/2402.html}
+}
+
 @misc{duarteBenchmarkExistingTools2023,
   title = {A {{Benchmark}} of {{Existing Tools}} for {{Outlier Detection}} and {{Cleaning}} in {{Trajectories}}},
   author = {Duarte, Mariana Machado Garcez and Sakr, Mahmoud},
@@ -201,6 +257,25 @@
   copyright = {https://creativecommons.org/licenses/by/4.0/},
   langid = {english},
   file = {/home/matt/Zotero/storage/IFWNCT7J/Errounda and Liu - 2020 - An Analysis of Differential Privacy Research in Location and Trajectory Data.pdf}
+}
+
+@misc{gerstgrasserModelCollapseInevitable2024,
+  title = {Is {{Model Collapse Inevitable}}? {{Breaking}} the {{Curse}} of {{Recursion}} by {{Accumulating Real}} and {{Synthetic Data}}},
+  shorttitle = {Is {{Model Collapse Inevitable}}?},
+  author = {Gerstgrasser, Matthias and Schaeffer, Rylan and Dey, Apratim and Rafailov, Rafael and Sleight, Henry and Hughes, John and Korbak, Tomasz and Agrawal, Rajashree and Pai, Dhruv and Gromov, Andrey and Roberts, Daniel A. and Yang, Diyi and Donoho, David L. and Koyejo, Sanmi},
+  year = {2024},
+  month = apr,
+  number = {arXiv:2404.01413},
+  eprint = {2404.01413},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2404.01413},
+  url = {http://arxiv.org/abs/2404.01413},
+  urldate = {2025-07-14},
+  abstract = {The proliferation of generative models, combined with pretraining on web-scale data, raises a timely question: what happens when these models are trained on their own generated outputs? Recent investigations into model-data feedback loops proposed that such loops would lead to a phenomenon termed model collapse, under which performance progressively degrades with each model-data feedback iteration until fitted models become useless. However, those studies largely assumed that new data replace old data over time, where an arguably more realistic assumption is that data accumulate over time. In this paper, we ask: what effect does accumulating data have on model collapse? We empirically study this question by pretraining sequences of language models on text corpora. We confirm that replacing the original real data by each generation's synthetic data does indeed tend towards model collapse, then demonstrate that accumulating the successive generations of synthetic data alongside the original real data avoids model collapse; these results hold across a range of model sizes, architectures, and hyperparameters. We obtain similar results for deep generative models on other types of real data: diffusion models for molecule conformation generation and variational autoencoders for image generation. To understand why accumulating data can avoid model collapse, we use an analytically tractable framework introduced by prior work in which a sequence of linear models are fit to the previous models' outputs. Previous work used this framework to show that if data are replaced, the test error increases with the number of model-fitting iterations; we extend this argument to prove that if data instead accumulate, the test error has a finite upper bound independent of the number of iterations, meaning model collapse no longer occurs.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Emerging Technologies,Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/home/matt/Zotero/storage/22QJHIVC/Gerstgrasser et al. - 2024 - Is Model Collapse Inevitable Breaking the Curse of Recursion by Accumulating Real and Synthetic Dat.pdf;/home/matt/Zotero/storage/W4NCGIBJ/2404.html}
 }
 
 @misc{gotoPrivacyPreservingTaxiDemandPrediction2023,
@@ -388,6 +463,25 @@
   copyright = {https://www.acm.org/publications/policies/copyright\_policy\#Background},
   langid = {english},
   file = {/home/matt/Zotero/storage/UVER2AST/Hu et al. - 2024 - Context-aware Trajectory Anomaly Detection.pdf}
+}
+
+@misc{huMultimodalSyntheticData2025,
+  title = {Multi-Modal {{Synthetic Data Training}} and {{Model Collapse}}: {{Insights}} from {{VLMs}} and {{Diffusion Models}}},
+  shorttitle = {Multi-Modal {{Synthetic Data Training}} and {{Model Collapse}}},
+  author = {Hu, Zizhao and Rostami, Mohammad and Thomason, Jesse},
+  year = {2025},
+  month = may,
+  number = {arXiv:2505.08803},
+  eprint = {2505.08803},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2505.08803},
+  url = {http://arxiv.org/abs/2505.08803},
+  urldate = {2025-07-14},
+  abstract = {Recent research has highlighted the risk of generative model collapse, where performance progressively degrades when continually trained on self-generated data. However, existing exploration on model collapse is limited to single, unimodal models, limiting our understanding in more realistic scenarios, such as diverse multi-modal AI agents interacting autonomously through synthetic data and continually evolving. We expand the synthetic data training and model collapse study to multi-modal vision-language generative systems, such as vision-language models (VLMs) and text-to-image diffusion models, as well as recursive generate-train loops with multiple models. We find that model collapse, previously observed in single-modality generative models, exhibits distinct characteristics in the multi-modal context, such as improved vision-language alignment and increased variance in VLM image-captioning task. Additionally, we find that general approaches such as increased decoding budgets, greater model diversity, and relabeling with frozen models can effectively mitigate model collapse. Our findings provide initial insights and practical guidelines for reducing the risk of model collapse in self-improving multi-agent AI systems and curating robust multi-modal synthetic datasets.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/WCQY6PX5/Hu et al. - 2025 - Multi-modal Synthetic Data Training and Model Collapse Insights from VLMs and Diffusion Models.pdf;/home/matt/Zotero/storage/65XMS53F/2505.html}
 }
 
 @article{huRealtimeTaxiSpatial2024,
@@ -1065,6 +1159,25 @@
   file = {/home/matt/Zotero/storage/E4AVHTNG/Saadallah et al. - 2020 - BRIGHT—Drift-Aware Demand Predictions for Taxi Networks.pdf}
 }
 
+@misc{seddikHowBadTraining2024,
+  title = {How {{Bad}} Is {{Training}} on {{Synthetic Data}}? {{A Statistical Analysis}} of {{Language Model Collapse}}},
+  shorttitle = {How {{Bad}} Is {{Training}} on {{Synthetic Data}}?},
+  author = {Seddik, Mohamed El Amine and Chen, Suei-Wen and Hayou, Soufiane and Youssef, Pierre and Debbah, Merouane},
+  year = {2024},
+  month = apr,
+  number = {arXiv:2404.05090},
+  eprint = {2404.05090},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2404.05090},
+  url = {http://arxiv.org/abs/2404.05090},
+  urldate = {2025-07-14},
+  abstract = {The phenomenon of model collapse, introduced in (Shumailov et al., 2023), refers to the deterioration in performance that occurs when new models are trained on synthetic data generated from previously trained models. This recursive training loop makes the tails of the original distribution disappear, thereby making future-generation models forget about the initial (real) distribution. With the aim of rigorously understanding model collapse in language models, we consider in this paper a statistical model that allows us to characterize the impact of various recursive training scenarios. Specifically, we demonstrate that model collapse cannot be avoided when training solely on synthetic data. However, when mixing both real and synthetic data, we provide an estimate of a maximal amount of synthetic data below which model collapse can eventually be avoided. Our theoretical conclusions are further supported by empirical validations.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/XSDWKXL5/Seddik et al. - 2024 - How Bad is Training on Synthetic Data A Statistical Analysis of Language Model Collapse.pdf;/home/matt/Zotero/storage/8ZDM4638/2404.html}
+}
+
 @article{shenTTPNetNeuralNetwork2022,
   title = {{{TTPNet}}: {{A Neural Network}} for {{Travel Time Prediction Based}} on {{Tensor Decomposition}} and {{Graph Embedding}}},
   shorttitle = {{{TTPNet}}},
@@ -1427,6 +1540,25 @@
   file = {/home/matt/Zotero/storage/IRNYNUGT/Xia et al. - 2023 - Short-Term Traffic Flow Prediction Based on Graph Convolutional Networks and Federated Learning.pdf}
 }
 
+@misc{xuFasterTrainingDiffusion2024,
+  title = {Towards {{Faster Training}} of {{Diffusion Models}}: {{An Inspiration}} of {{A Consistency Phenomenon}}},
+  shorttitle = {Towards {{Faster Training}} of {{Diffusion Models}}},
+  author = {Xu, Tianshuo and Mi, Peng and Wang, Ruilin and Chen, Yingcong},
+  year = {2024},
+  month = mar,
+  number = {arXiv:2404.07946},
+  eprint = {2404.07946},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2404.07946},
+  url = {http://arxiv.org/abs/2404.07946},
+  urldate = {2025-07-14},
+  abstract = {Diffusion models (DMs) are a powerful generative framework that have attracted significant attention in recent years. However, the high computational cost of training DMs limits their practical applications. In this paper, we start with a consistency phenomenon of DMs: we observe that DMs with different initializations or even different architectures can produce very similar outputs given the same noise inputs, which is rare in other generative models. We attribute this phenomenon to two factors: (1) the learning difficulty of DMs is lower when the noise-prediction diffusion model approaches the upper bound of the timestep (the input becomes pure noise), where the structural information of the output is usually generated; and (2) the loss landscape of DMs is highly smooth, which implies that the model tends to converge to similar local minima and exhibit similar behavior patterns. This finding not only reveals the stability of DMs, but also inspires us to devise two strategies to accelerate the training of DMs. First, we propose a curriculum learning based timestep schedule, which leverages the noise rate as an explicit indicator of the learning difficulty and gradually reduces the training frequency of easier timesteps, thus improving the training efficiency. Second, we propose a momentum decay strategy, which reduces the momentum coefficient during the optimization process, as the large momentum may hinder the convergence speed and cause oscillations due to the smoothness of the loss landscape. We demonstrate the effectiveness of our proposed strategies on various models and show that they can significantly reduce the training time and improve the quality of the generated images.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/YYH8STNC/Xu et al. - 2024 - Towards Faster Training of Diffusion Models An Inspiration of A Consistency Phenomenon.pdf;/home/matt/Zotero/storage/Z77RSHGS/2404.html}
+}
+
 @article{yin2016vehicle,
   title = {{智能视频分析的车辆异常行为检测方法}},
   author = {YIN, Hong-peng and LI, Yan-xia and ZHOU, Jia-yi and CHAI, Yi},
@@ -1498,6 +1630,25 @@
   doi = {10.1145/3716892}
 }
 
+@misc{zhangGeneratingGeneratedApproach2025,
+  title = {Generating on {{Generated}}: {{An Approach Towards Self-Evolving Diffusion Models}}},
+  shorttitle = {Generating on {{Generated}}},
+  author = {Zhang, Xulu and Wei, Xiaoyong and Wu, Jinlin and Wu, Jiaxin and Zhang, Zhaoxiang and Lei, Zhen and Li, Qing},
+  year = {2025},
+  month = feb,
+  number = {arXiv:2502.09963},
+  eprint = {2502.09963},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2502.09963},
+  url = {http://arxiv.org/abs/2502.09963},
+  urldate = {2025-07-14},
+  abstract = {Recursive Self-Improvement (RSI) enables intelligence systems to autonomously refine their capabilities. This paper explores the application of RSI in text-to-image diffusion models, addressing the challenge of training collapse caused by synthetic data. We identify two key factors contributing to this collapse: the lack of perceptual alignment and the accumulation of generative hallucinations. To mitigate these issues, we propose three strategies: (1) a prompt construction and filtering pipeline designed to facilitate the generation of perceptual aligned data, (2) a preference sampling method to identify human-preferred samples and filter out generative hallucinations, and (3) a distribution-based weighting scheme to penalize selected samples with hallucinatory errors. Our extensive experiments validate the effectiveness of these approaches.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/matt/Zotero/storage/4LKELI5E/Zhang et al. - 2025 - Generating on Generated An Approach Towards Self-Evolving Diffusion Models.pdf;/home/matt/Zotero/storage/RBMFK7YQ/2502.html}
+}
+
 @inproceedings{zhangIBATDetectingAnomalous2011,
   title = {{{iBAT}}: Detecting Anomalous Taxi Trajectories from {{GPS}} Traces},
   shorttitle = {{{iBAT}}},
@@ -1562,4 +1713,22 @@
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning},
   file = {/home/matt/Zotero/storage/CHXQ38B3/Zhu et al. - 2023 - DiffTraj Generating GPS Trajectory with Diffusion Probabilistic Model.pdf;/home/matt/Zotero/storage/UGAS7RGE/2304.html}
+}
+
+@misc{zhuHowSynthesizeText2025,
+  title = {How to {{Synthesize Text Data}} without {{Model Collapse}}?},
+  author = {Zhu, Xuekai and Cheng, Daixuan and Li, Hengli and Zhang, Kaiyan and Hua, Ermo and Lv, Xingtai and Ding, Ning and Lin, Zhouhan and Zheng, Zilong and Zhou, Bowen},
+  year = {2025},
+  month = may,
+  number = {arXiv:2412.14689},
+  eprint = {2412.14689},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2412.14689},
+  url = {http://arxiv.org/abs/2412.14689},
+  urldate = {2025-07-14},
+  abstract = {Model collapse in synthetic data indicates that iterative training on self-generated data leads to a gradual decline in performance. With the proliferation of AI models, synthetic data will fundamentally reshape the web data ecosystem. Future GPT-\${\textbackslash}\{n{\textbackslash}\}\$ models will inevitably be trained on a blend of synthetic and human-produced data. In this paper, we focus on two questions: what is the impact of synthetic data on language model training, and how to synthesize data without model collapse? We first pre-train language models across different proportions of synthetic data, revealing a negative correlation between the proportion of synthetic data and model performance. We further conduct statistical analysis on synthetic data to uncover distributional shift phenomenon and over-concentration of n-gram features. Inspired by the above findings, we propose token editing on human-produced data to obtain semi-synthetic data. As a proof of concept, we theoretically demonstrate that token-level editing can prevent model collapse, as the test error is constrained by a finite upper bound. We conduct extensive experiments on pre-training from scratch, continual pre-training, and supervised fine-tuning. The results validate our theoretical proof that token-level editing improves model performance.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/SGNRW2E3/Zhu et al. - 2025 - How to Synthesize Text Data without Model Collapse.pdf;/home/matt/Zotero/storage/FXTUXBXW/2412.html}
 }
