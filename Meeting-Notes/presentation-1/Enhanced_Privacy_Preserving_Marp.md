@@ -5,6 +5,28 @@ paginate: true
 size: 16:9
 header: 'Privacy-Preserving Synthetic Trajectory Generation | Mateusz Kędzia'
 footer: 'MSc AI Thesis | July 2025'
+style: |
+  section {
+    font-size: 22px;
+  }
+  h1 {
+    font-size: 34px;
+  }
+  h2 {
+    font-size: 30px;
+  }
+  h3 {
+    font-size: 26px;
+  }
+  ul, ol {
+    font-size: 20px;
+  }
+  table {
+    font-size: 18px;
+  }
+  blockquote {
+    font-size: 20px;
+  }
 ---
 
 <!-- _class: lead -->
