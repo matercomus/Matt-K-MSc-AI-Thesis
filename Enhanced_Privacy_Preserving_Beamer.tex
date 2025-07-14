@@ -123,12 +123,18 @@
   \end{alertblock}
   
   \vspace{1em}
-  \begin{block}{Our Solution: Bootstrap Approach}
+  \begin{block}{Solution: A Self-Sufficient Data Generation Cycle}
     \centering
-    \textbf{Privacy by Design} + \textbf{High Utility} + \textbf{Anomaly Detection Ready}
+    Resolve the paradox by creating labeled anomaly data from a private, synthetic source.
+    \vspace{1em}
     
-    \vspace{0.5em}
-    \textit{``Bootstraps anomaly generation without pre-labeled dataset''}
+    \begin{tikzpicture}[node distance=0.2cm, every node/.style={font=\large}]
+      \node (private) {\textbf{\color{ScienceBlue}Private Data}};
+      \node[right=of private] (arrow1) {$\boldsymbol{\rightarrow}$};
+      \node[right=of arrow1] (anomalous) {\textbf{\color{RustyNail}Mined Anomalies}};
+      \node[right=of anomalous] (arrow2) {$\boldsymbol{\rightarrow}$};
+      \node[right=of arrow2] (utility) {\textbf{\color{AbsoluteZero}High-Utility Model}};
+    \end{tikzpicture}
   \end{block}
 \end{frame}
 
@@ -250,7 +256,7 @@
   \end{center}
   
   \vspace{1em}
-  \begin{block}{Unsupervised Detection}
+  \begin{block}{Self-supervised Detection}
     LM-TAD treats trajectories as token sequences, identifying anomalies through language modeling perplexity
   \end{block}
 \end{frame}
@@ -267,7 +273,7 @@
     ]
       \node[data] (normal) {\textbf{Synthetic}\\Normal};
       \node[data, below=1cm of normal] (anomaly) {\textbf{Labeled}\\Anomalies};
-      \node[process, right=3cm of normal] (retrain) {\textbf{Retrain}\\DiffTraj};
+      \node[process, right=3cm of normal] (retrain) {\textbf{Controlled}\\Retraining};
       \node[data, right=of retrain] (output) {\textbf{Enhanced}\\Model};
       \draw[arrow] (normal) -- (retrain);
       \draw[arrow] (anomaly) -- (retrain);
@@ -278,9 +284,14 @@
     \end{tikzpicture}
   \end{center}
   \vspace{1em}
-  \begin{block}{Iterative Improvement}
-    Enhanced model generates both normal and anomalous trajectories with improved diversity and realism
-  \end{block}
+  \begin{alertblock}{Controlled Iterative Improvement}
+    \small
+    The model is enhanced, but requires strict controls to prevent degradation:
+    \begin{itemize}
+        \item \textbf{Limited Cycles:} Iterate only 3-5 times to avoid quality decay and exponential data needs \cite{seddikHowBadTraining2024}.
+        \item \textbf{Monitor Stability:} Continuously watch for model collapse, where the generator forgets diversity and produces low-quality samples \cite{gerstgrasserModelCollapseInevitable2024}.
+    \end{itemize}
+  \end{alertblock}
 \end{frame}
 
 % --- Rule-Based Anomaly Classification ---
