@@ -4,6 +4,7 @@
 \usepackage{fontspec}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usetikzlibrary{positioning}
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -19,20 +20,23 @@
 \usetheme{Boadilla}
 \usecolortheme{default}
 
-% Define modern colors
-\definecolor{VUBlue}{RGB}{0,87,183}
-\definecolor{VUOrange}{RGB}{255,127,0}
-\definecolor{DarkGray}{RGB}{64,64,64}
-\definecolor{LightGray}{RGB}{240,240,240}
-\definecolor{AccentBlue}{RGB}{0,120,215}
+% Define complementary palette based on VU Blue
+\definecolor{VUBlue}{HTML}{0057B7}
+\definecolor{Endeavour}{HTML}{0754AA}
+\definecolor{AbsoluteZero}{HTML}{055AB9}
+\definecolor{ScienceBlue}{HTML}{0360C8}
+\definecolor{RustyNail}{HTML}{8E4F09}
+\definecolor{RichGold}{HTML}{9C5608}
+\definecolor{LightGray}{HTML}{F8F9FA}
+\definecolor{Charcoal}{HTML}{222831}
 
 % Set theme colors
 \setbeamercolor{frametitle}{bg=VUBlue, fg=white}
 \setbeamercolor{title}{fg=VUBlue}
-\setbeamercolor{structure}{fg=VUBlue}
-\setbeamercolor{alerted text}{fg=VUOrange}
-\setbeamercolor{block title}{bg=VUBlue, fg=white}
-\setbeamercolor{block body}{bg=LightGray}
+\setbeamercolor{structure}{fg=ScienceBlue}
+\setbeamercolor{alerted text}{fg=RustyNail}
+\setbeamercolor{block title}{bg=AbsoluteZero, fg=white}
+\setbeamercolor{block body}{bg=LightGray, fg=Charcoal}
 
 % Font settings
 \setmainfont{Liberation Sans}
@@ -40,9 +44,9 @@
 \setmonofont{Liberation Mono}[Scale=0.9]
 
 % Custom commands
-\newcommand{\highlight}[1]{\textcolor{VUOrange}{\textbf{#1}}}
+\newcommand{\highlight}[1]{\textcolor{RustyNail}{\textbf{#1}}}
 \newcommand{\code}[1]{\texttt{\small #1}}
-\newcommand{\phase}[1]{\textcolor{AccentBlue}{\textbf{Phase #1}}}
+\newcommand{\phase}[1]{\textcolor{ScienceBlue}{\textbf{Phase #1}}}
 
 % Configure listings
 \lstset{
@@ -90,68 +94,105 @@
 
 \begin{document}
 
-\begin{frame}
-  \titlepage
-\end{frame}
-
-\begin{frame}{The Core Challenge}
-  \begin{alertblock}{Privacy vs. Utility Paradox}
-    \begin{itemize}
-      \item \highlight{High Utility Data}: Trajectory data is incredibly valuable for research
-      \item \highlight{High Privacy Risk}: Personally identifiable location patterns
-      \item \highlight{Traditional Trade-off}: Privacy protection destroys spatio-temporal patterns
-    \end{itemize}
-  \end{alertblock}
+% --- Redesigned Title Slide ---
+\begin{frame}[plain]
+  \vspace{1.5cm}
+  \centering
+  {\usebeamerfont{title}\color{VUBlue}\Huge\textbf{Privacy-Preserving Synthetic Trajectory Generation}}
+  
+  \vspace{0.5em}
+  {\usebeamerfont{subtitle}\color{RichGold}\Large An Integrated DiffTraj-LM-TAD Framework}
+  
+  \vspace{1.5em}
+  {\usebeamerfont{author}\large Mateusz Kędzia}
+  
+  \vspace{0.5em}
+  {\usebeamerfont{institute}\normalsize MSc Artificial Intelligence \\ Vrije Universiteit Amsterdam}
   
   \vspace{1em}
-  \begin{center}
-    \large\textit{``Standard privacy methods degrade spatio-temporal patterns needed for anomaly detection''}
-  \end{center}
+  {\usebeamerfont{date}\small Thesis Progress Presentation -- July 2025}
 \end{frame}
 
-\begin{frame}{Research Gap}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \begin{block}{Key Problems}
-        \begin{itemize}
-          \item \textbf{Data Scarcity}: Limited access to real trajectory datasets
-          \item \textbf{Privacy Barriers}: Sensitive location information blocks research
-          \item \textbf{Detection Limitations}: Need preserved patterns for effective anomaly detection
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \begin{alertblock}{Our Innovation}
-        \centering
-        \textbf{Privacy by Design} \\
-        $+$ \\
-        \textbf{High Utility} \\
-        $+$ \\
-        \textbf{Anomaly Detection Ready}
+% --- Redesigned Core Challenge Slide ---
+\begin{frame}{The Core Challenge}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.6\textwidth}
+      \begin{alertblock}{Privacy vs. Utility}
+        \vspace{0.5em}
+        \highlight{High Utility}: Trajectory data = valuable insights \\
+        \highlight{High Risk}: Location patterns = privacy threat \\
+        \vspace{0.5em}
+        \textcolor{Charcoal}{\small Standard privacy methods degrade spatio-temporal patterns}
       \end{alertblock}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.7]
+        % Privacy vs Utility scale
+        \draw[thick] (0,0) -- (3,0);
+        \draw[fill=VUBlue] (0,0) circle (0.15);
+        \draw[fill=RichGold] (3,0) circle (0.15);
+        \node[below] at (0,0) {\scriptsize Privacy};
+        \node[below] at (3,0) {\scriptsize Utility};
+        \draw[thick,->,VUBlue] (1.5,0.2) -- (1.5,0.7);
+        \node[above,VUBlue] at (1.5,0.7) {\scriptsize Trade-off};
+      \end{tikzpicture}
     \end{column}
   \end{columns}
 \end{frame}
 
+% --- Redesigned Research Gap Slide ---
+\begin{frame}{Research Gap}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Key Problems}
+        \begin{itemize}
+          \item \highlight{Data Scarcity}
+          \item \highlight{Privacy Barriers}
+          \item \highlight{Detection Limitations}
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \hspace{0.04\textwidth}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Our Innovation}
+        \centering
+        \textbf{Privacy by Design} $\rightarrow$ \textbf{High Utility} $\rightarrow$ \textbf{Anomaly Detection Ready}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% --- Redesigned Solution Slide with Diagram ---
 \begin{frame}{The Solution: 3-Phase Framework}
   \begin{block}{Framework Overview}
     \centering
-    \phase{1}: Normal Baseline $\rightarrow$ \phase{2}: Anomaly Mining $\rightarrow$ \phase{3}: Enhanced Model
+    \phase{1}: Baseline $\rightarrow$ \phase{2}: Anomaly Mining $\rightarrow$ \phase{3}: Enhanced Model
   \end{block}
-  
   \vspace{1em}
-  \begin{table}[h]
-    \centering
-    \begin{tabular}{cll}
-      \toprule
-      \textbf{Phase} & \textbf{Input} & \textbf{Output} \\
-      \midrule
-      \textbf{1} & Real normal data & \code{synthetic\_normal} \\
-      \textbf{2} & Synthetic normal & Labeled anomalies \\
-      \textbf{3} & Normal + Anomalies & Enhanced model \\
-      \bottomrule
-    \end{tabular}
-  \end{table}
+  \begin{center}
+    \begin{tikzpicture}[node distance=2.5cm, every node/.style={align=center}]
+      % Nodes
+      \node[draw, fill=LightGray, rounded corners, minimum width=2.5cm, minimum height=1cm] (phase1) {\phase{1}\\\scriptsize Synthetic Normal};
+      \node[draw, fill=LightGray, rounded corners, right=of phase1, minimum width=2.5cm, minimum height=1cm] (phase2) {\phase{2}\\\scriptsize Anomaly Mining};
+      \node[draw, fill=LightGray, rounded corners, right=of phase2, minimum width=2.5cm, minimum height=1cm] (phase3) {\phase{3}\\\scriptsize Enhanced Model};
+      % Arrows
+      \draw[thick, VUBlue,->] (phase1) -- (phase2);
+      \draw[thick, VUBlue,->] (phase2) -- (phase3);
+    \end{tikzpicture}
+  \end{center}
+  \vspace{1em}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.33\textwidth}
+      \centering\scriptsize Real Data $\rightarrow$ DiffTraj
+    \end{column}
+    \begin{column}{0.33\textwidth}
+      \centering\scriptsize LM-TAD $+$ Curation
+    \end{column}
+    \begin{column}{0.33\textwidth}
+      \centering\scriptsize Retrain $+$ Refine
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Key Innovation: Bootstrap Approach}
@@ -257,32 +298,6 @@
           \item Efficient attention caching
         \end{itemize}
       \end{alertblock}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Core Framework: SOEL \cite{liDeepAnomalyDetection2023}}
-  \begin{block}{Smart Anomaly Selection}
-    \centering
-    \textit{``Selecting informative data points for expert feedback''}
-  \end{block}
-  
-  \vspace{1em}
-  \begin{columns}
-    \begin{column}{0.6\textwidth}
-      \begin{block}{Process}
-        \centering
-        \textbf{Feature Extraction} $\rightarrow$ \textbf{k-means++} $\rightarrow$ \textbf{Diverse Candidates}
-      \end{block}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-      \begin{block}{Benefits}
-        \begin{itemize}
-          \item \textbf{Optimal Coverage}: Maximizes diversity
-          \item \textbf{Labeling Efficiency}: Most information from limited labels
-          \item \textbf{Proven Theory}: Conditions for generalization
-        \end{itemize}
-      \end{block}
     \end{column}
   \end{columns}
 \end{frame}
@@ -451,7 +466,7 @@
 \begin{frame}{Project Timeline}
   \begin{block}{Implementation Progress}
     \begin{itemize}
-      \item \phase{1}: \textcolor{VUOrange}{\textbf{In Progress}} (baseline DiffTraj)
+      \item \phase{1}: \textcolor{AbsoluteZero}{\textbf{In Progress}} (baseline DiffTraj)
       \item \phase{2}: \textbf{Planned} (LM-TAD integration)
       \item \phase{3}: \textbf{Planned} (iterative refinement)
     \end{itemize}
