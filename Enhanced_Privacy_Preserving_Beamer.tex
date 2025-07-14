@@ -348,7 +348,7 @@
         \small
         The framework's iterative process is designed to prevent privacy erosion and utility decay over time.
         \begin{itemize}
-            \item \textbf{Data Accumulation:} Real data is always preserved. Synthetic data is added, never replacing the original, which is a key strategy to prevent model collapse and information loss \cite{gerstgrasserModelCollapseInevitable2024}.
+            \item \textbf{Data Accumulation:} Preserving the original real data in all training cycles prevents model collapse. This ensures the model continues to \textbf{generalize} rather than \textbf{memorize} specific training instances, which would pose a direct privacy risk \cite{gerstgrasserModelCollapseInevitable2024}.
         \end{itemize}
     \end{block}
 \end{frame}
