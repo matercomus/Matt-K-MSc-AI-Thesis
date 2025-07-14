@@ -225,27 +225,44 @@
       process/.style={draw, fill=AbsoluteZero, text=white, rounded corners, minimum width=2.5cm, minimum height=1cm},
       arrow/.style={thick, VUBlue, ->, >=stealth}
     ]
-      
       \node[data] (normal) {\textbf{Synthetic}\\Normal};
       \node[data, below=1cm of normal] (anomaly) {\textbf{Labeled}\\Anomalies};
       \node[process, right=3cm of normal] (retrain) {\textbf{Retrain}\\DiffTraj};
       \node[data, right=of retrain] (output) {\textbf{Enhanced}\\Model};
-      
       \draw[arrow] (normal) -- (retrain);
       \draw[arrow] (anomaly) -- (retrain);
       \draw[arrow] (retrain) -- (output);
-      
       % Merge indicator
       \node[above=0.3cm of retrain, font=\scriptsize] {5-10\% anomalies};
-      \node[below=0.3cm of output, font=\scriptsize] {Conditional generation};
-      
+      \node[below=0.3cm of output, font=\scriptsize] {Conditional generation \cite{wangDetectingAnomalousTrajectories2018}};
     \end{tikzpicture}
   \end{center}
-  
   \vspace{1em}
   \begin{block}{Iterative Improvement}
     Enhanced model generates both normal and anomalous trajectories with improved diversity and realism
   \end{block}
+\end{frame}
+
+% --- Rule-Based Anomaly Classification ---
+\begin{frame}{Rule-Based Anomaly Classification}
+  \begin{block}{Four Anomalous Behavior Patterns \cite{wangDetectingAnomalousTrajectories2018}}
+    \small
+    Given anomalous trajectory $A_r$ with length $AL_r$ and time $AT_r$, and normal trajectory averages $NL_{value}$ and $NT_{value}$:
+    
+    \vspace{0.5em}
+    \begin{itemize}
+      \item \textbf{Abp1}: $AL_r \leq NL_{value} + L_\rho$ and $AT_r \leq NT_{value} + T_\rho$
+      \item \textbf{Abp2}: $AL_r \leq NL_{value} + L_\rho$ and $AT_r > NT_{value} + T_\rho$  
+      \item \textbf{Abp3}: $AL_r > NL_{value} + L_\rho$ and $AT_r \leq NT_{value} + T_\rho$
+      \item \textbf{Abp4}: $AL_r > NL_{value} + L_\rho$ and $AT_r > NT_{value} + T_\rho$
+    \end{itemize}
+  \end{block}
+  
+  \vspace{0.5em}
+  \begin{alertblock}{Pattern Interpretation}
+    \footnotesize
+    \textbf{Abp1}: Efficient routes (rush hour alternatives) | \textbf{Abp2}: Traffic delays | \textbf{Abp3}: Fast detours | \textbf{Abp4}: Fraudulent behavior
+  \end{alertblock}
 \end{frame}
 
 % --- Privacy Framework ---
@@ -333,10 +350,8 @@
 
 % --- References ---
 \begin{frame}[allowframebreaks]{References}
-  \begin{block}{}
-    \footnotesize
-    \printbibliography[heading=none]
-  \end{block}
+  \footnotesize
+  \printbibliography[heading=none]
 \end{frame}
 
 \end{document} 
