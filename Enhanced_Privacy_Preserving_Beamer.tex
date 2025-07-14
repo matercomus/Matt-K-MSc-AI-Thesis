@@ -348,7 +348,7 @@
         \small
         The framework's iterative process is designed to prevent privacy erosion and utility decay over time.
         \begin{itemize}
-            \item \textbf{Data Accumulation:} Real data is always preserved. We only add synthetic data, never replace the original, which is a key strategy to prevent model collapse and information loss \cite{gerstgrasserModelCollapseInevitable2024}.
+            \item \textbf{Data Accumulation:} Real data is always preserved. Synthetic data is added, never replacing the original, which is a key strategy to prevent model collapse and information loss \cite{gerstgrasserModelCollapseInevitable2024}.
         \end{itemize}
     \end{block}
 \end{frame}
@@ -387,14 +387,14 @@
     
     \begin{block}{2. Quality: Statistical Fidelity}
         \small
-        We use the \textbf{SDMetrics} library to assess how well the synthetic data captures the statistical properties of the real data, including univariate distributions and bivariate correlations \cite{espinosaQualitySyntheticGenerated2023}.
+        The \textbf{SDMetrics} library is used to assess how well the synthetic data captures the statistical properties of the real data, including univariate distributions and bivariate correlations \cite{espinosaQualitySyntheticGenerated2023}.
     \end{block}
 \end{frame}
 
 \begin{frame}{Evaluation Framework: Utility \& Privacy}
     \begin{block}{3. Utility: Detection Performance}
         \small
-        The ultimate test is model utility. We measure \textbf{Precision, Recall, and F1-Score} to evaluate the anomaly detector's performance when trained on the enhanced synthetic dataset \cite{mbuyaTrajectoryAnomalyDetection2024}.
+        The ultimate test is model utility. \textbf{Precision, Recall, and F1-Score} are measured to evaluate the anomaly detector's performance when trained on the enhanced synthetic dataset \cite{mbuyaTrajectoryAnomalyDetection2024}.
     \end{block}
 
     \vspace{1em}
