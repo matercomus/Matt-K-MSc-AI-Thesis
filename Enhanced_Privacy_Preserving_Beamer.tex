@@ -332,30 +332,44 @@
   \end{alertblock}
 \end{frame}
 
-% --- Privacy Framework ---
-\begin{frame}{Privacy-by-Design Framework}
-  \begin{center}
-    \begin{tikzpicture}[scale=0.8]
-      % Two layers only, focus on sampling
-      \draw[fill=LightGray, draw=ScienceBlue, thick, rounded corners] (0,2) rectangle (10,3.5);
-      \node at (5,2.75) {\large\textbf{Layer 1: Trajectory-Level Protection}};
-      \draw[fill=LightGray, draw=VUBlue, thick, rounded corners] (0,0) rectangle (10,1.5);
-      \node at (5,0.75) {\large\textbf{Layer 2: Noise-Based Decoupling}};
-      % Privacy notes
-      \node[right] at (10.2,2.75) {\footnotesize Entire trajectory as privacy unit};
-      \node[right] at (10.2,0.75) {\footnotesize Generation from random noise};
-    \end{tikzpicture}
-  \end{center}
-  \vspace{1em}
-  \begin{block}{Research-Backed Privacy Guarantees}
-    \small
-    \begin{itemize}
-      \item Privacy achieved by generating synthetic trajectories from random noise, decoupling outputs from individual real trajectories
-      \item Original data preserved; synthetic data only added, never substituted to prevent information leakage
-      \item Controlled synthetic content (<5\%) maintains privacy-utility balance
-      \item Multi-layer defense prevents membership inference and reconstruction attacks \cite{buchholzSystematisationKnowledgeTrajectory2024}
-    \end{itemize}
-  \end{block}
+% --- Privacy Framework Part 1 ---
+\begin{frame}{Privacy Framework: Generative \& Architectural Defenses}
+    \begin{block}{1. Generative Privacy: Decoupling from Real Data}
+        \small
+        The core privacy guarantee comes from the generative nature of the DiffTraj model, which breaks the link between synthetic outputs and real inputs.
+        \begin{itemize}
+            \item \textbf{Generation from Noise:} Synthetic trajectories are built from random noise, not by perturbing real trajectories. This prevents direct re-identification \cite{zhuDiffTrajGeneratingGPS2023}.
+            \item \textbf{Instance-Level Privacy Unit:} The model operates on entire trajectories, not individual locations, protecting against correlation attacks that exploit intra-trajectory patterns \cite{buchholzSystematisationKnowledgeTrajectory2024}.
+        \end{itemize}
+    \end{block}
+    
+    \vspace{1em}
+    \begin{block}{2. Architectural Defense: Preventing Model Collapse}
+        \small
+        The framework's iterative process is designed to prevent privacy erosion and utility decay over time.
+        \begin{itemize}
+            \item \textbf{Data Accumulation:} Real data is always preserved. We only add synthetic data, never replace the original, which is a key strategy to prevent model collapse and information loss \cite{gerstgrasserModelCollapseInevitable2024}.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% --- Privacy Framework Part 2 ---
+\begin{frame}{Privacy Framework: Threat Mitigation}
+    \begin{alertblock}{3. Practical Defense: Resisting Known Attacks}
+        \small
+        The framework provides resilience against two primary privacy threats for trajectory data \cite{buchholzSystematisationKnowledgeTrajectory2024}:
+        \begin{itemize}
+            \item \textbf{Membership Inference Attacks (MIA):} Because synthetic data is decoupled, an attacker cannot easily determine if a real trajectory was in the training set.
+            \item \textbf{Attribute Inference Attacks (AIA):} The model learns general patterns, not individual-specific details, making it hard to infer sensitive attributes from the output.
+        \end{itemize}
+    \end{alertblock}
+
+    \vspace{1em}
+    \begin{block}{Summary: Multi-Layered Privacy}
+      \centering
+      \large
+      This approach combines generative, architectural, and practical defenses to create a robust, privacy-by-design solution.
+    \end{block}
 \end{frame}
 
 % --- Evaluation & Results ---
