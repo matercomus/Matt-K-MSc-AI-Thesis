@@ -458,11 +458,15 @@ The dataset used in this study consisted of Beijing taxi GPS data collected betw
 
 \subsection{Raw Data Statistics and Characteristics}
 \label{sec:raw-data}
-The Beijing taxi GPS dataset exhibits substantial scale and complexity characteristics essential for comprehensive trajectory analysis. Daily data volumes averaged [DATA\_SIZE\_GB]GB, containing approximately [NUM\_GPS\_RECORDS] GPS records from over [NUM\_VEHICLES] active taxi vehicles. The temporal sampling rate varied between [MIN\_SAMPLING\_RATE]--[MAX\_SAMPLING\_RATE] second intervals, creating challenges for consistent trajectory reconstruction that influenced our preprocessing approach.
 
-Basic statistical analysis revealed significant variation in trajectory characteristics: trip durations ranged from [MIN\_TRIP\_DURATION] minutes to over [MAX\_TRIP\_DURATION] hours (median: [MEDIAN\_TRIP\_DURATION] minutes), while trip distances varied from [MIN\_TRIP\_DISTANCE]km to [MAX\_TRIP\_DISTANCE]km (median: [MEDIAN\_TRIP\_DISTANCE]km). Spatial coverage encompassed the greater Beijing metropolitan area (approximately [TOTAL\_AREA] km²), with [URBAN\_CORE\_PERCENTAGE]\% of trajectories concentrated within the urban core region defined by the 5th ring road.
-
-Temporal distribution analysis showed clear diurnal patterns with peak activity periods from [MORNING\_PEAK\_START]--[MORNING\_PEAK\_END] AM and [EVENING\_PEAK\_START]--[EVENING\_PEAK\_END] PM, consistent with commuting patterns. Weekend patterns differed significantly, with more distributed activity and longer average trip distances. These temporal variations proved critical for our anomaly detection approach, as normal behavior definitions vary substantially across different time contexts.
+\begin{compactoutline}
+  \outlineitem{Dataset Scale and Volume -- Daily data volumes, GPS record counts, active vehicle numbers}
+  \outlineitem{Temporal Sampling Characteristics -- Sampling rate variations, reconstruction challenges}
+  \outlineitem{Trip Duration and Distance Analysis -- Statistical distributions, median values, range analysis}
+  \outlineitem{Spatial Coverage Assessment -- Geographic extent, urban core concentration patterns}
+  \outlineitem{Temporal Pattern Analysis -- Diurnal patterns, peak activity periods, weekend variations}
+  \outlineitem{Anomaly Detection Context -- Normal behavior definitions across temporal contexts}
+\end{compactoutline}
 
 \subsection{Data Source and Privacy Issues}
 \label{sec:data-source}
