@@ -360,12 +360,49 @@ This phase uses an unsupervised approach to discover and categorize anomalous pa
     
     \item[\textbf{Diverse Querying for Manual Labeling (k-means++ Selection)}] DiffTraj generates synthetic trajectories as sequences of GPS coordinates. For the purpose of diverse querying, we extract feature vectors from these generated GPS trajectories. These features may include trajectory-level statistics (such as total distance, duration, average speed), learned embeddings, or outputs from anomaly detectors. We then apply the k-means++ initialization algorithm (as implemented in \texttt{scikit-learn}'s \texttt{kmeans\_plusplus} function) to these feature vectors to select a subset of $k$ trajectories that are maximally diverse in feature space. The indices returned by k-means++ are used to select the trajectories for manual review and labeling. This diverse querying strategy is based on the SOEL framework~\cite{liDeepAnomalyDetection2023}, which has been shown to maximize labeling efficiency and generalization in semi-supervised anomaly detection settings.
     
-    \item[\textbf{Rule-Based Curation and Categorization}] After the diverse subset of candidate anomalies has been selected via k-means++, we apply rule-based curation and categorization to these trajectories. Each selected trajectory is reviewed (either manually or with automated heuristics) and classified into interpretable anomaly categories using a taxonomy of rules based on kinematic and spatial properties. Thresholds for route length and travel time are set following the statistical approach of Wang et al.~\cite{wangStatisticalFrameworkTaxi2020,wangDetectingAnomalousTrajectories2018}, where a trajectory is considered anomalous if its length or duration exceeds the mean of normal trajectories for its origin-destination pair by more than an empirically determined margin (e.g., $L_\rho$ for length, $T_\rho$ for time). Specifically:
+    \item[\textbf{Rule-Based Curation and Categorization}] After the diverse subset of candidate anomalies has been selected via k-means++, we apply rule-based curation and categorization to these trajectories. Each selected trajectory is reviewed (either manually or with automated heuristics) and classified into interpretable anomaly categories using a comprehensive taxonomy of rules based on kinematic, spatial, and behavioral properties.
+
+    Building on the comprehensive taxonomy from Kong et al.~\cite{kongMobilityTrajectoryAnomaly2024}, we implement a two-category classification system that distinguishes between \textbf{Vehicle-Based Anomalies} (hardware/system related) and \textbf{Behavior-Based Anomalies} (driver/passenger related). This systematic approach enables more precise anomaly characterization and better interpretability for downstream analysis.
+
+    \textbf{Mathematical Formulations for Anomaly Detection:} Following the spatio-temporal trajectory anomaly detection framework of He et al.~\cite{heEnhancedDBSCANMultiple2020}, we implement the following computational approaches:
+
+    \textbf{Distance-Based Calculations:}
+    \begin{align}
+    \text{dist} &= \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2} \label{eq:euclidean}\\
+    \text{spatialdist} &= \frac{1}{e} \times \sum_{i=1}^{e} \text{dist}_i \label{eq:spatial}\\
+    \text{temporaldist} &= \frac{1}{n} \times \sum_{r=1}^{n} \text{span}_r \label{eq:temporal}
+    \end{align}
+
+    where $\text{span}_r$ represents the temporal interval between consecutive trajectory points.
+
+    \textbf{Speed Anomaly Detection:} Following Zhang et al.~\cite{zhangTaxiTrajectoryAnomaly2018}, speed anomalies are detected using:
+    \begin{equation}
+    v_{anomaly} = \begin{cases} 
+    1 & \text{if } v_i > \mu_v + 2\sigma_v \text{ or } v_i < \mu_v - 2\sigma_v \\
+    0 & \text{otherwise}
+    \end{cases}
+    \label{eq:speed-anomaly}
+    \end{equation}
+
+    where $\mu_v$ and $\sigma_v$ are the mean and standard deviation of speeds for the given route segment.
+
+    \textbf{Route Efficiency Scoring:} Building on Chen et al.~\cite{chenTemporalContextAwareRoute2021}, we compute route efficiency as:
+    \begin{equation}
+    \text{efficiency} = \frac{\text{shortest\_path\_distance}}{\text{actual\_path\_distance}} \times \frac{\text{expected\_travel\_time}}{\text{actual\_travel\_time}}
+    \label{eq:efficiency}
+    \end{equation}
+
+    Thresholds for route length and travel time are set following the statistical approach of Wang et al.~\cite{wangStatisticalFrameworkTaxi2020,wangDetectingAnomalousTrajectories2018}, where a trajectory is considered anomalous if its characteristics exceed normal trajectory parameters by empirically determined margins. 
+
+    \textbf{Specific Anomaly Categories:}
         \begin{itemize}[leftmargin=*]
             \item \textbf{Route Deviation:} Path length $> NL_{value} + L_\rho$, where $NL_{value}$ is the mean normal route length and $L_\rho$ is a margin (e.g., 5 km) as in~\cite{wangDetectingAnomalousTrajectories2018}.
             \item \textbf{Temporal Delay:} Travel time $> NT_{value} + T_\rho$, where $NT_{value}$ is the mean normal travel time and $T_\rho$ is a margin (e.g., 5 min).
-            \item \textbf{Kinematic Outliers:} The trajectory violates physical or legal driving norms (e.g., speed $>$ 120 km/h, stationary periods $>$ 15 min at non-terminal locations).
-            \item \textbf{Off-Road Driving:} Trajectory points are located beyond a reasonable distance from any known road segment, indicating GPS errors or highly unusual vehicle movement.
+            \item \textbf{Speed Anomalies:} Implementing Equation~\ref{eq:speed-anomaly} to detect both excessive speeding ($> 120$ km/h) and abnormally slow travel ($< 5$ km/h for extended periods) following He et al.~\cite{heEnhancedDBSCANMultiple2020}.
+            \item \textbf{Stop-Duration Anomalies:} Stationary periods $> 15$ min at non-terminal locations, computed using temporal clustering methods for trajectory analysis.
+            \item \textbf{Off-Road Driving:} Trajectory points located beyond a reasonable distance ($> 100$ m) from any known road segment, indicating GPS errors or highly unusual vehicle movement, as part of comprehensive trajectory anomaly detection frameworks.
+            \item \textbf{U-Turn and Loop Anomalies:} Detection of unnecessary reversals and circular patterns using heading change analysis $|\Delta\theta| > 150°$ within short time intervals ($< 2$ min) as implemented in spatio-temporal anomaly detection systems~\cite{heEnhancedDBSCANMultiple2020}.
+            \item \textbf{Detour Anomalies:} Routes with efficiency scores (Equation~\ref{eq:efficiency}) below 0.7, indicating significant deviation from optimal paths following established trajectory analysis frameworks.
         \end{itemize}
     This two-step process ensures that manual labeling effort is focused on a diverse and representative set of candidate anomalies, and that each labeled anomaly is further categorized in a systematic and interpretable way, improving both the quality and utility of the curated anomaly set.
     \item[Labeled Anomaly Subsets] This curation process produces labeled anomaly datasets (e.g., \texttt{anomalies\_speeding}, \texttt{anomalies\_off\_road}) that are ready for model retraining.
