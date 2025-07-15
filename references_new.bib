@@ -32,6 +32,15 @@
   file = {/home/matt/Zotero/storage/47K7N3SR/Balan et al. - 2011 - Real-time trip information service for a large taxi fleet.pdf}
 }
 
+@article{borisovLANGUAGEMODELSARE2023,
+  title = {{{LANGUAGE MODELS ARE REALISTIC TABULAR DATA GENERATORS}}},
+  author = {Borisov, Vadim and Se{\ss}ler, Kathrin and Leemann, Tobias and Pawelczyk, Martin and Kasneci, Gjergji},
+  year = {2023},
+  abstract = {Tabular data is among the oldest and most ubiquitous forms of data. However, the generation of synthetic samples with the original data's characteristics remains a significant challenge for tabular data. While many generative models from the computer vision domain, such as variational autoencoders or generative adversarial networks, have been adapted for tabular data generation, less research has been directed towards recent transformer-based large language models (LLMs), which are also generative in nature. To this end, we propose GReaT (Generation of Realistic Tabular data), which exploits an auto-regressive generative LLM to sample synthetic and yet highly realistic tabular data. Furthermore, GReaT can model tabular data distributions by conditioning on any subset of features; the remaining features are sampled without additional overhead. We demonstrate the effectiveness of the proposed approach in a series of experiments that quantify the validity and quality of the produced data samples from multiple angles. We find that GReaT maintains state-of-the-art performance across numerous real-world and synthetic data sets with heterogeneous feature types coming in various sizes.},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/AAMHZJB4/Borisov et al. - 2023 - LANGUAGE MODELS ARE REALISTIC TABULAR DATA GENERATORS.pdf}
+}
+
 @inproceedings{buchholzReconstructionAttackDifferential2022,
   title = {Reconstruction {{Attack}} on {{Differential Private Trajectory Protection Mechanisms}}},
   booktitle = {Annual {{Computer Security Applications Conference}} ({{ACSAC}} '22)},
@@ -66,12 +75,22 @@
   doi = {10.1145/3447548.3467158}
 }
 
-@inproceedings{caoHolisticSemanticRepresentation2025,
+@misc{caoHolisticSemanticRepresentation2025a,
   title = {Holistic {{Semantic Representation}} for {{Navigational Trajectory Generation}}},
-  booktitle = {The {{Thirty-Ninth AAAI Conference}} on {{Artificial Intelligence}} ({{AAAI-25}})},
   author = {Cao, Ji and Zheng, Tongya and Guo, Qinghong and Wang, Yu and Dai, Junshu and Liu, Shunyu and Yang, Jie and Song, Jie and Song, Mingli},
   year = {2025},
-  publisher = {Association for the Advancement of Artificial Intelligence}
+  month = feb,
+  number = {arXiv:2501.02737},
+  eprint = {2501.02737},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2501.02737},
+  url = {http://arxiv.org/abs/2501.02737},
+  urldate = {2025-07-15},
+  abstract = {Trajectory generation has garnered significant attention from researchers in the field of spatio-temporal analysis, as it can generate substantial synthesized human mobility trajectories that enhance user privacy and alleviate data scarcity. However, existing trajectory generation methods often focus on improving trajectory generation quality from a singular perspective, lacking a comprehensive semantic understanding across various scales. Consequently, we are inspired to develop a HOlistic SEmantic Representation (HOSER) framework for navigational trajectory generation. Given an origin-and-destination (OD) pair and the starting time point of a latent trajectory, we first propose a Road Network Encoder to expand the receptive field of road- and zone-level semantics. Second, we design a Multi-Granularity Trajectory Encoder to integrate the spatio-temporal semantics of the generated trajectory at both the point and trajectory levels. Finally, we employ a Destination-Oriented Navigator to seamlessly integrate destination-oriented guidance. Extensive experiments on three real-world datasets demonstrate that HOSER outperforms state-of-the-art baselines by a significant margin. Moreover, the model's performance in few-shot learning and zero-shot learning scenarios further verifies the effectiveness of our holistic semantic representation.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/3GYDF649/Cao et al. - 2025 - Holistic Semantic Representation for Navigational Trajectory Generation.pdf;/home/matt/Zotero/storage/GBA6DR33/2501.html}
 }
 
 @article{chenBehaviorAwareSyntheticTrajectory2023,
@@ -188,27 +207,8 @@
   abstract = {Synthetic data generation is a fundamental task for many data management and data science applications. Spatial data is of particular interest, and its sensitive nature often leads to privacy concerns. We introduce GeoPointGAN, a novel GAN-based solution for generating synthetic spatial point datasets with high utility and strong individual level privacy guarantees. GeoPointGAN's architecture includes a novel point transformation generator that learns to project randomly generated point co-ordinates into meaningful synthetic co-ordinates that capture both microscopic (e.g., junctions, squares) and macroscopic (e.g., parks, lakes) geographic features. We provide our privacy guarantees through label local differential privacy, which is more practical than traditional local differential privacy. We seamlessly integrate this level of privacy into GeoPointGAN by augmenting the discriminator to the point level and implementing a randomized response-based mechanism that flips the labels associated with the `real' and `fake' points used in training. Extensive experiments show that GeoPointGAN significantly outperforms recent solutions, improving by up to 10 times compared to the most competitive baseline. We also evaluate GeoPointGAN using range, hotspot, and facility location queries, which confirm the practical effectiveness of GeoPointGAN for privacy-preserving querying. The results illustrate that a strong level of privacy is achieved with little-to-no adverse utility cost, which we explain through the generalization and regularization effects that are realized by flipping the labels of the data during training.},
   archiveprefix = {arXiv},
   langid = {english},
-  keywords = {Computer Science - Artificial Intelligence,Computer Science - Cryptography and Security,Computer Science - Databases,Computer Science - Machine Learning},
-  file = {/home/matt/Zotero/storage/LWSMVFAZ/Cunningham et al. - 2022 - GeoPointGAN Synthetic Spatial Data with Local Label Differential Privacy.pdf}
-}
-
-@misc{dohmatobTaleTailsModel2024,
-  title = {A {{Tale}} of {{Tails}}: {{Model Collapse}} as a {{Change}} of {{Scaling Laws}}},
-  shorttitle = {A {{Tale}} of {{Tails}}},
-  author = {Dohmatob, Elvis and Feng, Yunzhen and Yang, Pu and Charton, Francois and Kempe, Julia},
-  year = {2024},
-  month = may,
-  number = {arXiv:2402.07043},
-  eprint = {2402.07043},
-  primaryclass = {cs},
-  publisher = {arXiv},
-  doi = {10.48550/arXiv.2402.07043},
-  url = {http://arxiv.org/abs/2402.07043},
-  urldate = {2025-07-14},
-  abstract = {As AI model size grows, neural scaling laws have become a crucial tool to predict the improvements of large models when increasing capacity and the size of original (human or natural) training data. Yet, the widespread use of popular models means that the ecosystem of online data and text will co-evolve to progressively contain increased amounts of synthesized data. In this paper we ask: How will the scaling laws change in the inevitable regime where synthetic data makes its way into the training corpus? Will future models, still improve, or be doomed to degenerate up to total (model) collapse? We develop a theoretical framework of model collapse through the lens of scaling laws. We discover a wide range of decay phenomena, analyzing loss of scaling, shifted scaling with number of generations, the ''un-learning" of skills, and grokking when mixing human and synthesized data. Our theory is validated by large-scale experiments with a transformer on an arithmetic task and text generation using the large language model Llama2.},
-  archiveprefix = {arXiv},
-  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Machine Learning},
-  file = {/home/matt/Zotero/storage/UHQB2Y8F/Dohmatob et al. - 2024 - A Tale of Tails Model Collapse as a Change of Scaling Laws.pdf;/home/matt/Zotero/storage/2VQPFKVB/2402.html}
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Cryptography and Security,Computer Science - Databases,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/LWSMVFAZ/Cunningham et al. - 2022 - GeoPointGAN Synthetic Spatial Data with Local Label Differential Privacy.pdf;/home/matt/Zotero/storage/UHQB2Y8F/Dohmatob et al. - 2024 - A Tale of Tails Model Collapse as a Change of Scaling Laws.pdf;/home/matt/Zotero/storage/2VQPFKVB/2402.html}
 }
 
 @misc{duarteBenchmarkExistingTools2023,
@@ -694,6 +694,23 @@
   doi = {10.1007/s10462-023-10598-x}
 }
 
+@misc{kotelnikovTabDDPMModellingTabular2024,
+  title = {{{TabDDPM}}: {{Modelling Tabular Data}} with {{Diffusion Models}}},
+  shorttitle = {{{TabDDPM}}},
+  author = {Kotelnikov, Akim and Baranchuk, Dmitry and Rubachev, Ivan and Babenko, Artem},
+  year = {2024},
+  month = oct,
+  eprint = {2209.15421},
+  primaryclass = {cs},
+  doi = {10.5555/3618408.3619133},
+  url = {http://arxiv.org/abs/2209.15421},
+  urldate = {2025-07-15},
+  abstract = {Denoising diffusion probabilistic models are currently becoming the leading paradigm of generative modeling for many important data modalities. Being the most prevalent in the computer vision community, diffusion models have also recently gained some attention in other domains, including speech, NLP, and graph-like data. In this work, we investigate if the framework of diffusion models can be advantageous for general tabular problems, where datapoints are typically represented by vectors of heterogeneous features. The inherent heterogeneity of tabular data makes it quite challenging for accurate modeling, since the individual features can be of completely different nature, i.e., some of them can be continuous and some of them can be discrete. To address such data types, we introduce TabDDPM -- a diffusion model that can be universally applied to any tabular dataset and handles any type of feature. We extensively evaluate TabDDPM on a wide set of benchmarks and demonstrate its superiority over existing GAN/VAE alternatives, which is consistent with the advantage of diffusion models in other fields. Additionally, we show that TabDDPM is eligible for privacy-oriented setups, where the original datapoints cannot be publicly shared.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/F564QI7F/Kotelnikov et al. - 2024 - TabDDPM Modelling Tabular Data with Diffusion Models.pdf;/home/matt/Zotero/storage/CGZF4U5K/2209.html}
+}
+
 @inproceedings{liang2018memory,
   title = {Memory Augmented Neural Networks for Trajectory Prediction},
   booktitle = {Proceedings of the {{IEEE}} Conference on Computer Vision and Pattern Recognition},
@@ -906,6 +923,26 @@
   file = {/home/matt/Zotero/storage/2C585ZIC/Lu et al. - 2024 - Vehicle Abnormal Behavior Detection Based on Dense Block and Soft Thresholding.pdf}
 }
 
+@misc{mahiouDpmmDifferentiallyPrivate2025,
+  title = {Dpmm: {{Differentially Private Marginal Models}}, a {{Library}} for {{Synthetic Tabular Data Generation}}},
+  shorttitle = {Dpmm},
+  author = {Mahiou, Sofiane and Dizche, Amir and Nazari, Reza and Wu, Xinmin and Abbey, Ralph and Silva, Jorge and Ganev, Georgi},
+  year = {2025},
+  month = may,
+  number = {arXiv:2506.00322},
+  eprint = {2506.00322},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2506.00322},
+  url = {http://arxiv.org/abs/2506.00322},
+  urldate = {2025-07-15},
+  abstract = {We propose dpmm, an open-source library for synthetic data generation with Differentially Private (DP) guarantees. It includes three popular marginal models --PrivBayes, MST, and AIM -- that achieve superior utility and offer richer functionality compared to alternative implementations. Additionally, we adopt best practices to provide end-to-end DP guarantees and address well-known DP-related vulnerabilities. Our goal is to accommodate a wide audience with easy-to-install, highly customizable, and robust model implementations. Our codebase is available from: https://github.com/sassoftware/dpmm.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Cryptography and Security,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/AFYU3KNM/Mahiou et al. - 2025 - dpmm Differentially Private Marginal Models, a Library for Synthetic Tabular Data Generation.pdf}
+}
+
 @article{maTrajectoryPrivacyProtection2021,
   title = {A {{Trajectory Privacy Protection Method Based}} on {{Random Sampling Differential Privacy}}},
   author = {Ma, Tinghuai and Song, Fagen},
@@ -1078,6 +1115,25 @@
   volume = {21},
   number = {3},
   pages = {2772--2793}
+}
+
+@misc{qianSynthcityFacilitatingInnovative2023,
+  title = {Synthcity: Facilitating Innovative Use Cases of Synthetic Data in Different Data Modalities},
+  shorttitle = {Synthcity},
+  author = {Qian, Zhaozhi and Cebere, Bogdan-Constantin and van der Schaar, Mihaela},
+  year = {2023},
+  month = jan,
+  number = {arXiv:2301.07573},
+  eprint = {2301.07573},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2301.07573},
+  url = {http://arxiv.org/abs/2301.07573},
+  urldate = {2025-07-15},
+  abstract = {Synthcity is an open-source software package for innovative use cases of synthetic data in ML fairness, privacy and augmentation across diverse tabular data modalities, including static data, regular and irregular time series, data with censoring, multi-source data, composite data, and more. Synthcity provides the practitioners with a single access point to cutting edge research and tools in synthetic data. It also offers the community a playground for rapid experimentation and prototyping, a one-stop-shop for SOTA benchmarks, and an opportunity for extending research impact. The library can be accessed on GitHub (https://github.com/vanderschaarlab/synthcity) and pip (https://pypi.org/project/synthcity/). We warmly invite the community to join the development effort by providing feedback, reporting bugs, and contributing code.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/N6QX9IY8/Qian et al. - 2023 - Synthcity facilitating innovative use cases of synthetic data in different data modalities.pdf;/home/matt/Zotero/storage/KGVHGGR6/2301.html}
 }
 
 @article{qiPrivacyPreservingCrossAreaTraffic2023,
