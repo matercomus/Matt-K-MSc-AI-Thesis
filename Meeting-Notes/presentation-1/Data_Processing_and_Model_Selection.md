@@ -97,17 +97,6 @@ style: |
 
 ---
 
-# Model Evaluation Process
-
-Three candidate trajectory generation models
-
-**EVALUATION CRITERIA:**
-- Data format compatibility with GPS trajectories
-- Preprocessing complexity and requirements
-- Output format alignment with research needs
-- Implementation feasibility and code availability
-
----
 
 # Model Comparison Results
 
@@ -207,24 +196,47 @@ Three candidate trajectory generation models
 
 ---
 
-# Anomaly Detection: Complete Pipeline
+
+# Approach Change: Pipeline Focus
+
+**CONTRARY TO PREVIOUS PLAN:**
+
+**NEW FOCUS:** Construct privacy-oriented pipeline for synthetic labeled data generation
+
+**KEY CHANGE:** No model retraining - use pre-trained models as designed
+
+**PIPELINE OBJECTIVES:**
+- **Privacy-Preserving:** Synthetic data generation without real data exposure
+- **Labeled Dataset:** Automatic anomaly detection and categorization
+- **Evaluation Ready:** Complete dataset for downstream analysis
+
+**WORKFLOW:** Real Data → Pre-trained Models → Synthetic Labeled Data → Evaluation
+
+**BENEFITS:**
+- **Faster Implementation:** No complex retraining cycles
+- **Privacy Compliant:** Synthetic data addresses access restrictions
+- **Research Ready:** Labeled dataset enables anomaly detection research
+
+---
+
+# Synthetic Labeled Dataset: Complete Pipeline
 
 **STEP 1: HOSER Synthetic Trajectory Generation**
 - **INPUT:** Clean GPS dataset
 - **PROCESS:** HOSER model training and trajectory generation
-- **OUTPUT:** Synthetic normal trajectory dataset
+- **OUTPUT:** Synthetic trajectory dataset
 
 **STEP 2: LM-TAD Anomaly Detection**
 - **INPUT:** Synthetic trajectories from HOSER
 - **PROCESS:** LM-TAD Perplexity scoring - higher perplexity = more anomalous
-- **OUTPUT:** Synthetic anomalous trajectories
+- **OUTPUT:** Synthetic trajectory dataset + anomaly flags
 
 **STEP 3: Rule-Based Categorization**
-- **INPUT:** LM-TAD identified anomalous trajectories  
+- **INPUT:** LM-TAD flagged anomalous trajectories  
 - **PROCESS:** Apply mathematical rules to categorize anomaly types
-- **OUTPUT:** Synthetic labeled anomalous trajectories
+- **OUTPUT:** Anomalous trajectory labeles
 
-**WORKFLOW:** Clean Data → HOSER → LM-TAD Detection → Rule-Based Classification → Labeled Anomalies
+**WORKFLOW:** Clean Data → HOSER → LM-TAD → Rule-Based Classification → Synthetic Labaled Dataset
 
 ---
 
@@ -247,19 +259,22 @@ Three candidate trajectory generation models
 ---
 
 
-# Questions & Discussion
 
-**Key Decision Points:**
-1. Agreement on HOSER selection for trajectory generation
-2. Privacy mechanism prioritization (differential privacy vs. other approaches)
-3. Evaluation metrics for synthetic data quality
+# Dataset Evaluation Strategy
 
-**Support Needed:**
-- Access to additional validation datasets (if available)
-- Feedback on privacy requirements and constraints
-- Guidance on thesis timeline and milestones
+**EVALUATION DATASETS:**
+- **Beijing:** BJUT Private + T-Drive (public)
+- **Cross-City:** Chengdu + Xi'an
+
+**EVALUATION FRAMEWORKS:**
+- **Privacy & Quality:** TransBigData + SDMetrics
+- **Downstream Tasks:** LibCity Framework + Supervised Anomaly Detection
+- **Analysis:** Ablation Study
+
+**COMPREHENSIVE:** Multi-dataset, multi-metric validation
 
 ---
+
 
 <!-- _class: lead -->
 # Thank You
