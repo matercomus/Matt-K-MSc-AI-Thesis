@@ -75,7 +75,7 @@ style: |
 
 ---
 
-# Dataset Characteristics & Quality
+# Dataset Characteristics
 
 | **Data Source** | Beijing taxi GPS data (25.11.2019 - 01.12.2019) |
 |-----------------|---------------------------------------------------|
@@ -133,6 +133,7 @@ Three candidate trajectory generation models
 | **Components** | Wide & Deep + conditional embedding | Node2Vec + RDCL denoising | **GATv2 + GCN + Transformer + Attention** |
 | **Datasets** | Chengdu, Xi'an, Porto | Porto, Chengdu | **Beijing, Porto, San Francisco** |
 | **Data Format** | GPS coordinates | Road segments + ratios | **GPS + network + temporal data** |
+| **Privacy Claims** | Synthetic generation = inherent privacy | Synthetic generation = inherent privacy | **Synthetic generation = inherent privacy** |
 
 **ADVANTAGE:** Latest architecture with comprehensive semantic modeling
 
@@ -140,23 +141,21 @@ Three candidate trajectory generation models
 
 # HOSER Selection Justification
 
-**INPUT REQUIREMENTS:** `id, timestamp, lon, lat, angle, speed` format
-
 **WHY HOSER WINS:**
 
-**Minimal Data Transformation:**
-- Direct ingestion without format conversion
-- No road segment mapping or network constraints (integrated in HOSER)
+**Technical Architecture Advantages:**
+- **Latest Innovation (2025):** Holistic semantic + destination guidance approach
+- **Advanced Components:** GATv2 + GCN + Transformer + Attention mechanisms
+- **Multi-Granularity:** Road-level + Zone-level + Point-level + Trajectory-level encoding
+- **Destination-Oriented:** Additive attention for trajectory + destination guidance
 
-**Rich Metadata Utilization:**
-- Leverages timestamps, speed, angle
-- Preserves contextual information crucial for anomaly detection
+**Implementation Advantages:**
+- **Minimal Data Transformation:** Direct GPS trajectory ingestion without format conversion
+- **Rich Metadata Utilization:** Leverages timestamps, speed, angle for contextual information
+- **Output Consistency:** Generated trajectories match input structure seamlessly
+- **Built-in Preprocessing:** Integrated map-matching pipeline with minimal setup
 
-**OUTPUT CONSISTENCY:**
-- Generated trajectories match input structure
-- Seamless integration with analysis pipelines
-
-**PRACTICAL ADVANTAGES:** Fastest implementation path with lowest technical risk
+**Practical Advantages:** Fastest implementation path with lowest technical risk
 
 ---
 
@@ -188,7 +187,7 @@ Three candidate trajectory generation models
 
 ---
 
-# HOSER Performance & Advantages
+# HOSER Performance & Advantages (As described in the paper)
 
 **PERFORMANCE vs. DiffTraj:**
 - **Global Metrics:** 27% better distance distribution similarity
@@ -208,53 +207,45 @@ Three candidate trajectory generation models
 
 ---
 
-# Anomaly Detection: Two-Step Process
+# Anomaly Detection: Complete Pipeline
 
-**STEP 1: LM-TAD Anomaly Detection**
+**STEP 1: HOSER Synthetic Trajectory Generation**
+- **INPUT:** Clean GPS dataset
+- **PROCESS:** HOSER model training and trajectory generation
+- **OUTPUT:** Synthetic normal trajectory dataset
+
+**STEP 2: LM-TAD Anomaly Detection**
 - **INPUT:** Synthetic trajectories from HOSER
-- **PROCESS:** Language Model for Trajectory Anomaly Detection (LM-TAD)
-- **METHOD:** Perplexity scoring - higher perplexity = more anomalous
-- **OUTPUT:** Ranked list of potential anomalous trajectories
+- **PROCESS:** LM-TAD Perplexity scoring - higher perplexity = more anomalous
+- **OUTPUT:** Synthetic anomalous trajectories
 
-**STEP 2: Rule-Based Categorization**
+**STEP 3: Rule-Based Categorization**
 - **INPUT:** LM-TAD identified anomalous trajectories  
 - **PROCESS:** Apply mathematical rules to categorize anomaly types
-- **OUTPUT:** Labeled anomaly categories with specific types
+- **OUTPUT:** Synthetic labeled anomalous trajectories
 
-**WORKFLOW:** HOSER → LM-TAD Detection → Rule-Based Classification → Labeled Anomalies
+**WORKFLOW:** Clean Data → HOSER → LM-TAD Detection → Rule-Based Classification → Labeled Anomalies
 
 ---
 
 # Mathematical Categorization Rules
 
-**Distance & Efficiency Metrics:**
-- **Spatial Distance:** $\text{spatialdist} = \frac{1}{e} \times \sum_{i=1}^{e} \text{dist}_i$
-- **Route Efficiency:** $\text{efficiency} = \frac{\text{shortest\_path\_distance}}{\text{actual\_path\_distance}} \times \frac{\text{expected\_travel\_time}}{\text{actual\_travel\_time}}$
+**Formula-to-Category Mapping:**
 
-**Speed Anomaly Detection:**
-- $v_{anomaly} = 1$ if $v_i > \mu_v + 2\sigma_v$ or $v_i < \mu_v - 2\sigma_v$
+| **Anomaly Category** | **Formula/Condition** | **Threshold Type** | **Detection Method** |
+|---------------------|----------------------|-------------------|---------------------|
+| **Speed Violations** | $v_{anomaly} = \begin{cases} 1 & \text{if } v_i > \mu_v + 2\sigma_v \text{ or } v_i < \mu_v - 2\sigma_v \\ 0 & \text{otherwise} \end{cases}$ | **Calculated** from data | Statistical outlier detection |
+| **Route Deviation** | Path length $> NL_{value} + L_\rho$ | **Calculated** + 5km margin | Distance-based threshold |
+| **Temporal Delay** | Travel time $> NT_{value} + T_\rho$ | **Calculated** + 5min margin | Time-based threshold |
+| **Long Stops** | Stationary periods $> 15$ min | **Literature** (15 min) | Temporal clustering |
+| **Off-Road Driving** | Distance from road $> 100$ m | **Literature** (100m) | Spatial validation |
+| **U-Turn Detection** | Heading change > 150° within < 2 min | **Literature** (150°, 2min) | Angular analysis |
+| **Detour** | $\text{efficiency} = \frac{\text{shortest\_path}}{\text{actual\_path}} \times \frac{\text{expected\_time}}{\text{actual\_time}} < 0.7$ | **Literature** (0.7) | Route optimization ratio |
 
-**Purpose:** These mathematical rules classify LM-TAD detected anomalies into interpretable categories
-
----
-
-# Anomaly Categories & Implementation Pipeline
-
-**ANOMALY CATEGORIES:**
-
-**Vehicle-Based:** Speed violations (>120 km/h), Off-road driving (>100m from roads)
-
-**Behavior-Based:** Route deviation ($> NL_{value} + L_ρ$), Temporal delay ($> NT_{value} + T_ρ$), Stop-duration (>15min), U-turns ($|Δθ| > 150°$), Detours (efficiency <0.7)
-
-**COMPLETE PIPELINE:**
-- **HOSER Generation:** Create synthetic normal trajectory baseline
-- **LM-TAD Detection:** Identify anomalous trajectories using perplexity scoring
-- **Rule-Based Categorization:** Apply mathematical rules to classify anomaly types
-- **Iterative Refinement:** Retrain HOSER model with labeled anomalies
-
-**NEXT STEPS:** Privacy enhancement → Complete pipeline implementation → Evaluation
+**Symbols:** $v_i$ (velocity), $\mu_v$ (mean), $\sigma_v$ (std dev), $NL_{value}$ (normal length), $L_\rho$ (5km margin), $NT_{value}$ (normal time), $T_\rho$ (5min margin)
 
 ---
+
 
 # Questions & Discussion
 
