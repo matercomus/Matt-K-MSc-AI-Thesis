@@ -127,10 +127,10 @@ Three candidate trajectory generation models
 
 **Minimal Data Transformation:**
 - Direct ingestion without format conversion
-- No road segment mapping or network constraints
+- No road segment mapping or network constraints (integrated in HOSER)
 
 **Rich Metadata Utilization:**
-- Leverages timestamps, speed, angle, taxi IDs
+- Leverages timestamps, speed, angle
 - Preserves contextual information crucial for anomaly detection
 
 **OUTPUT CONSISTENCY:**
