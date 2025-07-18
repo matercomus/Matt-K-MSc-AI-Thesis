@@ -100,7 +100,7 @@ style: |
 
 # Model Comparison Results
 
-| Aspect | DiffTraj | Diff-RNTraj | **HOSER** |
+| Aspect | DiffTraj [2] | Diff-RNTraj [3] | **HOSER [1]** |
 |--------|----------|-------------|-----------|
 | **Input Format** | Manual conversion needed | **GPS trajectories (automatic mapping)** | **Direct GPS support** |
 | **Preprocessing** | Not provided (user responsibility) | **Built-in map-matching pipeline** | **Built-in with minimal setup** |
@@ -114,7 +114,7 @@ style: |
 
 # Technical Architecture & Research Details
 
-| Aspect | DiffTraj (2023) | Diff-RNTraj (2024) | **HOSER (2025)** |
+| Aspect | DiffTraj (2023) [2] | Diff-RNTraj (2024) [3] | **HOSER (2025) [1]** |
 |--------|-----------------|---------------------|------------------|
 | **Publication** | October 2023 (NeurIPS) | September 2024 (TKDE) | **February 2025 (AAAI)** |
 | **Architecture** | 1D-CNN + Trajectory UNet | Diffusion + Residual Dilation Layers | **Road Encoder + Multi-Granularity + Navigator** |
@@ -275,6 +275,15 @@ style: |
 
 ---
 
+# References
+
+[1] J. Cao et al., “Holistic Semantic Representation for Navigational Trajectory Generation,” in AAAI-25, Sponsored by the Association for the Advancement of Artificial Intelligence, February 25 - March 4, 2025, Philadelphia, PA, USA, T. Walsh, J. Shah, and Z. Kolter, Eds., AAAI Press, 2025, pp. 40–48. doi: 10.1609/AAAI.V39I1.31978.
+
+[2] Y. Zhu, Y. Ye, S. Zhang, X. Zhao, and J. J. Q. Yu, “DiffTraj: Generating GPS Trajectory with Diffusion Probabilistic Model,” Oct. 24, 2023, arXiv: arXiv:2304.11582. doi: 10.48550/arXiv.2304.11582.
+
+[3] T. Wei et al., “Diff-RNTraj: A Structure-aware Diffusion Model for Road Network-constrained Trajectory Generation,” Sept. 11, 2024, arXiv: arXiv:2402.07369. doi: 10.48550/arXiv.2402.07369.
+
+---
 
 <!-- _class: lead -->
 # Thank You
