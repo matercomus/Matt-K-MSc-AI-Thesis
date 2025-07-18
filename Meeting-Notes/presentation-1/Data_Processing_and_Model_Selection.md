@@ -4,7 +4,7 @@ theme: default
 paginate: true
 size: 16:9
 header: 'Data Processing & Model Selection | Mateusz Kędzia'
-footer: 'MSc AI Thesis | July 2025'
+footer: 'Matts MSc AI Thesis | July 2025'
 style: |
   section {
     font-size: 22px;
@@ -33,7 +33,7 @@ style: |
 # Data Processing & Model Selection Update
 ## Privacy-Preserving Synthetic Trajectory Generation
 **Mateusz Kędzia** | MSc Artificial Intelligence | Vrije Universiteit Amsterdam
-*Progress Update for Thesis Coordinators - July 2025*
+*Progress Update - Week 29 - July 2025*
 
 ---
 
@@ -42,7 +42,7 @@ style: |
 **Project Status Update:**
 - **Section 1:** Data Processing - Large-scale GPS dataset cleaning completed
 - **Section 2:** Model Selection - Evidence-based choice of trajectory generation approach  
-- **Section 3:** HOSER Implementation - Technical details and performance validation
+- **Section 3:** Chosen Model Implementation - Technical details and performance validation
 
 **Key Outcomes:**
 1. Clean, analysis-ready dataset (1.16B GPS records)
@@ -77,13 +77,17 @@ style: |
 
 # Dataset Characteristics & Quality
 
-| Metric | Result |
-|--------|--------|
-| **Temporal Coverage** | Late Nov/early Dec 2019 (concentrated period) |
-| **Geographic Center** | Beijing area (115.6° E, 39.8° N) |
-| **Vehicle Behavior** | High idle time (median speed 0.0) |
-| **Fleet Distribution** | ZHTC and JYJ companies (>60% records) |
-| **Data Quality** | 275,000+ invalid GPS coordinates filtered |
+| **Data Source** | Beijing taxi GPS data (25.11.2019 - 01.12.2019) |
+|-----------------|---------------------------------------------------|
+| **Raw Data Volume** | 7 Parquet files, 1.16 billion GPS records |
+| **Daily Data Size** | ~16GB per day of raw GPS data |
+| **Temporal Coverage** | Late Nov/early Dec 2019 (concentrated 7-day period) |
+| **Geographic Center** | Beijing metropolitan area (115.6° E, 39.8° N) |
+| **Processing Engine** | DuckDB with 12GB memory, 8 threads optimization |
+| **Vehicle Behavior** | High idle time (median speed 0.0 km/h) |
+| **Fleet Distribution** | ZHTC and JYJ companies dominate (>60% of records) |
+| **Data Quality Issues** | 275,000+ invalid GPS coordinates filtered out |
+| **Processing Result** | Schema-consistent, analysis-ready dataset |
 
 ---
 
@@ -109,13 +113,28 @@ Three candidate trajectory generation models
 
 | Aspect | DiffTraj | Diff-RNTraj | **HOSER** |
 |--------|----------|-------------|-----------|
-| **Input Format** | Manual conversion needed | Road segment mapping required | **Direct GPS support** |
-| **Preprocessing** | User responsibility | Complex map-matching pipeline | **Minimal cleaning only** |
-| **Output Format** | GPS coordinates | Road segments + GPS | **Native GPS format** |
-| **Implementation** | Moderate effort | High complexity | **Seamless integration** |
-| **Code Availability** | Available | Available | **GitHub + datasets** |
+| **Input Format** | Manual conversion needed | **GPS trajectories (automatic mapping)** | **Direct GPS support** |
+| **Preprocessing** | Not provided (user responsibility) | **Built-in map-matching pipeline** | **Built-in with minimal setup** |
+| **Output Format** | GPS coordinates (manual post-processing) | Road segment IDs (requires network mapping) | **Same as input (GPS + metadata)** |
+| **Integration Effort** | High (manual preprocessing + post-processing) | Moderate (ID-to-network conversion for analysis) | **Low (seamless GPS workflow)** |
+| **Code & Data** | Available on GitHub | **Available on GitHub** | **Available on GitHub** |
 
 **RESULT:** HOSER selected as optimal choice for taxi GPS trajectory generation
+
+---
+
+# Technical Architecture & Research Details
+
+| Aspect | DiffTraj (2023) | Diff-RNTraj (2024) | **HOSER (2025)** |
+|--------|-----------------|---------------------|------------------|
+| **Publication** | October 2023 (NeurIPS) | September 2024 (TKDE) | **February 2025 (AAAI)** |
+| **Architecture** | 1D-CNN + Trajectory UNet | Diffusion + Residual Dilation Layers | **Road Encoder + Multi-Granularity + Navigator** |
+| **Innovation** | First diffusion for GPS trajectories | Road network-constrained generation | **Holistic semantic + destination guidance** |
+| **Components** | Wide & Deep + conditional embedding | Node2Vec + RDCL denoising | **GATv2 + GCN + Transformer + Attention** |
+| **Datasets** | Chengdu, Xi'an, Porto | Porto, Chengdu | **Beijing, Porto, San Francisco** |
+| **Data Format** | GPS coordinates | Road segments + ratios | **GPS + network + temporal data** |
+
+**ADVANTAGE:** Latest architecture with comprehensive semantic modeling
 
 ---
 
