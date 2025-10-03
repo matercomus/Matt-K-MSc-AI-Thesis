@@ -100,6 +100,26 @@
   publisher = {Elsevier}
 }
 
+@misc{chenDeepLearningTrajectory2024,
+  title = {Deep {{Learning}} for {{Trajectory Data Management}} and {{Mining}}: {{A Survey}} and {{Beyond}}},
+  shorttitle = {Deep {{Learning}} for {{Trajectory Data Management}} and {{Mining}}},
+  author = {Chen, Wei and Liang, Yuxuan and Zhu, Yuanshao and Chang, Yanchuan and Luo, Kang and Wen, Haomin and Li, Lei and Yu, Yanwei and Wen, Qingsong and Chen, Chao and Zheng, Kai and Gao, Yunjun and Zhou, Xiaofang and Zheng, Yu},
+  year = {2024},
+  month = mar,
+  number = {arXiv:2403.14151},
+  eprint = {2403.14151},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2403.14151},
+  url = {http://arxiv.org/abs/2403.14151},
+  urldate = {2025-07-26},
+  abstract = {Trajectory computing is a pivotal domain encompassing trajectory data management and mining, garnering widespread attention due to its crucial role in various practical applications such as location services, urban traffic, and public safety. Traditional methods, focusing on simplistic spatio-temporal features, face challenges of complex calculations, limited scalability, and inadequate adaptability to real-world complexities. In this paper, we present a comprehensive review of the development and recent advances in deep learning for trajectory computing (DL4Traj). We first define trajectory data and provide a brief overview of widely-used deep learning models. Systematically, we explore deep learning applications in trajectory management (pre-processing, storage, analysis, and visualization) and mining (trajectory-related forecasting, trajectory-related recommendation, trajectory classification, travel time estimation, anomaly detection, and mobility generation). Notably, we encapsulate recent advancements in Large Language Models (LLMs) that hold the potential to augment trajectory computing. Additionally, we summarize application scenarios, public datasets, and toolkits. Finally, we outline current challenges in DL4Traj research and propose future directions. Relevant papers and open-source resources have been collated and are continuously updated at: {\textbackslash}href\{https://github.com/yoshall/Awesome-Trajectory-Computing\}\{DL4Traj Repo\}.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computers and Society,Computer Science - Databases,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/E9D38QGS/Chen et al. - 2024 - Deep Learning for Trajectory Data Management and Mining A Survey and Beyond.pdf}
+}
+
 @article{chenDifferentiallyPrivateTrajectory2011,
   title = {Differentially {{Private Trajectory Data Publication}}},
   author = {Chen, Rui and Fung, Benjamin C. M. and Desai, Bipin C.},
@@ -277,6 +297,25 @@
   langid = {english},
   keywords = {class imbalance,synthetic data,tabular data,utility measures},
   file = {/home/matt/Zotero/storage/647GWG8Z/Espinosa and Figueira - 2023 - On the Quality of Synthetic Generated Tabular Data.pdf}
+}
+
+@misc{fengAgentMoveLargeLanguage2025,
+  title = {{{AgentMove}}: {{A Large Language Model}} Based {{Agentic Framework}} for {{Zero-shot Next Location Prediction}}},
+  shorttitle = {{{AgentMove}}},
+  author = {Feng, Jie and Du, Yuwei and Zhao, Jie and Li, Yong},
+  year = {2025},
+  month = feb,
+  number = {arXiv:2408.13986},
+  eprint = {2408.13986},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2408.13986},
+  url = {http://arxiv.org/abs/2408.13986},
+  urldate = {2025-07-28},
+  abstract = {Next location prediction plays a crucial role in various real-world applications. Recently, due to the limitation of existing deep learning methods, attempts have been made to apply large language models (LLMs) to zero-shot next location prediction task. However, they directly generate the final output using LLMs without systematic design, which limits the potential of LLMs to uncover complex mobility patterns and underestimates their extensive reserve of global geospatial knowledge. In this paper, we introduce AgentMove, a systematic agentic prediction framework to achieve generalized next location prediction. In AgentMove, we first decompose the mobility prediction task and design specific modules to complete them, including spatial-temporal memory for individual mobility pattern mining, world knowledge generator for modeling the effects of urban structure and collective knowledge extractor for capturing the shared patterns among population. Finally, we combine the results of three modules and conduct a reasoning step to generate the final predictions. Extensive experiments utilizing mobility data from two distinct sources reveal that AgentMove surpasses the leading baseline by 3.33\% to 8.57\% across 8 out of 12 metrics and it shows robust predictions with various LLMs as base and also less geographical bias across cities. Our codes are available via https://github.com/tsinghua-fib-lab/AgentMove.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Information Retrieval,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/CZ5GHL82/Feng et al. - 2025 - AgentMove A Large Language Model based Agentic Framework for Zero-shot Next Location Prediction.pdf;/home/matt/Zotero/storage/TJDEBRTF/2408.html}
 }
 
 @misc{gerstgrasserModelCollapseInevitable2024,
@@ -944,6 +983,24 @@
   file = {/home/matt/Zotero/storage/AFYU3KNM/Mahiou et al. - 2025 - dpmm Differentially Private Marginal Models, a Library for Synthetic Tabular Data Generation.pdf}
 }
 
+@inproceedings{maMoreRoutingJoint2024,
+  title = {More {{Than Routing}}: {{Joint GPS}} and {{Route Modeling}} for {{Refine Trajectory Representation Learning}}},
+  shorttitle = {More {{Than Routing}}},
+  booktitle = {Proceedings of the {{ACM Web Conference}} 2024},
+  author = {Ma, Zhipeng and Tu, Zheyan and Chen, Xinhai and Zhang, Yan and Xia, Deguo and Zhou, Guyue and Chen, Yilun and Zheng, Yu and Gong, Jiangtao},
+  year = {2024},
+  month = may,
+  series = {{{WWW}} '24},
+  pages = {3064--3075},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3589334.3645644},
+  url = {https://doi.org/10.1145/3589334.3645644},
+  urldate = {2025-07-26},
+  abstract = {Trajectory representation learning plays a pivotal role in supporting various downstream tasks, such as travel time estimation, trajectory classification and Top-k similar trajectory search. Traditional methods in order to filter the noise in GPS trajectories tend to focus on routing-based methods to simplify the trajectories. However, these approaches ignore the motion details contained in the GPS data, limiting the representation capability of trajectory representation learning. To fill this gap, we propose a novel representation learning framework that is Jointly G PS and Route Modeling based on self-supervised technology, namely JGRM. We consider GPS trajectory and route trajectory as the two modals of a single movement observation and fuse information through inter-modal information interaction. Specifically, we develop two encoders, each tailored to capture representations of GPS trajectories and route trajectories respectively. The representations from these two modalities are fed into a shared transformer for inter-modal information interaction. Eventually, we design three self-supervised tasks to train the model. We validate the effectiveness of the proposed method on two real-world datasets through extensive experiments. The experimental results show that JGRM significantly outperforms existing methods in both road segment representation and trajectory representation tasks. Our source code is available at Github https://github.com/mamazi0131/JGRM.},
+  isbn = {979-8-4007-0171-9}
+}
+
 @article{maTrajectoryPrivacyProtection2021,
   title = {A {{Trajectory Privacy Protection Method Based}} on {{Random Sampling Differential Privacy}}},
   author = {Ma, Tinghuai and Song, Fagen},
@@ -992,7 +1049,7 @@
   archiveprefix = {arXiv},
   langid = {english},
   keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
-  file = {/home/matt/Zotero/storage/IJZG4EBJ/Mbuya et al. - 2024 - Trajectory Anomaly Detection with Language Models.pdf}
+  file = {/home/matt/Zotero/storage/IJZG4EBJ/Mbuya et al. - 2024 - Trajectory Anomaly Detection with Language Models.pdf;/home/matt/Zotero/storage/3YIP68AG/2409.html}
 }
 
 @inproceedings{merhiSyntheticTrajectoryGeneration2024,
@@ -1001,6 +1058,13 @@
   author = {Merhi, Jesse and Buchholz, Erik and Kanhere, Salil S.},
   year = {2024},
   publisher = {IEEE}
+}
+
+@misc{MoreRoutingJoint,
+  title = {More {{Than Routing}}: {{Joint GPS}} and {{Route Modeling}} for {{Refine Trajectory Representation Learning}} {\textbar} {{Proceedings}} of the {{ACM Web Conference}} 2024},
+  url = {https://dl.acm.org/doi/10.1145/3589334.3645644},
+  urldate = {2025-07-26},
+  file = {/home/matt/Zotero/storage/2DKMQW87/3589334.html}
 }
 
 @misc{muradSyntheticAircraftTrajectory2025,
@@ -1386,6 +1450,25 @@
   file = {/home/matt/Zotero/storage/H8R83ZAS/Sun et al. - 2025 - Learning Spatio-Temporal Dynamics for Trajectory Recovery via Time-Aware Transformer.pdf;/home/matt/Zotero/storage/K3WPYMJ8/Sun et al. - 2025 - Learning Spatio-Temporal Dynamics for Trajectory Recovery via Time-Aware Transformer.pdf;/home/matt/Zotero/storage/QNIG6AJI/2505.html}
 }
 
+@inproceedings{suTripSafeRetrievingSafetyrelated2023,
+  title = {{{TripSafe}}: {{Retrieving Safety-related Abnormal Trips}} in {{Real-time}} with {{Trajectory Data}}},
+  shorttitle = {{{TripSafe}}},
+  booktitle = {Proceedings of the 46th {{International ACM SIGIR Conference}} on {{Research}} and {{Development}} in {{Information Retrieval}}},
+  author = {Su, Yueyang and Yao, Di and Zhou, Xiaolei and Zhang, Yuxuan and Fan, Yunxia and Bai, Lu and Bi, Jingping},
+  year = {2023},
+  month = jul,
+  pages = {2446--2450},
+  publisher = {ACM},
+  address = {Taipei Taiwan},
+  doi = {10.1145/3539618.3592074},
+  url = {https://dl.acm.org/doi/10.1145/3539618.3592074},
+  urldate = {2025-07-28},
+  abstract = {Nowadays safety has become one of the most critical factors for ride-hailing service. Ride-hailing platforms have conducted meticulous background checks for drivers to minimize the risk of abnormal trips, e.g. violence and sexual assault. However, current methods are labor-consuming and highly rely on the personal information of drivers, which may harm the fairness of the order dispatching system. In this paper, we utilize the trip trajectories as inputs and propose a dual variational auto-encoder(VAE) framework, namely TripSafe, to estimate the probability of abnormal safety incidents. Specifically, TripSafe models the moving behavior and route information, as two independent components and employs VAEs to pre-train generative models for normal trips. Then, a fusion network is adopted to fine-tune the whole model with a few labeled samples. In practice, TripSafe monitors the data update and calculate the anomaly score of partial-observed trips in real-time. Experiments on real ridehailing data show that TripSafe is superior to the state-of-the-art baselines with about 14.2\%{$\sim$}28.9\% improvements on F1 score.},
+  isbn = {978-1-4503-9408-6},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/J9AA3DR4/Su et al. - 2023 - TripSafe Retrieving Safety-related Abnormal Trips in Real-time with Trajectory Data.pdf}
+}
+
 @article{tangLowcostHighperformanceAbnormal2024,
   title = {Low-Cost and High-Performance Abnormal Trajectory Detection Based on the {{GRU}} Model with Deep Spatiotemporal Sequence Analysis in Cloud Computing},
   author = {Tang, Guohao and Zhao, Huaying and Yu, Baohua},
@@ -1486,6 +1569,14 @@
   publisher = {Association for the Advancement of Artificial Intelligence}
 }
 
+@article{wangGTRGeneralMultiView,
+  title = {{{GTR}}: {{A General}}, {{Multi-View}}, and {{Dynamic Framework}} for {{Trajectory Representation Learning}}},
+  author = {Wang, Xiangheng and Fang, Ziquan and Huang, Chenglong and Hu, Danlei and Chen, Lu and Gao, Yunjun},
+  abstract = {Trajectory representation learning aims to transform raw trajectory data into compact and lowdimensional vectors that are suitable for downstream analysis. However, most existing methods adopt either a free-space view or a roadnetwork view during the learning process, which limits their ability to capture the complex, multiview spatiotemporal features inherent in trajectory data. Moreover, these approaches rely on task-specific model training, restricting their generalizability and effectiveness for diverse analysis tasks. To this end, we propose GTR, a general, multi-view, and dynamic Trajectory Representation framework built on a pre-train and fine-tune architecture. Specifically, GTR introduces a multi-view encoder that captures the intrinsic multi-view spatiotemporal features. Based on the pre-train and fine-tune architecture, we provide the spatio-temporal fusion pre-training with a spatio-temporal mixture of experts to dynamically combine spatial and temporal features, enabling seamless adaptation to diverse trajectory analysis tasks. Furthermore, we propose an online frozen-hot updating strategy to efficiently update the representation model, accommodating the dynamic nature of trajectory data. Extensive experiments on two real-world datasets demonstrate that GTR consistently outperforms 15 state-of-the-art methods across 6 mainstream trajectory analysis tasks. All source code and data are available at https://github.com/ZJU-DAILY/GTR.},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/NCYEGJUR/Wang et al. - GTR A General, Multi-View, and Dynamic Framework for Trajectory Representation Learning.pdf}
+}
+
 @article{wangLongTermTrafficPrediction2021,
   title = {Long-{{Term Traffic Prediction Based}} on {{LSTM Encoder-Decoder Architecture}}},
   author = {Wang, Zhumei and Su, Xing and Ding, Zhiming},
@@ -1504,6 +1595,24 @@
   copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
   langid = {english},
   file = {/home/matt/Zotero/storage/M9U6CSAP/Wang et al. - 2021 - Long-Term Traffic Prediction Based on LSTM Encoder-Decoder Architecture.pdf}
+}
+
+@inproceedings{wangMultiScaleDetectionAnomalous2024,
+  title = {Multi-{{Scale Detection}} of {{Anomalous Spatio-Temporal Trajectories}} in {{Evolving Trajectory Datasets}}},
+  booktitle = {Proceedings of the 30th {{ACM SIGKDD Conference}} on {{Knowledge Discovery}} and {{Data Mining}}},
+  author = {Wang, Chenhao and Chen, Lisi and Shang, Shuo and Jensen, Christian S. and Kalnis, Panos},
+  year = {2024},
+  month = aug,
+  series = {{{KDD}} '24},
+  pages = {2980--2990},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3637528.3671874},
+  url = {https://dl.acm.org/doi/10.1145/3637528.3671874},
+  urldate = {2025-07-28},
+  abstract = {A trajectory is a sequence of timestamped point locations that captures the movement of an object such as a vehicle. Such trajectories encode complex spatial and temporal patterns and provide rich information about object mobility and the underlying infrastructures, typically road networks, within which the movements occur. A trajectory dataset is evolving when new trajectories are included continuously. The ability to detect anomalous trajectories in online fashion in this setting is fundamental and challenging functionality that has many applications, e.g., location-based services. State-of-the-art solutions determine anomalies based on the shapes or routes of trajectories, ignoring potential anomalies caused by different sampling rates or time offsets. We propose a multi-scale model, termed MST-OATD, for anomalous streaming trajectory detection that considers both the spatial and temporal aspects of trajectories. The model's multi-scale capabilities aim to enable extraction of trajectory features at multiple scales. In addition, to improve model evolvability and to contend with changes in trajectory patterns, the model is equipped with a learned ranking model that updates the training set as new trajectories are included. Experiments on real datasets offer evidence that the model can outperform state-of-the-art solutions and is capable of real-time anomaly detection. Further, the learned ranking model achieves promising results when updating the training set with newly arrived trajectories.},
+  isbn = {979-8-4007-0490-1},
+  file = {/home/matt/Zotero/storage/J3RZ8Z9U/Wang et al. - 2024 - Multi-Scale Detection of Anomalous Spatio-Temporal Trajectories in Evolving Trajectory Datasets.pdf}
 }
 
 @inbook{wangOptimizingDiffusionModels2025,
@@ -1812,6 +1921,44 @@
   abstract = {The advances in location-acquisition technologies have generated massive spatial trajectory data, which represent the mobility of a diversity of moving objects, such as people, vehicles, and animals. Many techniques have been proposed for processing, managing, and mining trajectory data in the past decade, fostering a variety of applications. In this article, we conduct a systematic survey on the major research into trajectory data mining, providing a panorama of the field as well as the scope of its research topics.}
 }
 
+@misc{zhongTimeVLMExploringMultimodal2025,
+  title = {Time-{{VLM}}: {{Exploring Multimodal Vision-Language Models}} for {{Augmented Time Series Forecasting}}},
+  shorttitle = {Time-{{VLM}}},
+  author = {Zhong, Siru and Ruan, Weilin and Jin, Ming and Li, Huan and Wen, Qingsong and Liang, Yuxuan},
+  year = {2025},
+  month = may,
+  number = {arXiv:2502.04395},
+  eprint = {2502.04395},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2502.04395},
+  url = {http://arxiv.org/abs/2502.04395},
+  urldate = {2025-07-26},
+  abstract = {Recent advancements in time series forecasting have explored augmenting models with text or vision modalities to improve accuracy. While text provides contextual understanding, it often lacks fine-grained temporal details. Conversely, vision captures intricate temporal patterns but lacks semantic context, limiting the complementary potential of these modalities. To address this, we propose {\textbackslash}method, a novel multimodal framework that leverages pre-trained Vision-Language Models (VLMs) to bridge temporal, visual, and textual modalities for enhanced forecasting. Our framework comprises three key components: (1) a Retrieval-Augmented Learner, which extracts enriched temporal features through memory bank interactions; (2) a Vision-Augmented Learner, which encodes time series as informative images; and (3) a Text-Augmented Learner, which generates contextual textual descriptions. These components collaborate with frozen pre-trained VLMs to produce multimodal embeddings, which are then fused with temporal features for final prediction. Extensive experiments demonstrate that Time-VLM achieves superior performance, particularly in few-shot and zero-shot scenarios, thereby establishing a new direction for multimodal time series forecasting. Code is available at https://github.com/CityMind-Lab/ICML25-TimeVLM.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/U4KIQSBQ/Zhong et al. - 2025 - Time-VLM Exploring Multimodal Vision-Language Models for Augmented Time Series Forecasting.pdf;/home/matt/Zotero/storage/H5P4IQ9H/2502.html}
+}
+
+@misc{zhuControlTrajControllableTrajectory2024,
+  title = {{{ControlTraj}}: {{Controllable Trajectory Generation}} with {{Topology-Constrained Diffusion Model}}},
+  shorttitle = {{{ControlTraj}}},
+  author = {Zhu, Yuanshao and Yu, James Jianqiao and Zhao, Xiangyu and Liu, Qidong and Ye, Yongchao and Chen, Wei and Zhang, Zijian and Wei, Xuetao and Liang, Yuxuan},
+  year = {2024},
+  month = apr,
+  number = {arXiv:2404.15380},
+  eprint = {2404.15380},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2404.15380},
+  url = {http://arxiv.org/abs/2404.15380},
+  urldate = {2025-07-26},
+  abstract = {Generating trajectory data is among promising solutions to addressing privacy concerns, collection costs, and proprietary restrictions usually associated with human mobility analyses. However, existing trajectory generation methods are still in their infancy due to the inherent diversity and unpredictability of human activities, grappling with issues such as fidelity, flexibility, and generalizability. To overcome these obstacles, we propose ControlTraj, a Controllable Trajectory generation framework with the topology-constrained diffusion model. Distinct from prior approaches, ControlTraj utilizes a diffusion model to generate high-fidelity trajectories while integrating the structural constraints of road network topology to guide the geographical outcomes. Specifically, we develop a novel road segment autoencoder to extract fine-grained road segment embedding. The encoded features, along with trip attributes, are subsequently merged into the proposed geographic denoising UNet architecture, named GeoUNet, to synthesize geographic trajectories from white noise. Through experimentation across three real-world data settings, ControlTraj demonstrates its ability to produce human-directed, high-fidelity trajectory generation with adaptability to unexplored geographical contexts.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/FJUULI6V/Zhu et al. - 2024 - ControlTraj Controllable Trajectory Generation with Topology-Constrained Diffusion Model.pdf;/home/matt/Zotero/storage/G75GQBQS/2404.html}
+}
+
 @misc{zhuDiffTrajGeneratingGPS2023,
   title = {{{DiffTraj}}: {{Generating GPS Trajectory}} with {{Diffusion Probabilistic Model}}},
   shorttitle = {{{DiffTraj}}},
@@ -1847,4 +1994,30 @@
   archiveprefix = {arXiv},
   keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Machine Learning},
   file = {/home/matt/Zotero/storage/SGNRW2E3/Zhu et al. - 2025 - How to Synthesize Text Data without Model Collapse.pdf;/home/matt/Zotero/storage/FXTUXBXW/2412.html}
+}
+
+@misc{zhuLearningGeneralizedFlexible2025,
+  title = {Learning {{Generalized}} and {{Flexible Trajectory Models}} from {{Omni-Semantic Supervision}}},
+  author = {Zhu, Yuanshao and Yu, James Jianqiao and Zhao, Xiangyu and Han, Xiao and Liu, Qidong and Wei, Xuetao and Liang, Yuxuan},
+  year = {2025},
+  month = may,
+  number = {arXiv:2505.17437},
+  eprint = {2505.17437},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2505.17437},
+  url = {http://arxiv.org/abs/2505.17437},
+  urldate = {2025-07-26},
+  abstract = {The widespread adoption of mobile devices and data collection technologies has led to an exponential increase in trajectory data, presenting significant challenges in spatio-temporal data mining, particularly for efficient and accurate trajectory retrieval. However, existing methods for trajectory retrieval face notable limitations, including inefficiencies in large-scale data, lack of support for condition-based queries, and reliance on trajectory similarity measures. To address the above challenges, we propose OmniTraj, a generalized and flexible omni-semantic trajectory retrieval framework that integrates four complementary modalities or semantics -- raw trajectories, topology, road segments, and regions -- into a unified system. Unlike traditional approaches that are limited to computing and processing trajectories as a single modality, OmniTraj designs dedicated encoders for each modality, which are embedded and fused into a shared representation space. This design enables OmniTraj to support accurate and flexible queries based on any individual modality or combination thereof, overcoming the rigidity of traditional similarity-based methods. Extensive experiments on two real-world datasets demonstrate the effectiveness of OmniTraj in handling large-scale data, providing flexible, multi-modality queries, and supporting downstream tasks and applications.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/matt/Zotero/storage/8XTZPDF5/Zhu et al. - 2025 - Learning Generalized and Flexible Trajectory Models from Omni-Semantic Supervision.pdf;/home/matt/Zotero/storage/7RCZWCL5/2505.html}
+}
+
+@article{zhuSynMobCreatingHighFidelity,
+  title = {{{SynMob}}: {{Creating High-Fidelity Synthetic GPS Trajectory Dataset}} for {{Urban Mobility Analysis}}},
+  author = {Zhu, Yuanshao and Ye, Yongchao and Wu, Ying and Zhao, Xiangyu and Yu, James J Q},
+  abstract = {Urban mobility analysis has been extensively studied in the past decade using a vast amount of GPS trajectory data, which reveals hidden patterns in movement and human activity within urban landscapes. Despite its significant value, the availability of such datasets often faces limitations due to privacy concerns, proprietary barriers, and quality inconsistencies. To address these challenges, this paper presents a synthetic trajectory dataset with high fidelity, offering a general solution to these data accessibility issues. Specifically, the proposed dataset adopts a diffusion model as its synthesizer, with the primary aim of accurately emulating the spatial-temporal behavior of the original trajectory data. These synthesized data can retain the geo-distribution and statistical properties characteristic of real-world datasets. Through rigorous analysis and case studies, we validate the high similarity and utility between the proposed synthetic trajectory dataset and real-world counterparts. Such validation underscores the practicality of synthetic datasets for urban mobility analysis and advocates for its wider acceptance within the research community. Finally, we publicly release the trajectory synthesizer and datasets, aiming to enhance the quality and availability of synthetic trajectory datasets and encourage continued contributions to this rapidly evolving field. The dataset is released for public online availability https://github.com/Applied-Machine-Learning-Lab/SynMob.},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/RJQZRBDU/Zhu et al. - SynMob Creating High-Fidelity Synthetic GPS Trajectory Dataset for Urban Mobility Analysis.pdf}
 }
