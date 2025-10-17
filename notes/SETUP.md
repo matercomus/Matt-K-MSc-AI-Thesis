@@ -32,15 +32,21 @@ LaTeX Workshop automatically detects ChkTeX and latexindent if installed.
 - **Intellisense**: Auto-completion for commands, citations, references
 - **SyncTeX**: Click PDF to jump to source and vice versa
 
-### Workspace Settings (Optional)
+### Workspace Settings
 
-For project-specific LaTeX Workshop settings, you can create a local config file.
-LaTeX Workshop will use the configuration files in the repository automatically.
+LaTeX Workshop is configured to use the `build/` directory for all output files.
 
-Key settings:
-- `latex-workshop.linting.chktex.enabled`: Enable/disable ChkTeX (default: false)
+**IMPORTANT:** If you need to recreate `.vscode/settings.json`:
+```bash
+mkdir -p .vscode
+cp latex-workshop-config.json.template .vscode/settings.json
+```
+
+Key settings configured:
+- `latex-workshop.latex.outDir`: "build" - All build artifacts go to build/ directory
+- `latex-workshop.latex.recipe.default`: "latexmk" - Uses .latexmkrc configuration
+- `latex-workshop.linting.chktex.enabled`: Enable/disable ChkTeX linting
 - `latex-workshop.latex.autoBuild.run`: Auto-build behavior
-- `latex-workshop.latex.outDir`: Build output directory (configured in .latexmkrc)
 
 ## Verification
 
