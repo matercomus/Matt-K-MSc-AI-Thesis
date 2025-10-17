@@ -12,7 +12,7 @@
             "tool",
             "run",
             "arxiv-mcp-server",
-            "--storage-path", "/path/to/paper/storage"
+            "--storage-path", "~/Documents/arxiv-mcp-papers/"
         ]
     }
     }

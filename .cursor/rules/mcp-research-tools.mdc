@@ -1,0 +1,396 @@
+---
+alwaysApply: true
+---
+
+# MCP Research Tools Usage Guide
+
+This document describes how to use the Model Context Protocol (MCP) tools configured for this thesis project. These tools enable AI-assisted research through integration with Zotero and ArXiv.
+
+## Zotero MCP Integration
+
+### Overview
+Zotero MCP provides AI-powered access to your local Zotero library, including semantic search, full-text search, and citation management.
+
+### Configuration
+- **Access Method**: Local Zotero API (`ZOTERO_LOCAL=true`)
+- **Requirement**: Zotero desktop application must be running
+- **Semantic Search**: Enabled with embedding-based similarity search
+
+### Core Capabilities
+
+#### 1. Semantic Search
+Search your library by **conceptual meaning**, not just keywords.
+
+**Tool**: `zotero_semantic_search`
+
+**When to Use**:
+- Finding papers related to a research concept
+- Discovering relevant work without knowing exact keywords
+- Exploring topics conceptually similar to a given abstract or description
+
+**Example Queries**:
+- "Find research on privacy-preserving trajectory generation"
+- "Papers about anomaly detection in time series data"
+- "Studies related to differential privacy in machine learning"
+- "Research similar to: [paste abstract]"
+
+**Best Practices**:
+- Use complete, descriptive queries (questions or topic descriptions)
+- Specify domain context when relevant
+- Results include similarity scores to gauge relevance
+- More comprehensive with full-text indexing enabled
+
+#### 2. Database Management
+The semantic search requires an up-to-date vector database.
+
+**Tool**: `zotero_update_search_database`
+
+**When to Update**:
+- After adding new papers to Zotero
+- After significant changes to your library (tags, annotations)
+- Before starting a new research session
+- When search results seem outdated
+
+**Update Options**:
+- **Metadata-only** (fast, ~few seconds): Indexes titles, abstracts, basic metadata
+- **Full-text** (slower, more comprehensive): Indexes complete paper content
+- **Force rebuild**: Completely rebuilds database from scratch
+
+**Recommended Workflow**:
+1. Add papers to Zotero throughout the week
+2. Run `zotero-mcp update-db --fulltext` weekly for comprehensive indexing
+3. Run quick metadata updates before research sessions: `zotero-mcp update-db`
+
+**Command-line Usage**:
+```bash
+# Quick metadata-only update
+zotero-mcp update-db
+
+# Comprehensive full-text update (recommended weekly)
+zotero-mcp update-db --fulltext
+
+# Force complete rebuild if issues occur
+zotero-mcp update-db --force-rebuild
+
+# Check database status
+zotero-mcp db-status
+```
+
+#### 3. Standard Search
+Traditional keyword-based search in your library.
+
+**Tool**: `zotero_search_items`
+
+**Use For**:
+- Finding papers by known keywords or title fragments
+- Searching for specific authors
+- Quick lookups when you know what you're looking for
+
+#### 4. Advanced Search
+Complex searches with multiple criteria.
+
+**Tool**: `zotero_advanced_search`
+
+**Use For**:
+- Combining multiple search conditions
+- Filtering by date ranges, item types, or collections
+- Precise queries with specific requirements
+
+#### 5. Tag-Based Search
+Find papers using custom tag filters.
+
+**Tool**: `zotero_search_by_tag`
+
+**Use For**:
+- Finding papers by research category or topic tags
+- Including/excluding specific tag combinations
+- Organizing papers by custom taxonomy
+
+**Example**: Find papers tagged "#Arm" excluding those with "#Crypt"
+
+#### 6. Citation Export
+Get citation information in various formats.
+
+**Tool**: `zotero_get_item_metadata`
+
+**Parameters**:
+- `format="bibtex"` - Export BibTeX citation
+
+**Workflow**:
+1. Find paper using semantic or standard search
+2. Request metadata with `format="bibtex"`
+3. Verify citation key matches entries in `references_new.bib`
+4. Use citation key in LaTeX: `\cite{key}`
+
+**Important**: Export entire library to `references_new.bib` via Zotero, don't manually copy individual citations
+
+#### 7. Full-Text Access
+Retrieve complete text content from papers.
+
+**Tool**: `zotero_get_item_fulltext`
+
+**Use For**:
+- Reading paper content within AI assistant
+- Extracting specific information from papers
+- Analyzing paper content for citation purposes
+
+**Requirements**:
+- Zotero 7+ for local full-text access
+- PDF attachments in Zotero library
+
+#### 8. Annotations and Notes
+Access PDF annotations and Zotero notes.
+
+**Tools**:
+- `zotero_get_annotations` - Extract PDF annotations
+- `zotero_get_notes` - Retrieve Zotero notes
+- `zotero_search_notes` - Search through notes and annotations
+
+**Use For**:
+- Reviewing your annotations from papers
+- Finding specific concepts in your notes
+- Extracting highlighted passages for writing
+
+**Enhancement**: Install [Better BibTeX](https://retorque.re/zotero-better-bibtex/) plugin for optimal annotation extraction
+
+#### 9. Collections and Organization
+Browse your Zotero library structure.
+
+**Tools**:
+- `zotero_get_collections` - List all collections
+- `zotero_get_collection_items` - Get items in a collection
+- `zotero_get_tags` - List all tags
+- `zotero_get_recent` - Get recently added items
+
+**Use For**:
+- Exploring library organization
+- Finding papers in specific research areas
+- Reviewing recent additions
+
+### Zotero Workflow Best Practices
+
+1. **Library Organization**:
+   - Use collections for major topics (e.g., "Privacy", "Anomaly Detection", "Trajectory Generation")
+   - Tag papers with specific concepts or methods
+   - Keep Zotero library well-maintained for better search results
+
+2. **Search Strategy**:
+   - Start with semantic search for exploratory research
+   - Use tag-based search for known topic areas
+   - Use standard search for specific papers or authors
+
+3. **Database Maintenance**:
+   - Update database after batch-adding papers
+   - Use full-text indexing for comprehensive searches
+   - Check database status if searches seem incomplete
+
+4. **Citation Workflow**:
+   - Search → Read → Add to Zotero → Export bibliography → Cite in LaTeX
+   - Never manually edit `references_new.bib`
+   - Verify citation keys before using in document
+
+## ArXiv MCP Integration
+
+### Overview
+ArXiv MCP enables searching and downloading papers from arXiv repository directly through AI assistant.
+
+### Configuration
+- **Storage Location**: `~/Documents/arxiv-mcp-papers/`
+- **Purpose**: Download and analyze papers not yet in Zotero library
+
+### Available Tools
+
+#### 1. Paper Search
+Search arXiv repository with filters.
+
+**Tool**: `search_papers`
+
+**Parameters**:
+- `query` - Search terms (e.g., "transformer architecture", "trajectory generation")
+- `max_results` - Number of results to return (default: 10)
+- `date_from` - Filter by date (format: "YYYY-MM-DD")
+- `categories` - arXiv categories (e.g., ["cs.AI", "cs.LG"])
+
+**Example Queries**:
+- Recent papers on a specific topic
+- Papers in particular research areas
+- Papers published after certain date
+
+**Common Categories**:
+- `cs.AI` - Artificial Intelligence
+- `cs.LG` - Machine Learning
+- `cs.CV` - Computer Vision
+- `cs.CR` - Cryptography and Security
+- `stat.ML` - Machine Learning (Statistics)
+
+#### 2. Download Paper
+Download paper by arXiv ID.
+
+**Tool**: `download_paper`
+
+**Parameters**:
+- `paper_id` - arXiv ID (e.g., "2401.12345")
+
+**Use For**:
+- Saving papers for offline reading
+- Building local paper collection
+- Preparing papers for detailed analysis
+
+#### 3. List Downloaded Papers
+View all papers in local storage.
+
+**Tool**: `list_papers`
+
+**Use For**:
+- Browsing downloaded papers
+- Checking what's available locally
+- Managing local paper collection
+
+#### 4. Read Paper
+Access content of downloaded paper.
+
+**Tool**: `read_paper`
+
+**Parameters**:
+- `paper_id` - arXiv ID
+
+**Use For**:
+- Reading paper content through AI assistant
+- Extracting information for thesis
+- Analyzing methodology or results
+
+#### 5. Deep Paper Analysis
+Comprehensive analysis workflow for academic papers.
+
+**Tool**: `deep-paper-analysis` (prompt)
+
+**Parameters**:
+- `paper_id` - arXiv ID
+
+**Provides**:
+- Executive summary
+- Research context and motivation
+- Methodology analysis
+- Results evaluation
+- Practical and theoretical implications
+- Future research directions
+- Broader impacts
+
+### ArXiv Workflow Best Practices
+
+1. **Discovery**:
+   - Use ArXiv MCP to find recent papers on current topics
+   - Search by category to stay within relevant research areas
+   - Filter by date to find latest work
+
+2. **Download and Review**:
+   - Download promising papers to local storage
+   - Use deep analysis prompt for systematic review
+   - Take notes in `notes/` directory with paper IDs
+
+3. **Integration with Zotero**:
+   - After reviewing ArXiv papers, add important ones to Zotero
+   - Import to Zotero using DOI or arXiv ID
+   - Export updated bibliography to sync with thesis
+
+4. **Storage Management**:
+   - Papers automatically saved to `~/Documents/arxiv-mcp-papers/`
+   - Organize with clear naming from arXiv IDs
+   - Periodically clean up papers moved to Zotero
+
+## Complete Research Workflow
+
+### Finding and Citing New Research
+
+1. **Discovery Phase**:
+   - Use Zotero semantic search for papers in your library
+   - Use ArXiv MCP for new papers not yet in your collection
+   - Explore related work through similarity searches
+
+2. **Evaluation Phase**:
+   - Read paper content using full-text tools
+   - Use deep analysis for systematic review
+   - Take notes linking to paper IDs or citation keys
+
+3. **Integration Phase**:
+   - Add paper to Zotero library
+   - Add appropriate tags and collections
+   - Update Zotero MCP database: `zotero-mcp update-db --fulltext`
+
+4. **Citation Phase**:
+   - Export updated `references_new.bib` from Zotero
+   - Use citation key in LaTeX document
+   - Rebuild thesis to verify citation
+
+### Maintaining Research Library
+
+**Daily**:
+- Add papers found during research to Zotero immediately
+- Tag and organize papers upon import
+
+**Weekly**:
+- Update Zotero MCP database with full-text: `zotero-mcp update-db --fulltext`
+- Export updated bibliography to thesis repo
+- Commit bibliography updates: `git commit -m "🔗 cite: sync bibliography with Zotero"`
+
+**Monthly**:
+- Review and clean up tags and collections
+- Archive or remove papers no longer relevant
+- Verify citation keys are consistent
+
+## Troubleshooting
+
+### Zotero MCP Issues
+
+**Semantic search returns no results**:
+- Check database is initialized: `zotero-mcp db-status`
+- Update database: `zotero-mcp update-db --fulltext`
+- Ensure Zotero desktop is running
+
+**Citations not found**:
+- Verify paper is in Zotero library
+- Check citation key spelling in `references_new.bib`
+- Re-export bibliography from Zotero
+
+**Database update fails**:
+- Ensure Zotero is running with local API enabled
+- Check Zotero preferences: "Allow other applications on this computer to communicate with Zotero"
+- Try force rebuild: `zotero-mcp update-db --force-rebuild`
+
+### ArXiv MCP Issues
+
+**Papers not downloading**:
+- Verify arXiv ID format (e.g., "2401.12345" not "arXiv:2401.12345")
+- Check internet connection
+- Verify storage path exists: `~/Documents/arxiv-mcp-papers/`
+
+**Storage path issues**:
+- Create directory if missing: `mkdir -p ~/Documents/arxiv-mcp-papers/`
+- Check directory permissions
+
+## Tool Selection Guide
+
+**Use Zotero semantic search when**:
+- Looking for conceptually related papers in your library
+- Exploring topics without knowing exact keywords
+- Finding papers similar to a given abstract or description
+
+**Use Zotero standard search when**:
+- You know the paper title or author
+- Looking for specific keywords
+- Quick lookups of known papers
+
+**Use Zotero tag search when**:
+- Papers are organized by custom taxonomy
+- Filtering by research category
+- Finding papers in specific topic areas
+
+**Use ArXiv search when**:
+- Looking for recent papers not yet in your library
+- Exploring cutting-edge research
+- Finding papers before adding them to Zotero
+
+**Use full-text tools when**:
+- Need to read specific paper sections
+- Extracting detailed information for writing
+- Analyzing methodology or results in depth

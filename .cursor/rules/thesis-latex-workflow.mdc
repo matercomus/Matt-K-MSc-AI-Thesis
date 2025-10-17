@@ -1,0 +1,178 @@
+---
+alwaysApply: true
+---
+
+# LaTeX Thesis Workflow Rules
+
+## Reference Management
+
+### Zotero as Single Source of Truth
+- **NEVER manually edit `references_new.bib`** - this file is automatically synced from Zotero
+- All bibliography changes must be made in Zotero, then exported
+- To add citations:
+  1. Add paper to Zotero library
+  2. Export updated bibliography to `references_new.bib`
+  3. Use citation key in LaTeX with `\cite{key}`
+  4. Rebuild document to update references
+
+### Citation Style Guidelines
+- **Use inline citations throughout** - no paper summaries
+- **No author name mentions** in the text (e.g., avoid "Smith et al. proposed...")
+- **No special formatting** for citations (e.g., no bold, italics, or parenthetical explanations)
+- Let citations speak through context, not explicit attribution
+- Example: "Recent work on trajectory generation shows promising results~\cite{paper1,paper2}."
+
+### Working with Citations
+- Use `\cite{key}` for standard citations
+- Use `\citep{key}` for parenthetical citations if needed
+- Verify citation keys exist in `references_new.bib` before committing
+- Check for undefined references during compilation
+
+## Build Configuration
+
+### Directory Structure
+```
+.
+├── main.tex                    # Main document
+├── custom-commands.tex         # Custom LaTeX commands
+├── title_page.tex             # Title page
+├── references_new.bib         # Bibliography (managed via Zotero)
+├── build/                     # Build artifacts (gitignored)
+│   ├── main.pdf              # Compiled PDF
+│   ├── main.aux              # Auxiliary files
+│   └── ...                   # Other build artifacts
+├── assets/                    # Static assets
+│   ├── plots/                # Generated plots and figures
+│   └── vu/                   # University branding
+├── llncs/                    # Springer LNCS template
+└── notes/                    # Markdown notes
+```
+
+### Build Artifacts
+- All build outputs go to `build/` directory
+- Main PDF is at `build/main.pdf`
+- Never commit files in `build/` directory
+- Use `latexmk` for automated building
+
+### Compilation Commands
+```bash
+# Build the document
+latexmk -pdf main.tex
+
+# Clean build artifacts
+latexmk -c
+
+# Full clean including PDF
+latexmk -C
+```
+
+## LaTeX Best Practices
+
+### Document Structure
+- Keep `main.tex` as the single entry point
+- Use `\input{}` or `\include{}` for modular structure when needed
+- Define custom commands in `custom-commands.tex`
+- Maintain consistent sectioning hierarchy
+
+### Figure Management
+- Store figures in `assets/plots/`
+- Use vector formats (PDF, SVG converted to PDF) when possible
+- Reference all figures in text before they appear
+- Use descriptive filenames (e.g., `trajectory-comparison.pdf`, not `fig1.pdf`)
+- Include figure source code or generation scripts when applicable
+
+### Table Best Practices
+- Use `booktabs` package for professional tables
+- Avoid vertical lines in tables
+- Include units in column headers
+- Reference tables before they appear in text
+
+### Cross-References
+- Use `\label{}` and `\ref{}` for all cross-references
+- Label format: `\label{sec:intro}`, `\label{fig:architecture}`, `\label{tab:results}`
+- Never hard-code section/figure/table numbers
+
+### Mathematical Notation
+- Define frequently used notation in `custom-commands.tex`
+- Use consistent notation throughout document
+- Define variables before use
+- Use `\DeclareMathOperator` for custom operators
+
+## Markdown Notes Integration
+
+### Linking to Notes
+- When incorporating information from project notes, **use markdown links** to relevant parts
+- Format: `[concept name](notes/filename.md#section)`
+- Helps maintain traceability between thesis and research notes
+- Example: Design decisions documented in notes should link back to source
+
+### Notes Organization
+- Keep research notes in `notes/` directory
+- Use markdown for note-taking
+- Link between thesis and notes bidirectionally
+- Document methodology decisions and rationale
+
+## Research Integration Workflow
+
+### Adding New Research
+1. Find paper using Zotero MCP semantic search or ArXiv MCP
+2. Add paper to Zotero library (add tags, collections)
+3. Update Zotero MCP database: `zotero-mcp update-db --fulltext`
+4. Export updated bibliography to `references_new.bib`
+5. Use citation in LaTeX document
+6. Rebuild to verify citation works
+
+### Literature Review Process
+1. Use semantic search to find related work
+2. Read and annotate papers in Zotero
+3. Take notes in `notes/` directory with links to sources
+4. Add relevant citations to thesis sections
+5. Maintain bibliography synchronization
+
+## Quality Checks
+
+### Before Committing
+- [ ] Document compiles without errors
+- [ ] No undefined citations (`Citation 'key' on page X undefined`)
+- [ ] No undefined references (`Reference 'label' on page X undefined`)
+- [ ] All figures are referenced in text
+- [ ] Figure/table captions are descriptive
+- [ ] No overfull/underfull hbox warnings (or documented as acceptable)
+- [ ] Bibliography is synchronized with Zotero
+- [ ] Build artifacts only in `build/` directory
+
+### Regular Maintenance
+- Keep Zotero library organized with tags and collections
+- Update semantic search database after significant library changes
+- Review and clean up unused custom commands
+- Maintain consistent formatting throughout document
+
+## Template-Specific Notes
+
+### LNCS Template (Springer)
+- Using `llncs.cls` document class
+- Bibliography style: `splncs04.bst`
+- Follow Springer formatting guidelines
+- Keep template files in `llncs/` directory
+- Don't modify template files unless necessary
+
+### Custom Commands
+- Define shortcuts in `custom-commands.tex`
+- Document complex commands with comments
+- Keep commands organized by category
+- Avoid redefining standard LaTeX commands
+
+## Error Handling
+
+### Common Issues
+1. **Undefined citations**: Check citation key spelling, verify in `references_new.bib`
+2. **Missing figures**: Check file path, ensure figure file exists in `assets/`
+3. **Compilation errors**: Read error message, check line number in source
+4. **Bibliography not updating**: Run `latexmk` multiple times or clean build
+
+### Debugging Process
+1. Read error messages carefully (line numbers, error type)
+2. Check recent changes if error is new
+3. Isolate problematic section by commenting out
+4. Consult LaTeX documentation or resources
+5. Verify package versions and dependencies
