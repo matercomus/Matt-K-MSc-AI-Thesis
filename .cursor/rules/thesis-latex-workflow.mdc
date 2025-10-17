@@ -28,6 +28,107 @@ alwaysApply: true
 - Verify citation keys exist in `references_new.bib` before committing
 - Check for undefined references during compilation
 
+## Agent Behavior Principles
+
+### Verification Over Assumption
+
+**Core principle**: When uncertain about any aspect of a task, **always ask clarifying questions** rather than making assumptions. It's better to ask than to make changes that need to be reverted.
+
+### When to Verify
+
+**Ask clarifying questions when:**
+- Citation keys or file paths are uncertain
+- User intent is ambiguous or could have multiple valid interpretations
+- Structural changes might have unintended consequences
+- Information from different sources conflicts
+- Task requirements are unclear or incomplete
+- Multiple valid approaches exist with significantly different outcomes
+
+**Proceed with confidence when:**
+- Task is clearly specified with explicit requirements
+- Following documented conventions and rules
+- Performing routine operations (e.g., building, reading files)
+- Information is verifiable from reliable sources (e.g., existing code, documentation)
+
+### Specific Verification Guidelines
+
+**Citations and References:**
+- Before citing a paper, verify the citation key exists in `references_new.bib`
+- If citation key is uncertain, search for it rather than guessing
+- When adding new citations, confirm user has added paper to Zotero first
+
+**File Operations:**
+- Verify file paths before reading or modifying files
+- Check file existence before operations that assume it exists
+- Confirm directory structure matches expectations
+
+**Content Changes:**
+- When making significant structural changes, outline the approach first
+- If user request is ambiguous, ask for clarification before proceeding
+- Present options when multiple valid implementations exist
+
+**Tool Usage:**
+- Verify tool parameters before execution
+- Check command syntax when uncertain
+- Confirm tool availability before use
+
+### User Responsibilities vs Agent Capabilities
+
+**The agent CANNOT:**
+- Add papers to Zotero library directly (Zotero MCP is read-only for library management)
+- Manually edit `references_new.bib` (Zotero is source of truth)
+- Install system packages or dependencies
+- Access resources outside the workspace without permission
+
+**The agent CAN:**
+- Search for papers using Zotero MCP and ArXiv MCP
+- Recommend papers to add to Zotero
+- Read and analyze papers from Zotero or ArXiv
+- Help with citations AFTER user adds papers to Zotero and syncs bibliography
+- Edit LaTeX source files
+- Run build commands and analyze output
+- Search and navigate codebase and documentation
+
+### Workflow Example: Adding Citations
+
+**Correct workflow:**
+1. Agent searches for relevant papers using MCP tools
+2. Agent recommends papers to user
+3. **User manually adds papers to Zotero** (agent cannot do this)
+4. **User exports updated bibliography to `references_new.bib`**
+5. **User runs `zotero-mcp update-db --fulltext`** (if using semantic search)
+6. Agent verifies citation keys exist in `references_new.bib`
+7. Agent adds citations to LaTeX document
+8. Agent verifies document compiles successfully
+
+**Incorrect workflow:**
+1. Agent tries to add paper to Zotero (not supported)
+2. Agent manually edits `references_new.bib` (violates Zotero as source of truth)
+3. Agent assumes citation key without verification (may cause errors)
+
+### Communication Guidelines
+
+**When asking clarifying questions:**
+- Be specific about what needs clarification
+- Provide context for why verification is needed
+- Offer relevant options when applicable
+- Keep questions concise and actionable
+
+**Example clarifications:**
+- "I found several papers on this topic. Which one would you like to cite? Or should I recommend the most relevant ones first?"
+- "The citation key could be 'smith2023privacy' or 'smith2023trajectory'. Let me check references_new.bib to verify."
+- "This change could affect multiple sections. Should I update all occurrences or just this one?"
+- "I can see two possible interpretations of this request. Did you mean [option A] or [option B]?"
+
+### Error Recovery
+
+When mistakes happen:
+- Acknowledge the error clearly
+- Explain what went wrong
+- Propose correction approach
+- Ask for confirmation before correcting
+- Learn from the mistake to avoid repetition
+
 ## Build Configuration
 
 ### Directory Structure
@@ -115,19 +216,20 @@ latexmk -C
 ## Research Integration Workflow
 
 ### Adding New Research
-1. Find paper using Zotero MCP semantic search or ArXiv MCP
-2. Add paper to Zotero library (add tags, collections)
-3. Update Zotero MCP database: `zotero-mcp update-db --fulltext`
-4. Export updated bibliography to `references_new.bib`
-5. Use citation in LaTeX document
-6. Rebuild to verify citation works
+1. **Agent**: Find paper using Zotero MCP semantic search or ArXiv MCP
+2. **User**: Add paper to Zotero library (add tags, collections) - *agent cannot do this*
+3. **User**: Update Zotero MCP database: `zotero-mcp update-db --fulltext`
+4. **User**: Export updated bibliography to `references_new.bib`
+5. **Agent**: Verify citation key exists in bibliography
+6. **Agent**: Use citation in LaTeX document
+7. **Agent**: Rebuild to verify citation works
 
 ### Literature Review Process
-1. Use semantic search to find related work
-2. Read and annotate papers in Zotero
-3. Take notes in `notes/` directory with links to sources
-4. Add relevant citations to thesis sections
-5. Maintain bibliography synchronization
+1. **Agent**: Use semantic search to find related work
+2. **User**: Read and annotate papers in Zotero
+3. **Agent/User**: Take notes in `notes/` directory with links to sources
+4. **Agent**: Add relevant citations to thesis sections (after user completes steps 2-4 above)
+5. **User**: Maintain bibliography synchronization with Zotero
 
 ## Quality Checks
 

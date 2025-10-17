@@ -5,204 +5,459 @@ alwaysApply: true
 # Git Best Practices for LaTeX Thesis Writing
 
 ## Commit Message Structure
-Follow conventional commit format with gitmojis for clarity:
+
+Follow conventional commit format for clarity and consistency:
+
 ```
-<gitmoji> <type>: <description>
+<type>(<scope>): <description>
 
 [optional body]
 
 [optional footer]
 ```
 
-### Types for Thesis Writing
-- ✍️ `content`: Writing new content, sections, arguments, or analysis
-- 📚 `lit-review`: Literature review additions or updates
-- 🔬 `methodology`: Methodology section changes
-- 📊 `results`: Results, analysis, or discussion updates
-- 🔗 `cite`: Citation additions or reference management (via Zotero)
-- 🖼️ `figure`: Adding or updating figures, tables, or plots
-- 📝 `edit`: Content revisions, rewording, or refinement
-- ♻️ `refactor`: Restructuring sections or reorganizing content
-- 🎨 `format`: LaTeX formatting, styling, or layout changes
-- 🔧 `config`: Build configuration, package updates, or tool setup
-- 📦 `deps`: LaTeX package dependencies or bibliography updates
-- 🐛 `fix`: Fixing compilation errors or broken references
-- 🚧 `draft`: Work-in-progress commits for incomplete sections
-- 🎯 `review`: Incorporating reviewer or supervisor feedback
+### Commit Types for Thesis
 
-### Examples
+- **content** - Writing new sections, arguments, analysis
+- **cite** - Citation management (syncing from Zotero)
+- **figure** - Adding or updating figures, tables, plots
+- **edit** - Revising existing content for clarity/quality
+- **refactor** - Restructuring sections or reorganizing content
+- **format** - LaTeX formatting, styling, layout changes
+- **fix** - Fixing errors, broken references, compilation issues
+- **config** - Build configuration, dependencies, tool setup
+- **draft** - Work-in-progress commits for incomplete sections
+- **review** - Incorporating supervisor or reviewer feedback
+
+### Scope Guidelines
+
+The scope indicates **where** or **what** the change affects. Use flexibly based on context:
+
+**Location-based scopes:**
+- `intro` - Introduction chapter
+- `lit-review` - Literature review
+- `chapter2`, `chapter3`, etc. - Specific chapters
+- `methodology` - Methodology chapter
+- `evaluation` - Evaluation/Results chapter  
+- `conclusion` - Conclusion chapter
+- `abstract` - Abstract section
+
+**Component-based scopes:**
+- `architecture` - System architecture content
+- `privacy-model` - Privacy model descriptions
+- `experiments` - Experimental setup or results
+- `references` - Bibliography management
+- `figures` - Multiple figures
+- `notation` - Mathematical notation
+
+**Examples:**
 ```bash
-✍️ content: add initial draft of data preprocessing section
-📚 lit-review: expand related work on trajectory generation
-🔬 methodology: detail DiffTraj implementation approach
-📊 results: add quantitative evaluation metrics
-🔗 cite: add references for privacy-preserving techniques
-🖼️ figure: add trajectory visualization comparison plots
-📝 edit: revise introduction for clarity
-♻️ refactor: reorganize methodology subsections
-🎨 format: adjust table formatting and caption placement
-🔧 config: update latexmk build configuration
-🐛 fix: resolve undefined citation references
-🚧 draft: initial outline for evaluation chapter
-🎯 review: address supervisor comments on methodology
+content(intro): add research motivation and problem statement
+cite(lit-review): sync updated references from Zotero
+figure(methodology): add DiffTraj architecture diagram
+edit(chapter2): improve clarity of privacy definitions
+refactor(evaluation): reorganize metrics into subsections
+fix(references): resolve undefined citation warnings
+review(methodology): address supervisor comments on threat model
+format(abstract): adjust spacing and paragraph structure
+draft(chapter4): initial outline for evaluation framework
+config(build): update latexmk configuration for build directory
+```
+
+## Semantic Versioning with Git Tags
+
+Use semantic versioning to tag thesis milestones:
+
+### Version Format: `vMAJOR.MINOR.PATCH`
+
+**MAJOR version (x.0.0):**
+- Complete drafts (first full draft, final draft)
+- Major restructures after supervisor/committee review
+- Significant methodological or structural changes
+
+**MINOR version (0.x.0):**
+- Completing major chapters or sections
+- Adding substantial new content or experiments
+- Significant improvements to existing chapters
+
+**PATCH version (0.0.x):**
+- Refinements and minor corrections
+- Small additions or clarifications
+- Formatting and style improvements
+
+### Example Versioning Timeline
+
+```
+v0.1.0 - Initial outline and introduction drafted
+v0.2.0 - Literature review chapter complete
+v0.3.0 - Methodology chapter complete  
+v0.4.0 - Implementation details added
+v0.5.0 - Evaluation chapter drafted
+v0.6.0 - All chapters have initial drafts
+v1.0.0 - First complete draft (all chapters, ready for supervisor review)
+v1.1.0 - Added additional experiments section
+v1.2.0 - Expanded discussion and limitations
+v1.2.1 - Fixed citations and minor corrections
+v2.0.0 - Major revisions after supervisor feedback (restructured)
+v2.1.0 - Added case study section
+v2.2.0 - Improved evaluation with new metrics
+v3.0.0 - Final submission version
+```
+
+### Creating Tags
+
+```bash
+# Tag a milestone
+git tag -a v0.2.0 -m "Literature review chapter complete"
+
+# Tag with detailed message
+git tag -a v1.0.0 -m "First complete draft for supervisor review
+
+All chapters drafted:
+- Introduction and motivation
+- Literature review  
+- Methodology
+- Evaluation and results
+- Discussion and conclusion"
+
+# List all tags
+git tag
+
+# View tag details
+git show v1.0.0
 ```
 
 ## Commit Guidelines
 
 ### Single Logical Change
-- One conceptual change per commit (e.g., one subsection, one figure, one set of related citations)
+- One conceptual change per commit
+- Group related edits (e.g., section + associated citations + figures)
 - If describing multiple unrelated changes, split into separate commits
-- Group related edits (e.g., content + associated citations + figure) in one commit
 
 ### Descriptive Messages
 - Use imperative mood ("add" not "added")
-- Be specific about which section or chapter changed
-- Include context for major structural changes
+- Be specific about which section or component changed
+- Include context for major structural changes in commit body
+
+### Commit Message Examples
+
+**Good:**
+```bash
+content(intro): add research motivation section
+
+Describes the gap in privacy-preserving trajectory generation
+and motivates the need for synthetic data approaches.
+```
+
+```bash
+figure(methodology): add DiffTraj architecture diagram
+
+Shows the complete pipeline from real data through DiffTraj
+to anomaly detection with LM-TAD.
+```
+
+**Avoid:**
+```bash
+# Too vague
+content: updates
+
+# No scope
+add stuff to chapter 2
+
+# Not descriptive enough  
+fix: changes
+```
 
 ### Staging Strategy
+
 ```bash
 # Review changes before committing
+git diff
 git diff main.tex
-git add -p  # Interactive staging for precise control
-git status  # Final verification
+
+# Interactive staging for precise control
+git add -p
+
+# Stage specific files
+git add main.tex assets/plots/new-figure.pdf
+
+# Final verification
+git status
 ```
 
-## Branch Management for Thesis Development
+## Branch Management
 
-### Workflow for Solo Thesis Project
-- `main`: Current stable version of thesis
-- `chapter/<name>`: Major chapter development
-- `draft/<topic>`: Exploratory writing or draft sections
-- `revision/<round>`: Supervisor feedback revisions
-- `figure/<topic>`: Complex figure or plot development
+### Workflow for Thesis Development
+
+**`main` branch:**
+- Current stable version of thesis
+- Always compiles without errors
+- Tagged with version numbers at milestones
+
+**Feature branches for focused work:**
+- `content/<topic>` - Writing new content
+- `review/<round>` - Supervisor feedback revisions
+- `figure/<topic>` - Complex figure development
+- `refactor/<topic>` - Structural changes
+- `experiment/<topic>` - Experimental additions
 
 ### Branch Operations
+
 ```bash
-# Create branch for new chapter
-git checkout -b chapter/methodology
+# Create branch for new chapter work
+git checkout -b content(chapter3-methodology)
 
 # Regular commits during writing
-git add main.tex custom-commands.tex
-git commit -m "✍️ content: add methodology framework overview"
+git add main.tex
+git commit -m "content(methodology): describe privacy model framework"
 
-# Merge when chapter is complete/stable
+# More commits...
+git commit -m "figure(methodology): add privacy budget allocation diagram"
+git commit -m "cite(methodology): add differential privacy references"
+
+# Merge when section is complete/stable
 git checkout main
-git merge chapter/methodology
-git branch -d chapter/methodology
+git merge content(chapter3-methodology) --no-ff
+git branch -d content(chapter3-methodology)
 
-# Quick branch for supervisor revisions
-git checkout -b revision/round-2
+# Create branch for supervisor revisions
+git checkout -b review(supervisor-round-2)
 # ... make changes ...
-git commit -m "🎯 review: address comments on evaluation section"
-git checkout main && git merge revision/round-2
+git commit -m "review(intro): strengthen motivation per supervisor feedback"
+git checkout main && git merge review(supervisor-round-2) --no-ff
 ```
 
+### Branch Naming Convention
+
+Use the same type and scope pattern as commits:
+- `content(evaluation)` - Adding evaluation chapter content
+- `review(methodology)` - Addressing review comments  
+- `figure(architecture)` - Developing architecture diagrams
+- `refactor(lit-review)` - Restructuring literature review
+- `config(build-system)` - Build configuration updates
+
 ## Pre-Commit Checks
+
 Always verify before committing:
-1. Document compiles without errors (`latexmk -pdf main.tex`)
-2. No undefined citations or references
-3. All figures are referenced in text
-4. No temporary/debug LaTeX commands left (e.g., `\todo`, `\comment`)
-5. Bibliography file not manually edited (Zotero is source of truth)
-6. Build artifacts remain in `build/` directory
+
+1. **Document compiles** without errors
+   ```bash
+   latexmk -pdf main.tex
+   ```
+
+2. **No undefined citations** or references
+   - Check build output for warnings
+   - Verify all `\cite{key}` have entries in `references_new.bib`
+
+3. **All figures are referenced** in text before they appear
+
+4. **No temporary commands** left in source
+   - Remove `\todo`, `\comment`, debug commands
+   - Check for commented-out text that should be deleted
+
+5. **Bibliography not manually edited**
+   - `references_new.bib` only updated via Zotero export
+   - Verify sync if citations added
+
+6. **Build artifacts** remain in `build/` directory
+   - Don't commit PDF files (unless intentional)
+   - Don't commit auxiliary files (.aux, .log, etc.)
 
 ## Repository Hygiene
 
 ### Regular Maintenance
+
 ```bash
 # Clean up merged branches
 git branch --merged | grep -v main | xargs git branch -d
 
-# Ensure .gitignore covers build artifacts
-# Keep references_new.bib under version control but never manually edit
+# View branch status
+git branch -vv
+
+# Update .gitignore for new file types as needed
 ```
 
-### File Organization
-- Commit related content changes together (e.g., section + figures + citations)
-- Separate major structural changes from content changes
-- Use `git add -A` carefully - prefer explicit file staging
-- Keep commits focused: one section/concept at a time
+### File Organization Principles
 
-### Thesis-Specific Patterns
+- Commit related changes together (section + citations + figures)
+- Separate major structural changes from content changes
+- Use explicit file staging over `git add -A`
+- Keep commits focused and atomic
+
+### Thesis-Specific Commit Patterns
+
 ```bash
 # Add new section with citations and figure
-git add main.tex assets/plots/new-figure.pdf
-git commit -m "✍️ content: add trajectory anomaly detection overview
-- Describe detection framework
-- Add architecture diagram (Figure 3.2)
-- Cite key papers on anomaly detection"
+git add main.tex assets/plots/trajectory-comparison.pdf
+git commit -m "content(evaluation): add trajectory utility metrics
 
-# Update references from Zotero
+Describe DTW distance and Hausdorff metrics for trajectory
+similarity. Include comparison visualization (Figure 4.2).
+Cite key papers on trajectory similarity measures."
+
+# Update bibliography from Zotero
 git add references_new.bib
-git commit -m "🔗 cite: sync bibliography with Zotero library"
+git commit -m "cite: sync bibliography with Zotero library"
 
-# Update figure based on feedback
-git add assets/plots/accuracy-comparison.pdf main.tex
-git commit -m "🖼️ figure: improve accuracy comparison visualization
-- Add error bars
-- Update caption with statistical significance"
-
-# Multiple related edits
+# Address supervisor feedback
 git add main.tex
-git commit -m "📝 edit: revise privacy preservation section
-- Clarify differential privacy explanation
-- Improve notation consistency
-- Strengthen argument flow"
+git commit -m "review(methodology): strengthen threat model description
+
+Per supervisor feedback:
+- Clarify attacker assumptions
+- Add formal threat model definition
+- Improve security parameter justification"
+
+# Multiple related improvements
+git add main.tex custom-commands.tex
+git commit -m "format(notation): standardize mathematical notation
+
+- Define macros for frequently used symbols
+- Ensure consistent notation across chapters
+- Update custom-commands.tex with new definitions"
 ```
 
 ## Emergency Procedures
 
 ### Quick Fixes
+
 ```bash
 # Amend last commit if not pushed (e.g., fix typo)
 git add main.tex
 git commit --amend --no-edit
 
+# Amend with new message
+git commit --amend -m "content(intro): add research motivation and objectives"
+
 # Reset soft for reworking recent commits
 git reset --soft HEAD~1
+# Make changes, then commit again
 ```
 
 ### Recovery
+
 ```bash
 # View commit history
 git log --oneline -10
+git log --graph --oneline --all -20
 
 # Recover lost commits
 git reflog
+
+# Restore specific commit
+git cherry-pick <commit-hash>
 ```
 
 ## Integration with Thesis Tools
 
 ### With Zotero (Bibliography Management)
+
 ```bash
-# After updating Zotero library, export to references_new.bib
-# Then commit the updated bibliography
+# After updating Zotero library and exporting bibliography:
 git add references_new.bib
-git commit -m "🔗 cite: sync updated references from Zotero"
+git commit -m "cite: sync updated references from Zotero
+
+Added papers on:
+- Differential privacy mechanisms
+- Trajectory data generation
+- Privacy-utility tradeoffs"
 ```
 
 ### With LaTeX Compilation
+
 ```bash
 # Build artifacts stay in build/ directory (gitignored)
-# Only commit source files, not generated PDFs
-git add main.tex title_page.tex custom-commands.tex
-git commit -m "✍️ content: complete abstract and introduction"
+# Only commit source files
+
+# Typical workflow
+git add main.tex title_page.tex
+git commit -m "content(abstract): write thesis abstract and summary"
 ```
 
 ### Documentation Updates
-- Update README.md when thesis structure changes significantly
-- Commit methodology notes alongside implementation
-- Keep notes/ directory synchronized with thesis progress
 
-## Milestone Commits
-Mark significant milestones with tags:
+```bash
+# Update README when structure changes
+git add README.md main.tex
+git commit -m "config: update README with new chapter structure"
+
+# Commit research notes with related thesis content
+git add notes/privacy-analysis.md main.tex
+git commit -m "content(methodology): add privacy analysis
+
+Document methodology in thesis and detailed notes."
+```
+
+## Milestone Tagging
+
+Mark significant milestones with annotated tags:
+
 ```bash
 # Tag completed draft for supervisor review
-git tag -a draft-v1.0 -m "First complete draft for supervisor review"
+git tag -a v1.0.0 -m "First complete draft for supervisor review
+
+All chapters complete with:
+- Introduction and motivation
+- Comprehensive literature review
+- Detailed methodology  
+- Evaluation and results
+- Discussion and conclusion
+- Complete bibliography"
 
 # Tag after major revisions
-git tag -a revision-round-2 -m "Revisions after second supervisor meeting"
+git tag -a v2.0.0 -m "Major revisions after supervisor feedback
 
-# Tag final submission
-git tag -a final-submission -m "Final thesis submission version"
+Changes:
+- Restructured methodology chapter
+- Expanded evaluation with new experiments
+- Strengthened discussion section
+- Addressed all supervisor comments"
+
+# Tag submission versions
+git tag -a v3.0.0 -m "Final thesis submission"
+
+# Tag with specific date for archival purposes
+git tag -a submission-2025-06-15 -m "Thesis submitted for defense"
 ```
+
+## Collaboration and Backup
+
+### Remote Repository
+
+```bash
+# Push main branch and all tags
+git push origin main --follow-tags
+
+# Push specific tag
+git push origin v1.0.0
+
+# Push all tags
+git push origin --tags
+```
+
+### Working with Feedback
+
+```bash
+# Create branch for each review round
+git checkout -b review(round-2)
+
+# Commit specific changes per comment
+git commit -m "review(intro): clarify research questions per comment #3"
+git commit -m "review(methodology): add implementation details per comment #5"
+
+# Merge when review addressed
+git checkout main
+git merge review(round-2) --no-ff
+git tag -a v1.1.0 -m "Revisions from supervisor review round 2"
+```
+
+## Summary
+
+- **Conventional commits** with type and scope for clarity
+- **Semantic versioning tags** for milestone tracking
+- **Atomic commits** - one logical change per commit
+- **Descriptive messages** in imperative mood
+- **Pre-commit verification** - always compile and check
+- **Feature branches** for focused development
+- **Never manually edit** `references_new.bib`
+- **Tag milestones** for clear version history

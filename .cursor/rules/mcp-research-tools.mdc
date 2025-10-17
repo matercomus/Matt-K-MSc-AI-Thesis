@@ -288,10 +288,12 @@ Comprehensive analysis workflow for academic papers.
    - Use deep analysis prompt for systematic review
    - Take notes in `notes/` directory with paper IDs
 
-3. **Integration with Zotero**:
-   - After reviewing ArXiv papers, add important ones to Zotero
-   - Import to Zotero using DOI or arXiv ID
-   - Export updated bibliography to sync with thesis
+3. **Integration with Zotero** (User tasks - Agent CANNOT do this):
+   - **User** reviews agent's paper recommendations
+   - **User** manually adds important papers to Zotero
+   - **User** imports to Zotero using DOI or arXiv ID
+   - **User** exports updated bibliography to sync with thesis
+   - **User** runs `zotero-mcp update-db --fulltext`
 
 4. **Storage Management**:
    - Papers automatically saved to `~/Documents/arxiv-mcp-papers/`
@@ -302,41 +304,49 @@ Comprehensive analysis workflow for academic papers.
 
 ### Finding and Citing New Research
 
-1. **Discovery Phase**:
+**IMPORTANT**: Agent CANNOT add papers to Zotero. This is a manual user task.
+
+1. **Discovery Phase** (Agent):
    - Use Zotero semantic search for papers in your library
    - Use ArXiv MCP for new papers not yet in your collection
    - Explore related work through similarity searches
+   - Recommend relevant papers to user
 
-2. **Evaluation Phase**:
+2. **Evaluation Phase** (Agent):
    - Read paper content using full-text tools
    - Use deep analysis for systematic review
    - Take notes linking to paper IDs or citation keys
+   - Provide paper summaries and relevance assessment
 
-3. **Integration Phase**:
-   - Add paper to Zotero library
-   - Add appropriate tags and collections
-   - Update Zotero MCP database: `zotero-mcp update-db --fulltext`
+3. **Integration Phase** (User - Agent CANNOT do this):
+   - **User** adds paper to Zotero library manually
+   - **User** adds appropriate tags and collections
+   - **User** exports updated `references_new.bib` from Zotero
+   - **User** updates Zotero MCP database: `zotero-mcp update-db --fulltext`
 
-4. **Citation Phase**:
-   - Export updated `references_new.bib` from Zotero
+4. **Citation Phase** (Agent):
+   - Verify citation key exists in `references_new.bib`
    - Use citation key in LaTeX document
-   - Rebuild thesis to verify citation
+   - Rebuild thesis to verify citation works
 
 ### Maintaining Research Library
 
-**Daily**:
+**Daily** (User tasks):
 - Add papers found during research to Zotero immediately
 - Tag and organize papers upon import
+- Export bibliography if citations needed same day
 
-**Weekly**:
+**Weekly** (User tasks):
 - Update Zotero MCP database with full-text: `zotero-mcp update-db --fulltext`
 - Export updated bibliography to thesis repo
-- Commit bibliography updates: `git commit -m "🔗 cite: sync bibliography with Zotero"`
+- Commit bibliography updates: `git commit -m "cite: sync bibliography with Zotero"`
 
-**Monthly**:
+**Monthly** (User tasks):
 - Review and clean up tags and collections
 - Archive or remove papers no longer relevant
 - Verify citation keys are consistent
+
+**Note**: The agent can help remind you of these tasks and verify the results, but cannot perform the Zotero operations directly.
 
 ## Troubleshooting
 
