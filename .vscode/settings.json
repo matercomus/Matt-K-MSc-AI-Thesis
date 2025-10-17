@@ -53,5 +53,6 @@
         "*.synctex.gz",
         "*.nav"
     ],
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "markdown.validate.enabled": true
 } 
