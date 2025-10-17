@@ -89,12 +89,6 @@ This project follows conventional commit conventions with gitmojis. See `.cursor
 MSc Artificial Intelligence  
 Vrije Universiteit Amsterdam
 
-**Supervisors:**
-- Ronald Siebes (VU Amsterdam)
-- Jiancheng Weng (Beijing University of Technology)
-- Zhisheng Huang (VU Amsterdam)
-- Shuai Wang (VU Amsterdam/Maastricht University)
-
 ## License
 
 This thesis is submitted in partial fulfillment of the requirements for the VU degree of Master of Science in Artificial Intelligence. All rights reserved.
