@@ -1,0 +1,16 @@
+# Binary files
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.eps binary
+
+# LaTeX files
+*.tex text
+*.bib text
+*.cls text
+*.bst text
+
+# Markdown files
+*.md text
+
