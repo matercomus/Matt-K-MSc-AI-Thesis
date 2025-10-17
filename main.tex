@@ -32,19 +32,21 @@
 
 % ===== Title Page =====
 \input{title_page}
-\title{Privacy-Preserving Synthetic Trajectory Generation for Taxi Route Anomaly Detection: An Integrated DiffTraj-LM-TAD Framework}
-\titlerunning{Privacy-Preserving Trajectory Generation for Anomaly Detection}
+\title{Knowledge Distillation for Map-Matched Trajectory Prediction: Improving Urban Route Prediction through Cross-Task Knowledge Transfer}
+\titlerunning{Knowledge Distillation for Trajectory Prediction}
 \author{Mateusz K{\k e}dzia\inst{1}\orcidID{0009-0001-4296-4479}}
 \authorrunning{K{\k e}dzia M.G.}
 \institute{Vrije Universiteit Amsterdam, Amsterdam}
 \maketitle
 
 \begin{abstract}
-  This study addresses the critical challenge of generating synthetic taxi trajectory datasets that preserve essential characteristics for anomaly detection research while ensuring passenger privacy protection. Urban taxi trajectory data contains sensitive location information that limits its availability for research purposes, creating a significant barrier to advancing anomaly detection methodologies. We propose a comprehensive framework for synthetic trajectory data generation that maintains statistical fidelity, behavioral patterns, and anomaly characteristics of real taxi routes while providing strong privacy guarantees.
+  Urban traffic management, transportation planning, and intelligent city systems require accurate real-time trajectory prediction to support policy decisions and optimize traffic flow. However, existing fast prediction models suffer from poor route completion rates (12-18\%), limiting their practical deployment for traffic regulators and urban planners. While sophisticated models like LM-TAD achieve superior spatial reasoning, their computational overhead (~3.4ms per trajectory vs ~0.1ms for fast models) prevents real-time application in city-wide traffic management systems, digital twin platforms, and large-scale simulations.
 
-  Our approach leverages LM-TAD (Language Model for Trajectory Anomaly Detection) integrated with DiffTraj diffusion-based generation to understand normal and anomalous trajectory patterns through iterative refinement, extracting key statistical and behavioral properties that must be preserved in synthetic generation. The framework implements multiple privacy protection mechanisms including differential privacy integration, trajectory-level anonymization, and synthetic data decoupling to prevent inference of individual trajectories from generated data. Comprehensive evaluation demonstrates that synthetic datasets maintain the essential characteristics necessary for effective anomaly detection while providing strong privacy protection, enabling continued research advancement without compromising passenger confidentiality.
+  This thesis addresses this challenge through training-time knowledge distillation, transferring spatial understanding from LM-TAD (a trajectory anomaly detection model) to HOSER (a fast zone-based prediction model). We demonstrate that repurposing the ``normal trajectory'' knowledge learned by anomaly detection models enables dramatic improvements in route prediction without inference-time overhead. Our distillation framework achieves 85-89\% path completion success (47-74$\times$ improvement over vanilla baseline), 87\% better distance distribution matching, and 98\% better spatial pattern fidelity on Beijing's 40,060-road network with 629,380 training trajectories. Hyperparameter optimization reveals that minimal distillation weight ($\lambda$=0.0014) with high temperature ($\tau$=4.37) enables effective knowledge transfer while preserving the student model's fast inference speed.
 
-  \keywords{Synthetic data generation \and Trajectory anomaly detection \and Privacy preservation \and Urban transportation \and Taxi routing}
+  The resulting system enables practical deployment for policy makers and traffic regulators, supporting applications in real-time traffic signal optimization, infrastructure planning, urban digital twins, agent-based traffic simulation, and high-quality synthetic trajectory data generation for training other models. This work demonstrates the viability of cross-task knowledge distillation for trajectory prediction and provides a scalable framework for integrating AI-based route prediction into operational traffic management systems.
+
+  \keywords{Knowledge distillation \and Trajectory prediction \and Urban transportation \and Traffic management \and Digital twins \and Deep learning}
 \end{abstract}
 
 \newpage
