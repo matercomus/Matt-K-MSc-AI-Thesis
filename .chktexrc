@@ -1,0 +1,12 @@
+# Suppress common false positives
+# -n22: Comment displayed (for inline comments)
+# -n30: Multiple spaces detected
+# -n46: Use \[ \] instead of $$ $$
+CmdLine { -n22 -n30 -n46 }
+
+# Set tab size
+TabSize = 2
+
+# Quiet mode (reduce noise)
+QuietMode { false }
+

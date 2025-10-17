@@ -1,0 +1,27 @@
+# LaTeX formatting preferences
+defaultIndent: "  "
+indentPreamble: 0
+alwaysLookforSplitBraces: 1
+alwaysLookforSplitBrackets: 1
+
+# Items and lists
+indentAfterItems: 1
+itemNames:
+  - item
+  - task
+
+# Environments
+indentAfterHeadings:
+  part:
+    indentAfterThisHeading: 0
+  chapter:
+    indentAfterThisHeading: 0
+  section:
+    indentAfterThisHeading: 0
+
+# Don't modify certain environments
+noAdditionalIndent:
+  - verbatim
+  - lstlisting
+  - algorithm
+
