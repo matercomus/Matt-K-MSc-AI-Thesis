@@ -1,9 +1,5 @@
-.cursor/
-literature/
-other/
-scripts/
-
-# Latex generated files
+# Build artifacts
+build/
 *.aux
 *.log
 *.out
@@ -14,20 +10,12 @@ scripts/
 *.fdb_latexmk
 *.synctex.gz
 *.xdv
-*.bbl
-
-# LaTeX auxiliary files
-*.aux
-*.log
-*.bbl
-*.blg
+*.lof
+*.lot
 *.nav
-*.out
 *.snm
-*.toc
 *.bcf
 *.run.xml
-*.fdb_latexmk
-*.fls
-Enhanced_Privacy_Preserving_Beamer.pdf
-main.pdf
+
+# IDE settings
+.vscode/
