@@ -6,10 +6,10 @@ alwaysApply: true
 
 ## Commit Message Structure
 
-Follow conventional commit format for clarity and consistency:
+Combine gitmojis with conventional commits for visual clarity and structure:
 
 ```
-<type>(<scope>): <description>
+<gitmoji> <type>(<scope>): <description>
 
 [optional body]
 
@@ -18,16 +18,16 @@ Follow conventional commit format for clarity and consistency:
 
 ### Commit Types for Thesis
 
-- **content** - Writing new sections, arguments, analysis
-- **cite** - Citation management (syncing from Zotero)
-- **figure** - Adding or updating figures, tables, plots
-- **edit** - Revising existing content for clarity/quality
-- **refactor** - Restructuring sections or reorganizing content
-- **format** - LaTeX formatting, styling, layout changes
-- **fix** - Fixing errors, broken references, compilation issues
-- **config** - Build configuration, dependencies, tool setup
-- **draft** - Work-in-progress commits for incomplete sections
-- **review** - Incorporating supervisor or reviewer feedback
+- ✍️ **content** - Writing new sections, arguments, analysis
+- 🔗 **cite** - Citation management (syncing from Zotero)
+- 🖼️ **figure** - Adding or updating figures, tables, plots
+- 📝 **edit** - Revising existing content for clarity/quality
+- ♻️ **refactor** - Restructuring sections or reorganizing content
+- 🎨 **format** - LaTeX formatting, styling, layout changes
+- 🐛 **fix** - Fixing errors, broken references, compilation issues
+- 🔧 **config** - Build configuration, dependencies, tool setup
+- 🚧 **draft** - Work-in-progress commits for incomplete sections
+- 🎯 **review** - Incorporating supervisor or reviewer feedback
 
 ### Scope Guidelines
 
@@ -52,16 +52,16 @@ The scope indicates **where** or **what** the change affects. Use flexibly based
 
 **Examples:**
 ```bash
-content(intro): add research motivation and problem statement
-cite(lit-review): sync updated references from Zotero
-figure(methodology): add DiffTraj architecture diagram
-edit(chapter2): improve clarity of privacy definitions
-refactor(evaluation): reorganize metrics into subsections
-fix(references): resolve undefined citation warnings
-review(methodology): address supervisor comments on threat model
-format(abstract): adjust spacing and paragraph structure
-draft(chapter4): initial outline for evaluation framework
-config(build): update latexmk configuration for build directory
+✍️ content(intro): add research motivation and problem statement
+🔗 cite(lit-review): sync updated references from Zotero
+🖼️ figure(methodology): add DiffTraj architecture diagram
+📝 edit(chapter2): improve clarity of privacy definitions
+♻️ refactor(evaluation): reorganize metrics into subsections
+🐛 fix(references): resolve undefined citation warnings
+🎯 review(methodology): address supervisor comments on threat model
+🎨 format(abstract): adjust spacing and paragraph structure
+🚧 draft(chapter4): initial outline for evaluation framework
+🔧 config(build): update latexmk configuration for build directory
 ```
 
 ## Semantic Versioning with Git Tags
@@ -143,14 +143,14 @@ git show v1.0.0
 
 **Good:**
 ```bash
-content(intro): add research motivation section
+✍️ content(intro): add research motivation section
 
 Describes the gap in privacy-preserving trajectory generation
 and motivates the need for synthetic data approaches.
 ```
 
 ```bash
-figure(methodology): add DiffTraj architecture diagram
+🖼️ figure(methodology): add DiffTraj architecture diagram
 
 Shows the complete pipeline from real data through DiffTraj
 to anomaly detection with LM-TAD.
@@ -159,13 +159,16 @@ to anomaly detection with LM-TAD.
 **Avoid:**
 ```bash
 # Too vague
-content: updates
+✍️ content: updates
 
 # No scope
 add stuff to chapter 2
 
 # Not descriptive enough  
-fix: changes
+🐛 fix: changes
+
+# Missing gitmoji
+content(intro): add section
 ```
 
 ### Staging Strategy
@@ -209,11 +212,11 @@ git checkout -b content(chapter3-methodology)
 
 # Regular commits during writing
 git add main.tex
-git commit -m "content(methodology): describe privacy model framework"
+git commit -m "✍️ content(methodology): describe privacy model framework"
 
 # More commits...
-git commit -m "figure(methodology): add privacy budget allocation diagram"
-git commit -m "cite(methodology): add differential privacy references"
+git commit -m "🖼️ figure(methodology): add privacy budget allocation diagram"
+git commit -m "🔗 cite(methodology): add differential privacy references"
 
 # Merge when section is complete/stable
 git checkout main
@@ -223,7 +226,7 @@ git branch -d content(chapter3-methodology)
 # Create branch for supervisor revisions
 git checkout -b review(supervisor-round-2)
 # ... make changes ...
-git commit -m "review(intro): strengthen motivation per supervisor feedback"
+git commit -m "🎯 review(intro): strengthen motivation per supervisor feedback"
 git checkout main && git merge review(supervisor-round-2) --no-ff
 ```
 
@@ -289,7 +292,7 @@ git branch -vv
 ```bash
 # Add new section with citations and figure
 git add main.tex assets/plots/trajectory-comparison.pdf
-git commit -m "content(evaluation): add trajectory utility metrics
+git commit -m "✍️ content(evaluation): add trajectory utility metrics
 
 Describe DTW distance and Hausdorff metrics for trajectory
 similarity. Include comparison visualization (Figure 4.2).
@@ -297,11 +300,11 @@ Cite key papers on trajectory similarity measures."
 
 # Update bibliography from Zotero
 git add references_new.bib
-git commit -m "cite: sync bibliography with Zotero library"
+git commit -m "🔗 cite: sync bibliography with Zotero library"
 
 # Address supervisor feedback
 git add main.tex
-git commit -m "review(methodology): strengthen threat model description
+git commit -m "🎯 review(methodology): strengthen threat model description
 
 Per supervisor feedback:
 - Clarify attacker assumptions
@@ -310,7 +313,7 @@ Per supervisor feedback:
 
 # Multiple related improvements
 git add main.tex custom-commands.tex
-git commit -m "format(notation): standardize mathematical notation
+git commit -m "🎨 format(notation): standardize mathematical notation
 
 - Define macros for frequently used symbols
 - Ensure consistent notation across chapters
@@ -327,7 +330,7 @@ git add main.tex
 git commit --amend --no-edit
 
 # Amend with new message
-git commit --amend -m "content(intro): add research motivation and objectives"
+git commit --amend -m "✍️ content(intro): add research motivation and objectives"
 
 # Reset soft for reworking recent commits
 git reset --soft HEAD~1
@@ -355,7 +358,7 @@ git cherry-pick <commit-hash>
 ```bash
 # After updating Zotero library and exporting bibliography:
 git add references_new.bib
-git commit -m "cite: sync updated references from Zotero
+git commit -m "🔗 cite: sync updated references from Zotero
 
 Added papers on:
 - Differential privacy mechanisms
@@ -371,7 +374,7 @@ Added papers on:
 
 # Typical workflow
 git add main.tex title_page.tex
-git commit -m "content(abstract): write thesis abstract and summary"
+git commit -m "✍️ content(abstract): write thesis abstract and summary"
 ```
 
 ### Documentation Updates
@@ -379,11 +382,11 @@ git commit -m "content(abstract): write thesis abstract and summary"
 ```bash
 # Update README when structure changes
 git add README.md main.tex
-git commit -m "config: update README with new chapter structure"
+git commit -m "🔧 config: update README with new chapter structure"
 
 # Commit research notes with related thesis content
 git add notes/privacy-analysis.md main.tex
-git commit -m "content(methodology): add privacy analysis
+git commit -m "✍️ content(methodology): add privacy analysis
 
 Document methodology in thesis and detailed notes."
 ```
@@ -442,8 +445,8 @@ git push origin --tags
 git checkout -b review(round-2)
 
 # Commit specific changes per comment
-git commit -m "review(intro): clarify research questions per comment #3"
-git commit -m "review(methodology): add implementation details per comment #5"
+git commit -m "🎯 review(intro): clarify research questions per comment #3"
+git commit -m "🎯 review(methodology): add implementation details per comment #5"
 
 # Merge when review addressed
 git checkout main
@@ -453,7 +456,8 @@ git tag -a v1.1.0 -m "Revisions from supervisor review round 2"
 
 ## Summary
 
-- **Conventional commits** with type and scope for clarity
+- **Gitmojis + conventional commits** - visual clarity with structure
+- **Format**: `<gitmoji> <type>(<scope>): <description>`
 - **Semantic versioning tags** for milestone tracking
 - **Atomic commits** - one logical change per commit
 - **Descriptive messages** in imperative mood
