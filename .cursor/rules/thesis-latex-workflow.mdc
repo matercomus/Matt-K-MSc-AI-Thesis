@@ -28,6 +28,33 @@ alwaysApply: true
 - Verify citation keys exist in `references_new.bib` before committing
 - Check for undefined references during compilation
 
+## Documentation Organization
+
+### Separation of Documentation and Thesis Figures
+
+**Documentation figures (notes/):**
+- `notes/` contains self-contained documentation with embedded figures
+- `notes/hoser/docs/figures/` - documentation-specific plots (Optuna visualizations, etc.)
+- `notes/hoser/cross_model/` - vanilla vs distilled trajectory comparison plots
+- These figures are part of the documentation and are NOT automatically copied to `assets/plots/`
+
+**Thesis figures (assets/plots/):**
+- `assets/plots/` is ONLY for figures actually referenced in `main.tex` or `sections/*.tex`
+- Only copy figures to `assets/plots/` when they are needed for the thesis document
+
+### Workflow for Using Documentation Figures in Thesis
+
+1. When a figure from `notes/` is needed for the thesis, manually copy it to `assets/plots/`
+2. Reference it in LaTeX using `\includegraphics{assets/plots/filename.pdf}`
+3. Keep figure paths in notes documentation as relative paths (e.g., `figures/optuna/optimization_history.png`)
+
+### Updating Documentation
+
+- Update notes documentation by replacing from source projects (HOSER, LMTAD) as needed
+- Documentation in `notes/` can contain markdown formatting, inline citations, and self-references
+- Documentation figures remain in `notes/` structure and are not automatically copied to thesis
+- Only `main.tex` and `sections/*.tex` follow strict LaTeX citation guidelines (no author names, inline citations only)
+
 ## Agent Behavior Principles
 
 ### Verification Over Assumption
@@ -129,44 +156,6 @@ When mistakes happen:
 - Ask for confirmation before correcting
 - Learn from the mistake to avoid repetition
 
-## Build Configuration
-
-### Directory Structure
-```
-.
-├── main.tex                    # Main document
-├── custom-commands.tex         # Custom LaTeX commands
-├── title_page.tex             # Title page
-├── references_new.bib         # Bibliography (managed via Zotero)
-├── build/                     # Build artifacts (gitignored)
-│   ├── main.pdf              # Compiled PDF
-│   ├── main.aux              # Auxiliary files
-│   └── ...                   # Other build artifacts
-├── assets/                    # Static assets
-│   ├── plots/                # Generated plots and figures
-│   └── vu/                   # University branding
-├── llncs/                    # Springer LNCS template
-└── notes/                    # Markdown notes
-```
-
-### Build Artifacts
-- All build outputs go to `build/` directory
-- Main PDF is at `build/main.pdf`
-- Never commit files in `build/` directory
-- Use `latexmk` for automated building
-
-### Compilation Commands
-```bash
-# Build the document
-latexmk -pdf main.tex
-
-# Clean build artifacts
-latexmk -c
-
-# Full clean including PDF
-latexmk -C
-```
-
 ## LaTeX Best Practices
 
 ### Document Structure
@@ -199,18 +188,27 @@ latexmk -C
 - Define variables before use
 - Use `\DeclareMathOperator` for custom operators
 
-## Markdown Notes Integration
+## Notes Integration
 
-### Linking to Notes
-- When incorporating information from project notes, **use markdown links** to relevant parts
-- Format: `[concept name](notes/filename.md#section)`
-- Helps maintain traceability between thesis and research notes
-- Example: Design decisions documented in notes should link back to source
+### Referencing Notes in LaTeX
+- When incorporating information from project notes, **use LaTeX comments** to document the source
+- Notes files are not part of the compiled document and should not be linked via LaTeX commands
+- Format: `% Source: notes/hoser/docs/LMTAD-Distillation.md - Section on loss formulation`
+- This maintains traceability for organization and clarity without affecting the compiled output
+- Place the comment above or near the content derived from the notes
+
+**Example:**
+```latex
+% Source: notes/hoser/docs/Hyperparameter-Optimization.md - Optimal hyperparameters
+% Lambda=0.0014, Temperature=4.37, Window=7
+The distillation process uses carefully tuned hyperparameters to balance
+teacher guidance with supervised learning~\cite{hinton2015distilling}.
+```
 
 ### Notes Organization
-- Keep research notes in `notes/` directory
+- Keep research notes in `notes/` directory (gitignored, local only)
 - Use markdown for note-taking
-- Link between thesis and notes bidirectionally
+- Notes contain documentation, figures, and reference materials from source projects
 - Document methodology decisions and rationale
 
 ## Research Integration Workflow
@@ -222,26 +220,26 @@ latexmk -C
 4. **User**: Export updated bibliography to `references_new.bib`
 5. **Agent**: Verify citation key exists in bibliography
 6. **Agent**: Use citation in LaTeX document
-7. **Agent**: Rebuild to verify citation works
+7. **Agent**: Verify document compiles successfully (LaTeX Workshop handles building automatically)
 
 ### Literature Review Process
 1. **Agent**: Use semantic search to find related work
 2. **User**: Read and annotate papers in Zotero
-3. **Agent/User**: Take notes in `notes/` directory with links to sources
+3. **Agent/User**: Take notes in `notes/` directory (local references, not linked in LaTeX)
 4. **Agent**: Add relevant citations to thesis sections (after user completes steps 2-4 above)
 5. **User**: Maintain bibliography synchronization with Zotero
 
 ## Quality Checks
 
 ### Before Committing
-- [ ] Document compiles without errors
+- [ ] Document compiles without errors (LaTeX Workshop auto-builds on save)
 - [ ] No undefined citations (`Citation 'key' on page X undefined`)
 - [ ] No undefined references (`Reference 'label' on page X undefined`)
 - [ ] All figures are referenced in text
 - [ ] Figure/table captions are descriptive
 - [ ] No overfull/underfull hbox warnings (or documented as acceptable)
 - [ ] Bibliography is synchronized with Zotero
-- [ ] Build artifacts only in `build/` directory
+- [ ] Build artifacts remain in `build/` directory (gitignored)
 
 ### Regular Maintenance
 - Keep Zotero library organized with tags and collections
