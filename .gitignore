@@ -16,3 +16,9 @@ build/
 *.snm
 *.bcf
 *.run.xml
+
+# Cursor AI plans and workspace files
+.cursor/plans/
+
+# Notes directory - documentation and references (not version controlled)
+notes/
