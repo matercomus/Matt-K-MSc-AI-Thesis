@@ -82,11 +82,13 @@ The command should output:
 
 ## Important Notes
 
+- **Current Setup**: Uses local embeddings (default, free, no API keys required)
 - **Zotero must be running** with local API enabled
 - Zotero preference must allow: "Allow other applications on this computer to communicate with Zotero"
-- Full-text indexing requires PDF attachments in Zotero
+- Full-text indexing works with local embeddings (no API key needed)
 - Database updates are incremental (only new/changed items processed)
 - Force rebuild processes entire library (use sparingly)
+- **Current Database**: 293 items indexed (example from initial setup)
 
 ## Troubleshooting
 
@@ -100,4 +102,9 @@ The command should output:
 1. Verify database status: `zotero-mcp db-status`
 2. Try full-text rebuild: `zotero-mcp update-db --fulltext --force-rebuild`
 3. Check Zotero library has PDFs attached to items
+
+**Embedding model configuration issues:**
+- If you see "Collection expecting embedding with dimension" errors, see troubleshooting in `.cursor/rules/mcp-research-tools.mdc`
+- Ensure `.cursor/mcp.json` only has `ZOTERO_LOCAL=true` for local embeddings
+- Delete database and rebuild if mismatch occurs: `rm -rf ~/.config/zotero-mcp/chroma_db && zotero-mcp update-db`
 

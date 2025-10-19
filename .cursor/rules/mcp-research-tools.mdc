@@ -14,7 +14,10 @@ Zotero MCP provides AI-powered access to your local Zotero library, including se
 ### Configuration
 - **Access Method**: Local Zotero API (`ZOTERO_LOCAL=true`)
 - **Requirement**: Zotero desktop application must be running
-- **Semantic Search**: Enabled with embedding-based similarity search
+- **Semantic Search**: Enabled with local embedding-based similarity search (default, free)
+- **Embedding Model**: Default local embeddings (no API keys required)
+- **MCP Configuration**: `.cursor/mcp.json` (gitignored for security)
+- **Current Database**: 293 items indexed (as of initial setup)
 
 ### Core Capabilities
 
@@ -41,19 +44,19 @@ Search your library by **conceptual meaning**, not just keywords.
 - More comprehensive with full-text indexing enabled
 
 #### 2. Database Management
-The semantic search requires an up-to-date vector database.
+The semantic search requires an up-to-date vector database. The current setup uses **local embeddings** (default, free, no API costs).
 
 **Tool**: `zotero_update_search_database`
 
 **When to Update**:
-- After adding new papers to Zotero
+- After adding new papers to Zotero (especially after copying from group libraries)
 - After significant changes to your library (tags, annotations)
 - Before starting a new research session
 - When search results seem outdated
 
 **Update Options**:
-- **Metadata-only** (fast, ~few seconds): Indexes titles, abstracts, basic metadata
-- **Full-text** (slower, more comprehensive): Indexes complete paper content
+- **Metadata-only** (fast, ~few seconds): Indexes titles, abstracts, basic metadata - works with local embeddings
+- **Full-text** (slower, more comprehensive): Indexes complete paper content - works with local embeddings, no API key needed
 - **Force rebuild**: Completely rebuilds database from scratch
 
 **Recommended Workflow**:
@@ -188,6 +191,15 @@ Browse your Zotero library structure.
    - Search → Read → Add to Zotero → Export bibliography → Cite in LaTeX
    - Never manually edit `references_new.bib`
    - Verify citation keys before using in document
+
+5. **Library Access (My Library vs Group Libraries)**:
+   - **Default**: Local API accesses "My Library" by default
+   - **Group Library Workaround**: To access group library items:
+     1. In Zotero desktop, drag collections from group library to "My Library"
+     2. Run `zotero-mcp update-db` to index the newly added items
+     3. Semantic search will now include these papers
+   - **Alternative**: Use web API setup with `--library-type group` for explicit group library access (requires API key and library ID)
+   - **Note**: Copying to "My Library" creates duplicates but ensures all papers are indexed for semantic search
 
 ## ArXiv MCP Integration
 
@@ -357,6 +369,16 @@ Comprehensive analysis workflow for academic papers.
 - Update database: `zotero-mcp update-db --fulltext`
 - Ensure Zotero desktop is running
 
+**Embedding dimension mismatch errors**:
+- **Symptoms**: Error like "Collection expecting embedding with dimension of 1536, got 384" or vice versa
+- **Cause**: Mismatch between database embedding model and MCP server configuration
+- **Solution**:
+  1. Ensure `.cursor/mcp.json` has only `ZOTERO_LOCAL=true` (no `ZOTERO_EMBEDDING_MODEL` or `OPENAI_API_KEY` variables)
+  2. Restart Cursor completely to reload MCP server configuration
+  3. If error persists, delete database and rebuild: `rm -rf ~/.config/zotero-mcp/chroma_db && zotero-mcp update-db`
+  4. The default setup uses local embeddings (384 dimensions) - no API keys needed
+- **Prevention**: Keep `.cursor/mcp.json` simple with only `ZOTERO_LOCAL=true` for local embeddings
+
 **Citations not found**:
 - Verify paper is in Zotero library
 - Check citation key spelling in `references_new.bib`
@@ -366,6 +388,11 @@ Comprehensive analysis workflow for academic papers.
 - Ensure Zotero is running with local API enabled
 - Check Zotero preferences: "Allow other applications on this computer to communicate with Zotero"
 - Try force rebuild: `zotero-mcp update-db --force-rebuild`
+
+**Group library papers not appearing in search**:
+- Local API indexes "My Library" by default
+- Copy collections from group library to "My Library" in Zotero
+- Run `zotero-mcp update-db` to index the new items
 
 ### ArXiv MCP Issues
 

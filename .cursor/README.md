@@ -23,8 +23,10 @@ This directory contains Cursor IDE configuration specifically tailored for writi
 
 ### `mcp.json`
 Configures Model Context Protocol (MCP) servers for AI-assisted research:
-- **Zotero MCP**: Local Zotero library access with semantic search
+- **Zotero MCP**: Local Zotero library access with semantic search using local embeddings (no API keys required)
 - **ArXiv MCP**: ArXiv paper search and download (storage: `~/Documents/arxiv-mcp-papers/`)
+- **Note**: This file is gitignored for security (added to `.gitignore`)
+- **Simple Setup**: Only `ZOTERO_LOCAL=true` environment variable needed for basic functionality
 
 ### Rules (`rules/*.mdc`)
 
@@ -89,15 +91,22 @@ Search ArXiv for papers and download for review before adding to Zotero.
 ### First-Time Setup
 
 1. **Verify MCP servers are configured**:
+   - MCP configuration is already set up in `.cursor/mcp.json`
+   - No additional environment variables needed for local embeddings (default)
    - Zotero: Ensure Zotero desktop is running with local API enabled
+   - Zotero: Preferences → Advanced → General → Allow other applications to communicate with Zotero
    - ArXiv: Create storage directory: `mkdir -p ~/Documents/arxiv-mcp-papers/`
 
-2. **Initialize Zotero semantic search**:
+2. **Access group library items** (if needed):
+   - Drag collections from group library to "My Library" in Zotero desktop
+   - This ensures group library papers are included in semantic search
+
+3. **Initialize Zotero semantic search**:
    ```bash
    zotero-mcp update-db --fulltext
    ```
 
-3. **Test configuration**:
+4. **Test configuration**:
    - Use `@zotero-semantic-search` to search your library
    - Use `@arxiv-search` to find papers on ArXiv
 
@@ -198,6 +207,16 @@ Search ArXiv for papers and download for review before adding to Zotero.
 2. Check Zotero preferences: Allow local API access
 3. Update database: `zotero-mcp update-db --fulltext`
 4. Check status: `zotero-mcp db-status`
+
+**Embedding dimension mismatch:**
+1. Ensure `.cursor/mcp.json` only has `ZOTERO_LOCAL=true` (no embedding model overrides)
+2. Restart Cursor completely
+3. Delete and rebuild database: `rm -rf ~/.config/zotero-mcp/chroma_db && zotero-mcp update-db`
+4. See detailed troubleshooting in `rules/mcp-research-tools.mdc`
+
+**Group library papers not found:**
+1. Copy collections from group library to "My Library" in Zotero
+2. Update database: `zotero-mcp update-db`
 
 **Citations not found:**
 1. Verify paper is in Zotero library
