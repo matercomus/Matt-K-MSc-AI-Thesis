@@ -19,6 +19,7 @@ build/
 
 # Cursor AI plans and workspace files
 .cursor/plans/
+.cursor/mcp.json
 
 # Notes directory - documentation and references (not version controlled)
 notes/
