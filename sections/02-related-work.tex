@@ -3,73 +3,52 @@
 
 This section reviews the key research areas relevant to knowledge distillation for trajectory prediction. We examine trajectory prediction and generation methods, synthetic data applications for urban systems, trajectory anomaly detection approaches that learn spatial patterns, knowledge distillation techniques, the architectural foundations in graph neural networks and transformers, and cross-task knowledge transfer methods.
 
-\subsection{Trajectory Prediction and Generation}
+% ===== BEGIN REWRITTEN BODY (chronological narrative) =====
+
+% Overview paragraph
+The evolution of data‐driven trajectory research mirrors the broader progression of sequential modelling in artificial intelligence.  Beginning with recurrent neural networks and hand‐crafted statistical baselines, the field has steadily adopted richer spatial representations, more expressive sequence architectures and, most recently, cross–task knowledge transfer.  The subsections below follow this chronological arc, critiquing the advantages and limitations of each paradigm to motivate the distillation framework presented in~\autoref{sec:methodology}.
+
+\subsection{Classical Trajectory Prediction Models}
 \label{sec:lit-traj-pred}
-
-Trajectory prediction and generation have evolved significantly from early LSTM-based approaches to recent large language model frameworks. Early methods~\cite{liang2018memory} employed memory-augmented neural networks to capture trajectory patterns, enabling sophisticated pattern learning for trajectory modeling. Deep generative approaches using variational autoencoders~\cite{liuOnlineAnomalousTrajectory2020} demonstrated the potential for modeling trajectory uncertainty through latent representations.
-
-Recent advances leverage diffusion models~\cite{chuSimulatingHumanMobility2024} for trajectory generation, demonstrating zero-shot prediction capabilities by modeling generation as an uncertainty-reducing process. The T
-
-rajGPT framework~\cite{hsuTrajGPTControlledSynthetic2024} introduced controlled generation using transformer-based spatiotemporal modeling, achieving significant improvements in temporal accuracy while maintaining high spatial precision. PathGen-LLM~\cite{liPathGenLLMLargeLanguage} applies large language models to dynamic path generation in transportation networks, directly addressing the challenge of generalization to unseen origin-destination pairs through self-supervised pre-training on historical paths.
-
-The evolution from traditional GAN-based methods~\cite{raoLSTMTrajGANDeepLearning2020} to recent transformer and diffusion approaches highlights a persistent challenge: balancing route completion accuracy with computational efficiency. Comparative studies~\cite{zhangEndtoendTrajectoryGeneration2025} demonstrate that while language model approaches excel at capturing complex sequential patterns, they face computational overhead that limits real-time deployment. The GTG framework~\cite{wangGTGGeneralizableTrajectory2025} emphasizes cross-city generalizability, a critical requirement for practical traffic management systems.
-
-A fundamental limitation emerges across these approaches: standard prediction models often achieve poor route completion rates on complex urban networks, severely limiting their utility for operational traffic management and digital twin applications. This motivates the need for methods that can dramatically improve completion rates while maintaining inference speed suitable for real-time deployment.
-
-\subsection{Synthetic Trajectory Generation for Urban Applications}
-\label{sec:lit-synthetic-urban}
-
-High-fidelity synthetic trajectory generation serves critical functions in urban planning, traffic simulation, and digital twin development beyond traditional privacy considerations. SynMob~\cite{zhuSynMobCreatingHighFidelity} employs diffusion models to generate synthetic GPS trajectories that retain geo-distribution and statistical properties of real data, explicitly emphasizing utility for urban planning, transportation planning, and policy decisions rather than privacy preservation. The framework demonstrates that synthetic data can support infrastructure planning and traffic analysis without requiring access to individual real trajectories.
-
-Foundation model approaches~\cite{maLearningUniversalHuman2025} demonstrate cross-domain data fusion for universal mobility pattern learning, validating utility through large-scale traffic simulations. This work integrates multi-modal urban data (geographical, mobility, socio-demographic, traffic) to create semantically enriched trajectory datasets suitable for agent-based simulation and urban digital twin systems. The emphasis on domain transfer techniques enables knowledge sharing across cities and transportation modes, directly supporting the scalability requirements of operational traffic management.
-
-TrajGDM~\cite{chuSimulatingHumanMobility2024} models trajectory generation as capturing universal mobility patterns through step-by-step uncertainty reduction, demonstrating applications in trajectory prediction and reconstruction. The framework's ability to generate diverse, realistic trajectories makes it valuable for training other models, populating simulation environments, and testing traffic management algorithms under various scenarios.
-
-These synthetic generation methods address practical challenges in traffic management: generating training data for prediction models, creating test scenarios for infrastructure planning, populating agent-based simulations with realistic behavior patterns, and providing data for digital twin systems that mirror real urban mobility without exposing individual trajectories. The shift from privacy-centric to utility-centric synthetic generation better aligns with stakeholder needs in transportation planning and policy development.
-
-\subsection{Trajectory Anomaly Detection and Spatial Learning}
-\label{sec:lit-anomaly-spatial}
-
-Trajectory anomaly detection methods learn rich spatial representations of normal trajectory patterns, providing a foundation for understanding typical urban mobility behaviors. Deep generative approaches~\cite{liuOnlineAnomalousTrajectory2020} use variational autoencoders for sequence modeling, learning to distinguish between normal and anomalous movement patterns through reconstruction quality. LSTM autoencoder architectures incorporate attention mechanisms to focus on salient spatiotemporal features, effectively capturing sequential dependencies in trajectory data.
-
-Spatiotemporal methods~\cite{heSpatiotemporalTrajectoryAnomaly2022} identify anomalies through common sub-sequence analysis, while spatial-feature approaches combine multiple dimensions of trajectory data for robust outlier detection in large-scale systems. Comprehensive taxonomies~\cite{kongMobileTrajectoryAnomaly2024} categorize anomaly detection methods, highlighting the evolution from statistical approaches to deep learning frameworks. Real-time detection systems~\cite{huRealtimeTaxiSpatial2024} employ Seq2Seq models to predict expected trajectories, identifying deviations through spatial consistency measures. GRU-based approaches~\cite{tangLowcostHighperformanceAbnormal2024} demonstrate cost-effective anomaly detection through deep spatiotemporal sequence analysis.
-
-The key insight for trajectory prediction is that models designed to detect anomalies must first learn comprehensive representations of normal trajectory patterns. These models encode spatial relationships between locations, typical movement sequences, and context-dependent routing behaviors. The LM-TAD framework represents anomaly detection as a language modeling task, learning probability distributions over trajectory tokens through transformer architectures. This spatial understanding—knowing which routes are typical and which are unusual—directly translates to prediction capability.
-
-However, transformer-based anomaly detection models incur significant computational cost compared to fast prediction architectures, creating a deployment challenge for real-time traffic management systems. This performance gap motivates transferring the spatial knowledge learned during anomaly detection model training to faster prediction models, enabling operational deployment without inference-time overhead.
-
-\subsection{Knowledge Distillation and Model Compression}
-\label{sec:lit-distill}
-
-Knowledge distillation~\cite{hintonDistillingKnowledgeNeural2015} enables fast student models to learn from slower teacher models through soft targets and temperature scaling during training. The foundational work demonstrates that student networks can achieve comparable accuracy to larger teachers by learning from the teacher's softened output distributions rather than hard labels alone. Temperature scaling controls the smoothness of these distributions, providing richer training signals that capture relationships between classes beyond simple classification boundaries.
-
-Knowledge distillation has proven effective for model compression across computer vision and natural language processing domains, consistently demonstrating that smaller models can capture essential patterns learned by larger counterparts. The technique is particularly valuable when deployment constraints require fast inference but training resources allow for sophisticated teacher models. By distilling at training time only, the approach imposes no inference overhead, making it ideal for real-time applications like traffic management.
-
-Applying knowledge distillation to trajectory prediction represents a novel cross-task application. Rather than compressing a model for the same task (e.g., a smaller prediction model learning from a larger prediction model), cross-task distillation transfers spatial understanding from trajectory anomaly detection models to trajectory prediction models. The key insight is that anomaly detection models learn comprehensive representations of normal trajectory patterns that are directly applicable to prediction tasks. This cross-task distillation approach can enable substantial improvements in route completion while maintaining fast inference suitable for operational deployment.
+Early work framed next–location prediction as a sequence modelling problem amenable to recurrent neural networks (RNNs) and their gated variants.  Memory‐augmented LSTMs~\cite{liang2018memory} and variational autoencoders~\cite{liuOnlineAnomalousTrajectory2020} captured short-range dependencies and route uncertainty, while GAN‐based approaches such as LSTM-TrajGAN~\cite{raoLSTMTrajGANDeepLearning2020} attempted adversarially faithful path synthesis.  These models established the feasibility of learning spatial–temporal patterns directly from GPS data, but their limited receptive field and difficulty handling map constraints curbed real-world adoption.  \textit{Takeaway}: classical RNN/GAN models prove the concept yet struggle with long-range coherence and graph topology.
 
 \subsection{Graph Neural Networks for Road Networks}
 \label{sec:lit-gnn}
+The introduction of graph neural networks (GNNs)~\cite{kipfSemisupervisedClassificationGraph2017,velickovicGraphAttentionNetworks2018} provided an explicit inductive bias for road topology.  By representing intersections and road segments as nodes and edges, GCNs aggregated neighbourhood information, whereas GATs learned edge-specific attention weights, supporting fine-grained routing decisions.  Hierarchical hybrids further combined local and regional reasoning.  Despite clear spatial benefits, pure GNN solutions often incurred high inference latency on large urban graphs.  \textit{Takeaway}: GNNs embed topology elegantly but computational cost motivates search for lighter yet expressive alternatives.
 
-Graph neural networks naturally model road network topology by representing locations as nodes and connections as edges. The Graph Convolutional Network (GCN)~\cite{kipfSemisupervisedClassificationGraph2017} provides foundational spectral methods for learning on graph-structured data, enabling aggregation of information from neighboring nodes through localized filters. GCN architectures enable zone-level or region-level aggregation, capturing relationships between geographic areas in road networks.
-
-Graph Attention Networks (GAT)~\cite{velickovicGraphAttentionNetworks2018} extend this foundation by learning adaptive attention weights for different neighbors, allowing models to focus on the most relevant connections. GAT-based approaches can encode fine-grained spatial reasoning at the road segment level, weighting connections between individual road segments to model likely transitions.
-
-Multi-level hierarchical approaches combining GAT for detailed spatial features with GCN for broader regional aggregation can capture spatial structure at different scales. This architectural pattern reflects the reality that urban navigation involves both local decisions (which turn to take at an intersection) and regional planning (which neighborhoods to traverse). GNN architectures' ability to encode graph topology makes them well-suited for transportation applications where spatial connectivity fundamentally constrains movement patterns.
-
-\subsection{Transformer Architecture for Sequential Modeling}
+\subsection{Transformer Architectures for Mobility Sequences}
 \label{sec:lit-transformer}
+Transformers~\cite{vaswaniAttentionAllYou2023} revolutionised sequential learning through self-attention.  Mobility research quickly adopted this paradigm—LM-TAD treats trajectories as token sequences, achieving state-of-the-art anomaly detection accuracy.  Large language model (LLM) adaptations such as PathGen-LLM~\cite{liPathGenLLMLargeLanguage} demonstrated zero-shot path generalisation.  However, the quadratic cost of self-attention renders vanilla transformers impractical for real-time traffic services.  \textit{Takeaway}: transformers learn rich global dependencies but impose prohibitive inference overhead.
 
-Transformers~\cite{vaswaniAttentionAllYou2023} revolutionized sequential modeling through self-attention mechanisms and causal masking for autoregressive prediction. Self-attention enables modeling long-range dependencies in sequences by directly computing relationships between all positions, avoiding the sequential bottleneck of recurrent architectures. Causal masking ensures that predictions at each position depend only on previous elements, crucial for trajectory modeling where future locations cannot influence past decisions.
+\subsection{Deep Generative Approaches: VAEs to Diffusion and LLMs}
+\label{sec:lit-generative}
+Parallel to architectural advances, generative modelling transitioned from VAEs to diffusion processes and LLM-style decoders.  Diffusion-based TrajGDM~\cite{chuSimulatingHumanMobility2024} reframed generation as uncertainty reduction, yielding diverse and realistic paths.  TrajGPT~\cite{hsuTrajGPTControlledSynthetic2024} leveraged transformers for controllable synthesis, while foundation-scale models integrated multi-modal context~\cite{maLearningUniversalHuman2025}.  These methods improved fidelity but further increased computational and data demands.  \textit{Takeaway}: modern generative models capture complex mobility patterns yet exacerbate scalability concerns.
 
-LM-TAD employs transformer architecture for trajectory anomaly detection, treating trajectories as sequences of tokens similar to natural language. The self-attention mechanism learns which prior locations in a trajectory are most relevant for predicting the next location, capturing both local movement patterns and global route structure. Recent applications~\cite{liPathGenLLMLargeLanguage} demonstrate that large language model techniques can effectively handle dynamic path generation in transportation networks, learning spatial-temporal patterns through self-supervised pre-training on historical trajectory corpora.
+% ---- Road-so-far synthesis ----
+\paragraph{Road so far.}  Classical RNNs established learnability, GNNs injected topology awareness, transformers unlocked long-range context, and diffusion/LLM generators raised realism.  Nevertheless, none reconcile spatial expressiveness with the latency constraints of traffic operations.
 
-The computational cost of transformers—particularly the quadratic complexity of self-attention with sequence length—creates deployment challenges for real-time traffic management. While transformers excel at learning complex sequential patterns during training, their inference cost limits large-scale operational use. This trade-off between pattern learning capability and deployment efficiency motivates knowledge distillation approaches that transfer transformer-learned knowledge to faster architectures.
+\subsection{Synthetic Trajectory Generation for Urban Applications}
+\label{sec:lit-synthetic-urban}
+Recent literature positions synthetic data as a utility-centric asset for simulation and policy rather than solely for privacy.  SynMob~\cite{zhuSynMobCreatingHighFidelity} and related frameworks retain geo-statistical properties critical to urban planning.  This shift underlines the importance of high-quality generation that scales across cities, a requirement echoed by foundation mobility models~\cite{maLearningUniversalHuman2025}.  \textit{Takeaway}: urban stakeholders demand scalable, high-fidelity synthesis, heightening the need for efficient yet accurate predictors.
 
-\subsection{Cross-Task Knowledge Transfer}
+\subsection{Trajectory Anomaly Detection and Spatial Learning}
+\label{sec:lit-anomaly-spatial}
+Anomaly detectors such as LM-TAD learn what \emph{normal} mobility looks like by modelling probability distributions over location tokens~\cite{heSpatiotemporalTrajectoryAnomaly2022,kongMobileTrajectoryAnomaly2024}.  Their spatial insight is invaluable, yet transformer-based detectors are slower than prediction-oriented models like HOSER.  \textit{Takeaway}: anomaly detection encodes rich spatial priors that remain untapped by fast predictors.
+
+\subsection{Knowledge Distillation and Model Compression}
+\label{sec:lit-distill}
+Knowledge distillation~\cite{hintonDistillingKnowledgeNeural2015} addresses the accuracy–efficiency dilemma by transferring soft targets from a high-capacity teacher to a lightweight student.  Vision and NLP studies show that students can approximate teachers with negligible runtime overhead.  \textit{Takeaway}: distillation offers a principled route to inherit transformer knowledge without paying inference cost.
+
+\subsection{Cross-Task Transfer and Foundation Mobility Models}
 \label{sec:lit-transfer}
+Cross-task transfer extends distillation across objectives—e.g.
+leveraging anomaly-detection priors to boost prediction~\cite{maLearningUniversalHuman2025}.  Foundation mobility models exemplify multi-domain knowledge sharing, yet concrete methods for teacher–student bridging remain under-explored.  \textit{Takeaway}: transferring spatial knowledge across tasks is promising but lacks systematic methodologies.
 
-Cross-task knowledge transfer enables models trained for one objective to improve performance on related but distinct tasks. Foundation models for mobility~\cite{maLearningUniversalHuman2025} demonstrate domain transfer techniques that enable knowledge sharing across different cities, data modalities, and transportation contexts. These models learn universal patterns through multi-modal data integration, then adapt to specific tasks through fine-tuning or zero-shot transfer.
+% ---- Second Road-so-far synthesis ----
+\paragraph{Road so far.}  The literature converges on two complementary insights: (i) transformers learn superior spatial representations, and (ii) operational systems require millisecond-scale inference.
 
-Transferring knowledge from anomaly detection to trajectory prediction represents a novel cross-task application where the source and target tasks have fundamentally different objectives. Anomaly detection learns what constitutes normal behavior to identify deviations, while prediction learns to forecast future locations given past observations. Despite this difference, both tasks require understanding typical movement patterns, spatial constraints, and context-dependent routing behaviors.
+\subsection*{Synthesis and Motivation for This Thesis}
+\label{sec:lit-synthesis}
+Bridging these insights, our work distils the transformer-based LM-TAD anomaly detector into the graph-aware, low-latency HOSER predictor during training only, as detailed in~\autoref{sec:methodology}. This approach inherits rich spatial priors while preserving real-time performance, directly addressing the shortcomings identified above.
 
-The challenge in cross-task distillation lies in bridging different model architectures, vocabularies, and output spaces. Anomaly detection models and prediction models may operate on different spatial representations and prediction targets, requiring careful mapping between representations. Success depends on identifying shared underlying patterns—in this case, knowledge of normal trajectory sequences—that transfer across task boundaries. This transfer learning paradigm directly addresses stakeholder needs for fast, accurate trajectory prediction by leveraging sophisticated models during training while maintaining deployment efficiency.
+% ===== END REWRITTEN BODY =====
