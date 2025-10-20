@@ -14,7 +14,7 @@ Early work framed next–location prediction as a sequence modelling problem ame
 
 \subsection{Graph Neural Networks for Road Networks}
 \label{sec:lit-gnn}
-The introduction of graph neural networks (GNNs)~\cite{kipfSemisupervisedClassificationGraph2017,velickovicGraphAttentionNetworks2018} provided an explicit inductive bias for road topology.  By representing intersections and road segments as nodes and edges, GCNs aggregated neighbourhood information, whereas GATs learned edge-specific attention weights, supporting fine-grained routing decisions.  Hierarchical hybrids further combined local and regional reasoning.  Despite clear spatial benefits, pure GNN solutions often incurred high inference latency on large urban graphs.  \textit{Takeaway}: GNNs embed topology elegantly but computational cost motivates search for lighter yet expressive alternatives.
+The introduction of graph neural networks (GNNs)~\cite{kipfSemisupervisedClassificationGraph2017,veličkovićGraphAttentionNetworks2018} provided an explicit inductive bias for road topology.  By representing intersections and road segments as nodes and edges, GCNs aggregated neighbourhood information, whereas GATs learned edge-specific attention weights, supporting fine-grained routing decisions.  Hierarchical hybrids further combined local and regional reasoning.  Despite clear spatial benefits, pure GNN solutions often incurred high inference latency on large urban graphs.  \textit{Takeaway}: GNNs embed topology elegantly but computational cost motivates search for lighter yet expressive alternatives.
 
 \subsection{Transformer Architectures for Mobility Sequences}
 \label{sec:lit-transformer}

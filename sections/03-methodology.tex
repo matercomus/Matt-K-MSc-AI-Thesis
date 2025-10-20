@@ -1,190 +1,463 @@
 \section{Methodology}
 \label{sec:methodology}
 
-This research addresses the critical convergence point identified in the literature review (Section~\ref{sec:synthesis}) by developing a comprehensive privacy-preserving framework for synthetic trajectory anomaly detection. The methodology directly responds to the fundamental challenge that traditional privacy protection methods destroy the spatio-temporal relationships essential for accurate anomaly detection~\cite{buchholzSystematisationKnowledgeTrajectory2024}, while existing synthetic generation approaches fail to provide adequate privacy guarantees~\cite{liuTrajGANsUsingGenerative2018}.
+This section presents our knowledge distillation framework for transferring spatial reasoning from a trajectory anomaly detector to a fast route predictor. Figure~\ref{fig:distillation-framework} illustrates the complete pipeline, showing how the frozen teacher and trainable student interact through vocabulary mapping and temperature-scaled distributions. We detail the vocabulary alignment mechanism (\autoref{sec:method-vocab}), the temperature-scaled distillation objective (\autoref{sec:method-distill}), the optimized training pipeline (\autoref{sec:method-training}), and the inference procedure (\autoref{sec:method-inference}).
 
-Building on the identified requirements for pattern preservation under privacy constraints, scalable synthetic generation, and systematic evaluation capabilities, this framework introduces an iterative approach that integrates DiffTraj-based synthetic generation~\cite{zhuDiffTrajGeneratingGPS2023}, LM-TAD anomaly detection~\cite{mbuyaTrajectoryAnomalyDetection2024}, and comprehensive privacy protection mechanisms. The methodology ensures that privacy protection is integrated throughout the entire research pipeline rather than treated as a post-processing step.
+\subsection{Preliminaries}
+\label{sec:method-prelim}
 
-The framework is developed and validated using Beijing taxi trajectory data as the primary dataset, with generalizability assessed through independent pipeline execution on additional urban datasets (Chengdu, Xi'an). This per-city approach ensures robust model development while enabling systematic evaluation of framework transferability across diverse urban environments without the complexity of joint multi-city training. Each city dataset maintains independent privacy budgets and model parameters, providing clear evaluation of generalization capabilities.
+\subsubsection{Notation}
+Table~\ref{tab:notation} summarizes the mathematical notation used throughout this section.
 
-The framework bootstraps controllable and diverse synthetic anomaly generation without requiring pre-labeled anomaly data, addressing the parameter sensitivity and labeled data scarcity issues identified in anomaly detection research~\cite{zhangIBATDetectingAnomalous2011}. Through iterative refinement combining unsupervised detection, diverse querying based on the SOEL framework~\cite{liDeepAnomalyDetection2023}, and rule-based curation, the methodology enables systematic evaluation of anomaly detection methods while maintaining strong privacy guarantees. The process consists of three main phases designed to enrich the synthetic dataset with specific, interpretable anomalies while preserving privacy by design, as formalized in Algorithms~\ref{alg:iterative-generation} and~\ref{alg:anomaly-mining}.
-
-\begin{algorithm}[h!]
-  \caption{Iterative Anomaly Generation Framework}\label{alg:iterative-generation}
-  \begin{algorithmic}[1]
-    \Require $D_{real}, N, M, LM\text{-}TAD, Rules$
-    \Ensure $G_N, D_{anomalous}$
-
-    \State Initialize and train generative model $G_0$ on $D_{real}$.
-    \State $D_{enriched} \gets D_{real}$.
-    \State $D_{anomalous} \gets \emptyset$.
-
-    \For{$i \gets 1$ to $N$}
-    \State $D_{new\_anomalies} \gets \text{MineAnomalies}(G_{i-1}, M, LM\text{-}TAD, Rules)$.
-    \State $D_{anomalous} \gets D_{anomalous} \cup D_{new\_anomalies}$.
-    \State $D_{enriched} \gets D_{enriched} \cup D_{new\_anomalies}$.
-    \State Initialize and train new model $G_i$ on $D_{enriched}$.
-    \EndFor
-    \State \Return $G_N, D_{anomalous}$.
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[h!]
-  \caption{Unsupervised Anomaly Mining and Curation (`MineAnomalies`)}\label{alg:anomaly-mining}
-  \begin{algorithmic}[1]
-    \Require $G_{in}, M, LM\text{-}TAD, Rules$
-    \Ensure $D_{new\_anomalies}$
-
-    \State $D_{synthetic} \gets$ Generate $M$ trajectories using $G_{in}$.
-    \State Train $LM\text{-}TAD$ on $D_{synthetic}$ using autoregressive language modeling.
-    \State $D_{potential} \gets$ Identify outliers in $D_{synthetic}$ using $LM\text{-}TAD$ perplexity scores.
-    \State $D_{new\_anomalies} \gets \emptyset$.
-    \For{each $traj$ in $D_{potential}$}
-    \State $label \gets \text{Categorize}(traj, Rules)$.
-    \If{$label \neq \text{None}$}
-    \State Add $(traj, label)$ to $D_{new\_anomalies}$.
-    \EndIf
-    \EndFor
-    \State \Return $D_{new\_anomalies}$.
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{table}[h!]
-  \caption{Nomenclature for Algorithms~\ref{alg:iterative-generation} and~\ref{alg:anomaly-mining}}
-  \label{tab:nomenclature}
-  \centering
-  \begin{tabular}{>{\(}l<{\)} p{0.75\textwidth}}
-    \hline
-    \textbf{Symbol}    & \textbf{Description}                                                                       \\
-    \hline
-    D_{real}           & A dataset containing real-world, normal trajectories.                                      \\
-    D_{synthetic}      & A dataset of trajectories generated by the model.                                          \\
-    D_{potential}      & A subset of synthetic trajectories identified as potential anomalies.                      \\
-    D_{anomalous}      & A curated dataset of synthetic trajectories labeled as anomalies.                          \\
-    D_{enriched}       & The training dataset, augmented with newly curated anomalies.                              \\
-    D_{new\_anomalies} & A set of newly discovered and labeled anomalies from an iteration.                         \\
-    G_{i}              & The generative model at iteration \(i\).                                                   \\
-    G_{in}             & The input generative model for the anomaly mining process.                                 \\
-    N                  & The total number of iterative refinement cycles to perform.                                \\
-    M                  & The number of synthetic trajectories to generate in each iteration.                        \\
-    LM\text{-}TAD      & The autoregressive transformer-based language model used for trajectory anomaly detection. \\
-    Rules              & A set of heuristics used to categorize potential anomalies.                                \\
-    traj               & A single trajectory data structure.                                                        \\
-    label              & The specific anomaly category assigned to a trajectory.                                    \\
-    \hline
-  \end{tabular}
+\begin{table}[h]
+\centering
+\caption{Mathematical notation}
+\label{tab:notation}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Symbol} & \textbf{Description} \\
+\midrule
+$\mathcal{G} = (\mathcal{V}, \mathcal{E})$ & Road network graph with $|\mathcal{V}|$ segments \\
+$\mathbf{r}_{1:t} = (r_1, \ldots, r_t)$ & Partial trajectory of $t$ road segments \\
+$\mathcal{C}_t \subseteq \mathcal{V}$ & Candidate set at timestep $t$ (top-$k$ roads) \\
+$\mathcal{Z} = \{1, \ldots, V\}$ & Grid cell vocabulary, $V = 51{,}663$ \\
+$\phi: \mathcal{V} \rightarrow \mathcal{Z}$ & Road-to-grid mapping function \\
+$q_t^{(\tau)}$ & Teacher distribution (temperature $\tau$) \\
+$p_t^{(\tau)}$ & Student distribution (temperature $\tau$) \\
+$\lambda$ & Distillation loss weight \\
+$\tau$ & Temperature parameter \\
+$w$ & History window size \\
+$k$ & Candidate set size (typically 64) \\
+\bottomrule
+\end{tabular}
 \end{table}
 
-\subsection{Phase 1: Baseline Synthetic Data Generation}
-\label{sec:baseline-generation}
+\subsubsection{Problem Definition}
+\label{sec:method-problem}
 
-The initial phase focuses on creating a high-fidelity synthetic dataset of normal trajectories, which serves as the foundation for the anomaly mining process.
+\begin{definition}[Map-Matched Trajectory Prediction]
+Given a partial trajectory $\mathbf{r}_{1:t}$ on road network $\mathcal{G}$, a destination road $r_d \in \mathcal{V}$, and a candidate set $\mathcal{C}_t$ generated by spatial pruning, predict the probability distribution $p(r_{t+1} | \mathbf{r}_{1:t}, r_d, \mathcal{C}_t)$ over next road segments such that inference time satisfies $t_{\text{inf}} < 15$ ms.
+\end{definition}
 
-\begin{description}
-  \item[Core Generation Model (\textbf{DiffTraj})] The DiffTraj architecture---a 1D-CNN-based residual network with attention---is adopted for its demonstrated training stability and ability to generate high-quality, realistic trajectories.
-  \item[Training on Normal Data] Normal trajectories are identified through a dynamic multi-criteria filtering process applied to each dataset. First, statistical thresholds are computed from the raw trajectory data: origin-destination median times, shortest path distances, and temporal pattern distributions. Then, trajectories are filtered to retain only those with: trip durations within 2 standard deviations of the computed origin-destination medians, distances within reasonable efficiency bounds ($\leq$ 1.5$\times$ computed shortest path), and adherence to the derived typical temporal patterns. The DiffTraj model is then trained solely on this filtered dataset of normal taxi trajectories to capture the underlying patterns of typical urban mobility.
-  \item[Output Dataset] This phase produces a synthetic trajectory dataset, \texttt{synthetic\_normal}, which statistically resembles the real normal data but contains no direct copies, thereby ensuring privacy by design.
-\end{description}
+\subsubsection{Model Specifications}
+\label{sec:method-models}
 
-\subsection{Phase 2: Unsupervised Anomaly Mining and Curation}
-\label{sec:anomaly-mining}
+\textbf{Teacher (LM-TAD):} A pre-trained transformer for trajectory anomaly detection with:
+\begin{itemize}[leftmargin=*,noitemsep,topsep=0pt]
+\item Input: Grid cell sequences $\mathbf{z}_{1:t}$ where $z_i \in \mathcal{Z}$
+\item Architecture: 6-layer causal transformer, 512-dim embeddings, 8 attention heads
+\item Output: Next-token distribution $q(z_{t+1} | \mathbf{z}_{1:t})$ over $V$ grid cells
+\item Inference speed: $\sim$430 ms/batch (frozen during distillation)
+\end{itemize}
 
-This phase uses an unsupervised approach to discover and categorize anomalous patterns within the baseline synthetic data.
+\textbf{Student (HOSER):} A hierarchical graph-aware predictor with:
+\begin{itemize}[leftmargin=*,noitemsep,topsep=0pt]
+\item Input: Road sequences $\mathbf{r}_{1:t}$ where $r_i \in \mathcal{V}$
+\item Architecture: Zone embeddings (300) + 2-layer GCN + attention navigator
+\item Output: Logits $\ell_t \in \mathbb{R}^{|\mathcal{C}_t|}$ for candidate roads
+\item Inference speed: $\sim$13 ms/batch (trainable parameters)
+\end{itemize}
 
-\begin{description}
-  \item[Unsupervised Anomaly Detection]
-    We employ LM-TAD~\cite{mbuyaTrajectoryAnomalyDetection2024}, an autoregressive transformer-based language model for trajectory anomaly detection. Each GPS trajectory is first discretized into a sequence of tokens (e.g., grid cells, staypoints, or activity types). LM-TAD is trained in a self-supervised manner to predict the next location in a trajectory given its historical context, learning the probability distribution over typical movement patterns. For anomaly detection, the model computes the probability of each location in a trajectory conditioned on its preceding locations. The anomaly score for a trajectory is quantified using the perplexity metric, which measures the model's uncertainty in predicting the sequence; higher perplexity indicates greater deviation from normal patterns. Additionally, the surprisal rate can be used to localize specific anomalous locations within a trajectory. LM-TAD supports user- and context-specific anomaly detection by conditioning on user or contextual tokens, and enables efficient online detection by caching attention states. This approach is robust, interpretable, and has demonstrated state-of-the-art performance on both synthetic and real-world GPS trajectory datasets~\cite{mbuyaTrajectoryAnomalyDetection2024}.
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+    node distance=1.2cm and 1.5cm,
+    every node/.style={font=\small},
+    box/.style={draw, rectangle, rounded corners, minimum width=3cm, minimum height=0.8cm, align=center},
+    frozen/.style={box, fill=blue!15, draw=blue!50, very thick, dashed},
+    trainable/.style={box, fill=green!15, draw=green!50, thick},
+    data/.style={box, fill=gray!10, draw=gray!50},
+    loss/.style={box, fill=red!10, draw=red!50},
+    arrow/.style={-{Stealth[scale=0.8]}, thick},
+    label/.style={font=\footnotesize}
+]
 
-    Notably, both DiffTraj~\cite{zhuDiffTrajGeneratingGPS2023} and LM-TAD~\cite{mbuyaTrajectoryAnomalyDetection2024} are designed to work with the same underlying GPS trajectory datasets, including taxi datasets from cities such as Beijing, Chengdu, and Xi'an. While DiffTraj operates directly on continuous GPS coordinates for generation, LM-TAD processes discretized trajectory representations for anomaly detection. This compatibility ensures that the synthetic trajectories generated by DiffTraj can be seamlessly processed by LM-TAD for anomaly scoring, creating a cohesive pipeline from generation to detection without requiring additional data format conversions or significant preprocessing steps.
+% Input trajectory
+\node[data] (input) {Input Trajectory\\$\mathbf{r}_{1:t} = (r_1, \ldots, r_t)$\\{\footnotesize Road IDs}};
 
-    The top-ranked anomalies are then passed to the diverse querying and rule-based curation steps for manual review and categorization.
+% Vocabulary mapping
+\node[data, below=0.7cm of input, minimum width=4cm] (mapping) {Vocabulary Mapping $\phi$\\{\footnotesize $\mathcal{V} \rightarrow \mathcal{Z}$}};
+\draw[arrow] (input) -- (mapping);
 
-  \item[\textbf{Diverse Querying for Manual Labeling (k-means++ Selection)}] DiffTraj generates synthetic trajectories as sequences of GPS coordinates. For the purpose of diverse querying, we extract feature vectors from these generated GPS trajectories. These features may include trajectory-level statistics (such as total distance, duration, average speed), learned embeddings, or outputs from anomaly detectors. We then apply the k-means++ initialization algorithm (as implemented in \texttt{scikit-learn}'s \texttt{kmeans\_plusplus} function) to these feature vectors to select a subset of $k$ trajectories that are maximally diverse in feature space. The indices returned by k-means++ are used to select the trajectories for manual review and labeling. This diverse querying strategy is based on the SOEL framework~\cite{liDeepAnomalyDetection2023}, which has been shown to maximize labeling efficiency and generalization in semi-supervised anomaly detection settings.
+% Grid sequence
+\node[data, below left=0.7cm and 2cm of mapping] (grid) {Grid Sequence\\$\mathbf{z}_{1:t}$\\{\footnotesize 51,663 cells}};
+\draw[arrow] (mapping.south) -- ++(0,-0.3) -| (grid.north);
 
-  \item[\textbf{Rule-Based Curation and Categorization}] After the diverse subset of candidate anomalies has been selected via k-means++, we apply rule-based curation and categorization to these trajectories. Each selected trajectory is reviewed (either manually or with automated heuristics) and classified into interpretable anomaly categories using a comprehensive taxonomy of rules based on kinematic, spatial, and behavioral properties.
+% Candidate set
+\node[data, below right=0.7cm and 2cm of mapping] (candidates) {Candidate Set\\$\mathcal{C}_t \subseteq \mathcal{V}$\\{\footnotesize top-64 roads}};
+\draw[arrow] (mapping.south) -- ++(0,-0.3) -| (candidates.north);
 
-    Building on the comprehensive taxonomy~\cite{kongMobileTrajectoryAnomaly2024}, we implement a two-category classification system that distinguishes between \textbf{Vehicle-Based Anomalies} (hardware/system related) and \textbf{Behavior-Based Anomalies} (driver/passenger related). This systematic approach enables more precise anomaly characterization and better interpretability for downstream analysis.
+% Teacher model (frozen)
+\node[frozen, below=1.2cm of grid, minimum width=4.5cm, minimum height=1.2cm] (teacher) {
+    \textbf{LM-TAD Teacher}\\
+    {\footnotesize Transformer (6 layers)}\\
+    {\footnotesize \textit{Frozen weights}}
+};
+\draw[arrow] (grid) -- (teacher);
 
-    \textbf{Mathematical Formulations for Anomaly Detection:} Following the spatio-temporal trajectory anomaly detection framework~\cite{heEnhancedDBSCANMultiple2020}, we implement the following computational approaches:
+% Teacher output
+\node[data, below=0.7cm of teacher, minimum width=3.5cm] (teacher_out) {Teacher Probs\\$q(z | \mathbf{z}_{1:t})$};
+\draw[arrow] (teacher) -- (teacher_out);
 
-    \textbf{Distance-Based Calculations:}
-    \begin{align}
-      \text{dist}         & = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2} \label{eq:euclidean}           \\
-      \text{spatialdist}  & = \frac{1}{e} \times \sum_{i=1}^{e} \text{dist}_i \label{eq:spatial}  \\
-      \text{temporaldist} & = \frac{1}{n} \times \sum_{r=1}^{n} \text{span}_r \label{eq:temporal}
-    \end{align}
+% Student model (trainable)
+\node[trainable, below=1.2cm of candidates, minimum width=4.5cm, minimum height=1.2cm] (student) {
+    \textbf{HOSER Student}\\
+    {\footnotesize Zone GCN + Navigator}\\
+    {\footnotesize \textit{Trainable weights}}
+};
+\draw[arrow] (candidates) -- (student);
 
-    where $\text{span}_r$ represents the temporal interval between consecutive trajectory points.
+% Better arrow from input to student
+\coordinate (inputright) at ([xshift=3cm]input.east);
+\draw[arrow] (input.east) -- (inputright) |- (student.north east);
 
-    \textbf{Speed Anomaly Detection:} Speed anomalies are detected using~\cite{wangDetectingAnomalousTrajectories2018}:
-    \begin{equation}
-      v_{anomaly} = \begin{cases}
-        1 & \text{if } v_i > \mu_v + 2\sigma_v \text{ or } v_i < \mu_v - 2\sigma_v \\
-        0 & \text{otherwise}
-      \end{cases}
-      \label{eq:speed-anomaly}
-    \end{equation}
+% Student output
+\node[data, below=0.7cm of student, minimum width=3.5cm] (student_out) {Student Logits\\$\ell_t \in \mathbb{R}^{|\mathcal{C}_t|}$};
+\draw[arrow] (student) -- (student_out);
 
-    where $\mu_v$ and $\sigma_v$ are the mean and standard deviation of speeds for the given route segment.
+% Temperature scaling and renormalization
+\node[data, below right=0.5cm and 0.5cm of teacher_out, minimum width=4cm] (temp) {Temperature Scaling\\$q_t^{(\tau)}, p_t^{(\tau)}$};
+\draw[arrow] (teacher_out.south) -- ++(0,-0.2) -| (temp.west);
+\draw[arrow] (student_out.south) -- ++(0,-0.2) -| (temp.east);
 
-    \textbf{Route Efficiency Scoring:} Route efficiency is computed as~\cite{chenTemporalContextAwareRoute2021}:
-    \begin{equation}
-      \text{efficiency} = \frac{\text{shortest\_path\_distance}}{\text{actual\_path\_distance}} \times \frac{\text{expected\_travel\_time}}{\text{actual\_travel\_time}}
-      \label{eq:efficiency}
-    \end{equation}
+% KL divergence
+\node[loss, below=0.7cm of temp] (kl) {KL Divergence\\$\mathcal{L}_{\text{KL}} = \text{KL}(q_t^{(\tau)} || p_t^{(\tau)})$};
+\draw[arrow] (temp) -- (kl);
 
-    Thresholds for route length and travel time are set following the statistical approach~\cite{wangStatisticalFrameworkTaxi2020,wangDetectingAnomalousTrajectories2018}, where a trajectory is considered anomalous if its characteristics exceed normal trajectory parameters by empirically determined margins.
+% Other losses
+\node[loss, left=1.2cm of kl] (ce) {Cross-Entropy\\$\mathcal{L}_{\text{CE}}$};
+\node[loss, right=1.2cm of kl] (time) {Time MAPE\\$\mathcal{L}_{\text{time}}$};
 
-    \textbf{Specific Anomaly Categories:}
-    \begin{itemize}[leftmargin=*]
-      \item \textbf{Route Deviation:} Path length $> NL_{value} + L_\rho$, where $NL_{value}$ is the mean normal route length and $L_\rho$ is a margin (e.g., 5 km)~\cite{wangDetectingAnomalousTrajectories2018}.
-      \item \textbf{Temporal Delay:} Travel time $> NT_{value} + T_\rho$, where $NT_{value}$ is the mean normal travel time and $T_\rho$ is a margin (e.g., 5 min).
-      \item \textbf{Speed Anomalies:} Implementing Equation~\ref{eq:speed-anomaly} to detect both excessive speeding ($> 120$ km/h) and abnormally slow travel ($< 5$ km/h for extended periods)~\cite{heEnhancedDBSCANMultiple2020}.
-      \item \textbf{Stop-Duration Anomalies:} Stationary periods $> 15$ min at non-terminal locations, computed using temporal clustering methods for trajectory analysis.
-      \item \textbf{Off-Road Driving:} Trajectory points located beyond a reasonable distance ($> 100$ m) from any known road segment, indicating GPS errors or highly unusual vehicle movement, as part of comprehensive trajectory anomaly detection frameworks.
-      \item \textbf{U-Turn and Loop Anomalies:} Detection of unnecessary reversals and circular patterns using heading change analysis $|\Delta\theta| > 150^{\circ}$ within short time intervals ($< 2$ min) as implemented in spatio-temporal anomaly detection systems~\cite{heEnhancedDBSCANMultiple2020}.
-      \item \textbf{Detour Anomalies:} Routes with efficiency scores (Equation~\ref{eq:efficiency}) below 0.7, indicating significant deviation from optimal paths following established trajectory analysis frameworks.
-    \end{itemize}
-    This two-step process ensures that manual labeling effort is focused on a diverse and representative set of candidate anomalies, and that each labeled anomaly is further categorized in a systematic and interpretable way, improving both the quality and utility of the curated anomaly set.
-  \item[Labeled Anomaly Subsets] This curation process produces labeled anomaly datasets (e.g., \texttt{anomalies\_speeding}, \texttt{anomalies\_off\_road}) that are ready for model retraining.
-\end{description}
+% Better ground truth connection
+\coordinate (leftpoint) at ([xshift=-1.5cm]input.west);
+\draw[arrow, dashed] (input.west) -- (leftpoint) -- ([yshift=0cm]leftpoint |- ce.north) -- (ce.north) node[midway, left, label] {\footnotesize Ground truth};
 
-\subsection{Phase 3: Iterative Refinement and Conditional Generation}
-\label{sec:iterative-refinement}
+% Student output to time loss
+\draw[arrow, dashed] (student_out.east) -- ++(0.5,0) |- (time.east);
 
-The final phase closes the loop by retraining the diffusion model on the enriched dataset to learn and amplify the discovered anomalous patterns, enabling controlled generation.
+% Total loss
+\node[loss, below=1cm of kl, minimum width=5cm] (total) {\textbf{Total Loss}\\$\mathcal{L} = \mathcal{L}_{\text{CE}} + \alpha \mathcal{L}_{\text{time}} + \lambda \mathcal{L}_{\text{KL}}$};
+\draw[arrow] (ce.south) -- ++(0,-0.3) -| (total.west);
+\draw[arrow] (kl) -- (total);
+\draw[arrow] (time.south) -- ++(0,-0.3) -| (total.east);
 
-\begin{description}
-  \item[Enriched Data Retraining] The DiffTraj model is retrained on a dataset that combines the original \texttt{synthetic\_normal} trajectories with the curated, labeled anomalies. The proportion of anomalies is carefully balanced (e.g., 5--10\%) to prevent mode collapse and maintain diversity.
-  \item[Iterative Amplification] This process---generation, detection, curation, and retraining---can be repeated multiple times. Each iteration further amplifies and diversifies the model's ability to generate complex and varied anomalies.
-  \item[Controlled Anomaly Generation] The refined model supports conditional sampling (e.g., \texttt{difftraj.sample(condition="speeding")}), enabling the targeted generation of specific, high-quality anomalies for downstream tasks.
-\end{description}
+% Gradient flow
+\draw[arrow, very thick, red!70] (total.south) -- ++(0,-0.5) node[below, label] {\textbf{Backprop to Student Only}};
 
-\subsection{Privacy Protection Implementation}
-\label{sec:privacy-implementation}
+% Annotations
+\node[above=0.1cm of teacher, font=\footnotesize\bfseries, blue!70] {[Frozen]};
+\node[above=0.1cm of student, font=\footnotesize\bfseries, green!70] {[Trainable]};
 
-Building on the privacy protection requirements identified in the literature review (Section~\ref{sec:privacy-review}), this framework implements multiple complementary privacy mechanisms to ensure strong privacy guarantees throughout the synthetic data generation pipeline.
+% Better background box
+\begin{scope}[on background layer]
+    \coordinate (topleft) at ([xshift=-0.5cm, yshift=0.5cm]input.north west);
+    \coordinate (bottomright) at ([xshift=0.5cm, yshift=-1cm]total.south east);
+    \node[draw=gray!30, fill=gray!5, fit=(topleft) (bottomright), inner sep=0cm] {};
+\end{scope}
 
-\textbf{Differential Privacy Integration.} The framework integrates differential privacy at the model training level through DP-SGD (Differentially Private Stochastic Gradient Descent) during DiffTraj training. This ensures that individual trajectory influence on the model parameters is bounded, preventing membership inference attacks. The privacy budget $\epsilon$ is carefully allocated across the three phases: baseline generation ($\epsilon_1 = 2.0$), iterative refinement ($\epsilon_2 = 1.0$ per iteration), and final evaluation ($\epsilon_3 = 0.5$).
+\end{tikzpicture}
+\caption{Knowledge distillation framework. The frozen LM-TAD teacher (blue, dashed) provides soft targets via temperature-scaled distributions over grid cells. The trainable HOSER student (green) learns from both hard labels (cross-entropy) and soft teacher knowledge (KL divergence). Vocabulary mapping $\phi$ bridges the representation gap between road IDs and grid cells.}
+\label{fig:distillation-framework}
+\end{figure}
 
-\textbf{Trajectory-Level Privacy Protection.} Following the trajectory-level privacy unit identified as optimal in the literature review, the framework treats entire trajectories as atomic privacy units rather than individual GPS points. This prevents correlation attacks that exploit temporal dependencies within trajectories. Spatial generalization through grid-based discretization provides additional protection while preserving essential spatial patterns for anomaly detection.
+\subsection{Vocabulary Alignment}
+\label{sec:method-vocab}
 
-\textbf{Synthetic Data Decoupling.} The core privacy guarantee comes from the generative approach itself: synthetic trajectories are not direct copies or transformations of real data but are generated from learned statistical distributions. This fundamental decoupling provides inherent privacy protection, as demonstrated by the framework's ability to generate novel trajectory patterns that were not present in the original dataset.
+\subsubsection{The Representation Gap}
+The teacher and student models operate on fundamentally different spatial representations. LM-TAD discretizes the city into $V = 51{,}663$ uniform grid cells for fine-grained anomaly detection, while HOSER directly predicts over $|\mathcal{V}| = 40{,}060$ road segments for efficient routing. This vocabulary mismatch necessitates a careful alignment strategy.
 
-\textbf{Attack Resistance Mechanisms.} The framework incorporates specific defenses against membership inference and reconstruction attacks. The iterative refinement process ensures that any individual trajectory's influence diminishes through multiple generation cycles, while the rule-based curation step adds an additional layer of protection by filtering trajectories based on interpretable criteria rather than direct similarity to training data.
+\subsubsection{Mapping Construction}
+We construct a deterministic mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ that assigns each road segment to its corresponding grid cell based on the road's centroid coordinates. Algorithm~\ref{alg:vocab-map} details this preprocessing step.
 
-\subsection{Model Selection and Justification}
-\label{sec:model-selection}
+\begin{algorithm}[t]
+\caption{BuildVocabularyMapping}
+\label{alg:vocab-map}
+\begin{algorithmic}
+\Require Road network $\mathcal{V}$ with centroid coordinates, Grid bounds and resolution
+\Ensure Mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$
+\State Initialize $\phi \gets \{\}$
+\For{each road $r \in \mathcal{V}$}
+    \State $(x_r, y_r) \gets \text{centroid}(r)$
+    \State $i \gets \lfloor (x_r - x_{\min}) / \Delta_x \rfloor$ \Comment{Grid row index}
+    \State $j \gets \lfloor (y_r - y_{\min}) / \Delta_y \rfloor$ \Comment{Grid column index}
+    \State $z \gets i \cdot n_{\text{cols}} + j$ \Comment{Flatten to token ID}
+    \State $\phi[r] \gets z$
+\EndFor
+\State \Return $\phi$
+\end{algorithmic}
+\end{algorithm}
 
-The selection of the DiffTraj model and the iterative, bootstrapping methodology is grounded in a pragmatic assessment of technical advantages and research objectives.
+\begin{remark}[Many-to-One Mapping]
+Multiple roads may map to the same grid cell, particularly in dense urban cores. On average, each grid cell corresponds to $|\mathcal{V}|/V \approx 0.78$ roads, though downtown cells may contain 5--10 road segments.
+\end{remark}
 
-\begin{description}
-  \item[Generative Model Choice] DiffTraj was selected over alternatives like GANs and VAEs for its superior training stability, high-fidelity sample generation, and inherent privacy-preserving design, which avoids direct replication of real data. Diffusion models offer significant advantages in training stability by avoiding mode collapse and vanishing gradient challenges that often affect GANs and VAEs, and they generate diverse, high-fidelity samples that accurately represent underlying data distributions~\cite{liuAnomalyDetectionGeneration2025}. In contrast, GAN-based frameworks for synthetic trajectory generation, while effective for privacy preservation, are more prone to instability and mode collapse challenges~\cite{caoGeneratingMobilityTrajectories2021}.
-  \item[Rationale for Iterative Approach] The proposed iterative framework was chosen for its key strategic benefits:
-    \begin{itemize}[leftmargin=*]
-      \item \textbf{No Labeled Data Required:} It bootstraps the anomaly generation process without needing a pre-labeled anomalous dataset, addressing a common bottleneck in anomaly detection research.
-      \item \textbf{High Control and Interpretability:} The rule-based curation ensures that generated anomalies correspond to clear, interpretable, and controllable categories. Recent advances in diffusion models highlight the synergistic relationship between anomaly detection and generation, where generation techniques address anomaly data scarcity and detection methods provide feedback to improve generation fidelity and relevance~\cite{liuAnomalyDetectionGeneration2025}.
-      \item \textbf{Scalability and Efficiency:} The approach is computationally less intensive than complex latent space manipulation techniques and allows the anomaly dataset to be iteratively expanded and refined. Diffusion models are being actively adapted for scalability and computational efficiency, supporting their use in large-scale synthetic data generation~\cite{liuAnomalyDetectionGeneration2025}.
-    \end{itemize}
-  \item[Trade-off Analysis] This methodology prioritizes interpretability, control, and implementation feasibility. It serves as a robust foundation, acknowledging that more complex generative techniques like latent space adversarial training are deferred to future work.
-\end{description}
+\subsubsection{Probability Renormalization}
+\label{sec:method-renorm}
+Given teacher probabilities $q(z | \mathbf{z}_{1:t})$ over all grid cells and student candidates $\mathcal{C}_t$, we extract and renormalize the relevant probabilities:
+
+\begin{align}
+\tilde{q}_t(c) &= q(\phi(c) | \mathbf{z}_{1:t}) \quad \forall c \in \mathcal{C}_t \label{eq:extract}\\
+q_t^{(\tau)}(c) &= \frac{\exp(\log \tilde{q}_t(c) / \tau)}{\sum_{c' \in \mathcal{C}_t} \exp(\log \tilde{q}_t(c') / \tau)} \label{eq:renorm}
+\end{align}
+
+Equation~\eqref{eq:extract} gathers teacher probabilities for candidate roads, while Equation~\eqref{eq:renorm} applies temperature scaling and ensures the distribution sums to 1 over $\mathcal{C}_t$.
+
+\subsection{Knowledge Distillation Framework}
+\label{sec:method-distill}
+
+\subsubsection{Temperature Scaling}
+\label{sec:method-temp}
+Temperature scaling controls the smoothness of probability distributions. For a distribution over logits $\ell$, the temperature-scaled softmax is:
+
+\begin{equation}
+p^{(\tau)}_i = \frac{\exp(\ell_i / \tau)}{\sum_j \exp(\ell_j / \tau)}
+\label{eq:temp-softmax}
+\end{equation}
+
+\begin{definition}[Temperature Effect on Entropy]
+As temperature $\tau$ increases:
+\begin{itemize}[noitemsep,topsep=0pt]
+\item $\tau \rightarrow 1$: Original distribution (sharp)
+\item $\tau > 1$: Smoother distribution, higher entropy
+\item $\tau \rightarrow \infty$: Uniform distribution
+\end{itemize}
+\end{definition}
+
+The temperature parameter serves a crucial role in distillation by exposing the relative probabilities of non-maximum choices---what Hinton et al.~\cite{hintonDistillingKnowledgeNeural2015} term ``dark knowledge.''
+
+\subsubsection{Distillation Loss Formulation}
+\label{sec:method-kl}
+We employ the forward KL divergence to align the student's predictions with the teacher's knowledge. Algorithm~\ref{alg:distill-loss} shows the computation.
+
+\begin{algorithm}[t]
+\caption{ComputeDistillationLoss}
+\label{alg:distill-loss}
+\begin{algorithmic}
+\Require Teacher logits $\ell^T_t$, Student logits $\ell^S_t$, Candidates $\mathcal{C}_t$, Temperature $\tau$
+\Ensure Distillation loss $\mathcal{L}_{\text{KL}}$
+\State $q^{(\tau)}_t \gets \text{Softmax}(\ell^T_t / \tau)$ \Comment{Teacher distribution}
+\State $p^{(\tau)}_t \gets \text{Softmax}(\ell^S_t / \tau)$ \Comment{Student distribution}
+\State $\mathcal{L}_{\text{KL}} \gets 0$
+\For{each candidate $c \in \mathcal{C}_t$}
+    \If{$q^{(\tau)}_t(c) > 0$} \Comment{Avoid $\log(0)$}
+        \State $\mathcal{L}_{\text{KL}} \gets \mathcal{L}_{\text{KL}} + q^{(\tau)}_t(c) \cdot [\log q^{(\tau)}_t(c) - \log p^{(\tau)}_t(c)]$
+    \EndIf
+\EndFor
+\State $\mathcal{L}_{\text{KL}} \gets \tau^2 \cdot \mathcal{L}_{\text{KL}}$ \Comment{Gradient correction}
+\State \Return $\mathcal{L}_{\text{KL}}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{remark}[Gradient Scaling]
+The $\tau^2$ factor in line 9 ensures that gradients remain well-scaled as $\tau$ increases, preventing gradient vanishing during backpropagation~\cite{hintonDistillingKnowledgeNeural2015}.
+\end{remark}
+
+\subsubsection{Combined Training Objective}
+\label{sec:method-combined}
+The total loss combines three components, each serving a distinct purpose:
+
+\begin{equation}
+\mathcal{L} = \mathcal{L}_{\text{CE}} + \alpha \cdot \mathcal{L}_{\text{time}} + \lambda \cdot \mathcal{L}_{\text{KL}}
+\label{eq:total-loss}
+\end{equation}
+
+where:
+\begin{itemize}[noitemsep,topsep=0pt]
+\item $\mathcal{L}_{\text{CE}}$: Cross-entropy loss against ground-truth road (hard target)
+\item $\mathcal{L}_{\text{time}}$: Mean Absolute Percentage Error for travel time prediction
+\item $\mathcal{L}_{\text{KL}}$: Knowledge distillation loss (soft target)
+\end{itemize}
+
+The hyperparameters $\alpha = 0.1$ (fixed) and $\lambda \in [0.001, 0.1]$ (tuned) balance the loss components.
+
+\subsection{Training Pipeline}
+\label{sec:method-training}
+
+\subsubsection{Main Training Loop}
+Algorithm~\ref{alg:distill-train} presents the complete distillation training procedure, integrating teacher inference, loss computation, and optimization.
+
+\begin{algorithm}[t]
+\caption{DistillationTraining}
+\label{alg:distill-train}
+\begin{algorithmic}
+\Require Dataset $\mathcal{D}$, Teacher $f_T$, Student $f_S$, Hyperparameters $\{\lambda, \tau, w, \eta\}$
+\Ensure Trained student parameters $\theta_S$
+\State Initialize student parameters $\theta_S$
+\State Freeze teacher parameters $\theta_T$ \Comment{No gradients}
+\For{epoch $= 1$ to $E$}
+    \For{batch $(\mathbf{r}, \mathbf{y}, \mathbf{t}) \in \mathcal{D}$} \Comment{Roads, labels, times}
+        \State $\mathbf{z} \gets \phi(\mathbf{r})$ \Comment{Map roads to grid cells}
+        \State \textbf{// Teacher inference (no gradient)}
+        \State $\mathbf{q} \gets f_T(\mathbf{z}_{t-w:t})$ with \texttt{torch.no\_grad()}
+        \State Extract $q_t^{(\tau)}$ for candidates $\mathcal{C}_t$ \Comment{Eq.~\eqref{eq:renorm}}
+        \State \textbf{// Student forward pass}
+        \State $\mathbf{\ell} \gets f_S(\mathbf{r}, \mathcal{C})$ \Comment{Student logits}
+        \State $p_t^{(\tau)} \gets \text{Softmax}(\mathbf{\ell} / \tau)$
+        \State \textbf{// Compute losses}
+        \State $\mathcal{L}_{\text{CE}} \gets \text{CrossEntropy}(\mathbf{\ell}, \mathbf{y})$
+        \State $\mathcal{L}_{\text{time}} \gets \text{MAPE}(\hat{\mathbf{t}}, \mathbf{t})$
+        \State $\mathcal{L}_{\text{KL}} \gets \text{ComputeDistillationLoss}(q_t^{(\tau)}, p_t^{(\tau)}, \tau)$
+        \State $\mathcal{L} \gets \mathcal{L}_{\text{CE}} + \alpha \cdot \mathcal{L}_{\text{time}} + \lambda \cdot \mathcal{L}_{\text{KL}}$
+        \State \textbf{// Optimization step}
+        \State $\nabla_{\theta_S} \mathcal{L} \gets \text{Backward}(\mathcal{L})$
+        \State $\theta_S \gets \text{AdamW}(\theta_S, \nabla_{\theta_S} \mathcal{L}, \eta)$
+    \EndFor
+    \State Validate and save best checkpoint
+\EndFor
+\State \Return $\theta_S$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{remark}[Computational Complexity]
+Per-iteration complexity: $\mathcal{O}(B \cdot t \cdot (V + k^2))$ where $B$ is batch size, $t$ is trajectory length, $V$ is vocabulary size, and $k$ is candidate set size. The teacher inference dominates at $\mathcal{O}(B \cdot t \cdot V)$.
+\end{remark}
+
+\subsubsection{Efficiency Optimizations}
+\label{sec:method-opt}
+To enable practical training on commodity hardware, we implement several key optimizations:
+
+\textbf{1. Automatic Mixed Precision (AMP):}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item Teacher inference: FP16 with \texttt{autocast} reduces memory by 50\%
+\item Student training: TF32 for matrix operations maintains accuracy
+\item Gradient scaling prevents underflow in FP16 backward pass
+\end{itemize}
+
+\textbf{2. Memory Management:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{RAM caching}: Pre-load 630k samples ($\sim$13GB) when available
+\item \textbf{Gradient accumulation}: Simulate batch 512 using 8 micro-batches of 64
+\item \textbf{Candidate filtering}: Limit to top-$k=64$ roads per timestep
+\end{itemize}
+
+\textbf{3. Batched Operations:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item Vectorized road-to-grid mapping using PyTorch tensor operations
+\item GPU-accelerated label remapping with masked positions set to $-100$
+\item Parallel teacher inference across all timesteps in batch
+\end{itemize}
+
+These optimizations yield 11--13 iterations/second throughput, with teacher inference adding less than 2\% overhead compared to vanilla training.
+
+\subsection{Hyperparameter Optimization}
+\label{sec:method-hparam}
+
+\subsubsection{Search Space Design}
+We optimize three critical hyperparameters that govern the knowledge transfer process. Table~\ref{tab:hparam-space} details the search ranges and their effects.
+
+\begin{table}[h]
+\centering
+\caption{Hyperparameter search space and effects}
+\label{tab:hparam-space}
+\small
+\begin{tabular}{lllp{5cm}}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Scale} & \textbf{Effect on Training} \\
+\midrule
+$\lambda$ (distill weight) & [0.001, 0.1] & Log & Controls teacher influence vs. supervised signal \\
+$\tau$ (temperature) & [1.0, 5.0] & Linear & Smooths distributions; higher values expose more dark knowledge \\
+$w$ (window size) & [2, 8] & Integer & Teacher context length; trades accuracy for speed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Two-Phase Optuna Strategy}
+We employ a systematic optimization approach using the Optuna framework:
+
+\textbf{Phase 1: Exploration (12 trials)}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Sampler}: CMA-ES (Covariance Matrix Adaptation Evolution Strategy) for efficient continuous optimization
+\item \textbf{Pruner}: Hyperband with min\_resource=5 epochs to early-stop poor configurations
+\item \textbf{Objective}: Maximize validation accuracy after 8 epochs
+\item \textbf{Baseline}: Trial 0 always runs vanilla (no distillation) for comparison
+\end{itemize}
+
+\textbf{Phase 2: Validation (3 seeds)}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item Train best configuration for full 25 epochs
+\item Test with seeds \{42, 43, 44\} to estimate variance
+\item Generate trajectories and compute full evaluation metrics
+\end{itemize}
+
+\begin{remark}[Optimal Hyperparameters]
+Empirically, we find $\lambda \approx 0.0014$ (very low distillation weight), $\tau \approx 4.37$ (high temperature), and $w = 7$ yield best results, suggesting that subtle teacher guidance with broad distributional knowledge transfer is most effective.
+\end{remark}
+
+\subsection{Inference and Evaluation}
+\label{sec:method-inference}
+
+\subsubsection{Trajectory Generation}
+At inference time, we use only the trained student model to generate complete trajectories. Algorithm~\ref{alg:beam-search} details our beam search procedure.
+
+\begin{algorithm}[t]
+\caption{BeamSearchGeneration}
+\label{alg:beam-search}
+\begin{algorithmic}
+\Require Origin $r_o$, Destination $r_d$, Student model $f_S$, Beam width $b$
+\Ensure Generated trajectory $\hat{\mathbf{r}}$
+\State Initialize beams $\mathcal{B} \gets \{(r_o, 0.0)\}$ \Comment{(path, log-prob)}
+\State $t \gets 0$
+\While{$t < T_{\max}$ and no beam reached $r_d$}
+    \State $\mathcal{B}_{\text{new}} \gets \{\}$
+    \For{each $(path, score) \in \mathcal{B}$}
+        \State $r_{\text{curr}} \gets \text{last}(path)$
+        \State $\mathcal{C} \gets \text{GetCandidates}(r_{\text{curr}}, r_d)$ \Comment{Spatial pruning}
+        \State $\mathbf{\ell} \gets f_S(path, \mathcal{C})$ \Comment{Student inference only}
+        \State $\mathbf{p} \gets \text{Softmax}(\mathbf{\ell})$
+        \For{each $c \in \text{top-}k(\mathbf{p}, b)$}
+            \State $path' \gets path + [c]$
+            \State $score' \gets score + \log p(c)$
+            \State $\mathcal{B}_{\text{new}} \gets \mathcal{B}_{\text{new}} \cup \{(path', score')\}$
+        \EndFor
+    \EndFor
+    \State $\mathcal{B} \gets \text{top-}b(\mathcal{B}_{\text{new}})$ by score
+    \State $t \gets t + 1$
+\EndWhile
+\State \Return best complete path from $\mathcal{B}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{remark}[Inference Speed]
+With beam width $b=4$, the student generates trajectories at $\sim$77 trajectories/second on a single GPU, enabling real-time deployment for urban-scale applications.
+\end{remark}
+
+\subsubsection{Evaluation Protocol}
+\label{sec:method-eval-metrics}
+We evaluate generated trajectories using two categories of metrics:
+
+\textbf{Global Distribution Metrics:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Jensen-Shannon Divergence (JSD)}: Measures similarity of aggregate statistics
+  \begin{equation}
+  \text{JSD}(P||Q) = \frac{1}{2}D_{KL}(P||M) + \frac{1}{2}D_{KL}(Q||M)
+  \end{equation}
+  where $M = \frac{1}{2}(P + Q)$ and evaluated for distance, duration, and radius distributions
+\end{itemize}
+
+\textbf{Local Trajectory Metrics:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Hausdorff Distance}: Maximum deviation between trajectories
+\item \textbf{Dynamic Time Warping (DTW)}: Temporal alignment distance
+\item \textbf{Edit Distance on Real sequence (EDR)}: Discrete sequence similarity
+\item \textbf{Path Completion Rate}: Percentage reaching destination
+\end{itemize}
+
+All metrics are computed separately on training OD pairs (memorization) and held-out test OD pairs (generalization) to assess overfitting.
+
+\subsection{Implementation Details}
+\label{sec:method-impl}
+
+\textbf{Hardware:} NVIDIA RTX 2080 Ti (11GB), 64GB RAM, NVMe SSD
+
+\textbf{Software:} Python 3.11, PyTorch 2.1, CUDA 12.1
+
+\textbf{Key Implementation Choices:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item AdamW optimizer with $\eta = 5 \times 10^{-4}$, cosine schedule
+\item Batch size 64 with gradient accumulation to effective 512
+\item Training for 25 epochs takes $\sim$36 hours with distillation
+\item All random seeds fixed for reproducibility
+\end{itemize}
+
+\textbf{Code Organization:} The implementation follows a modular design with configuration-driven experiments. Core components include teacher wrappers (\texttt{critics/}), training scripts with Optuna integration, and comprehensive evaluation pipelines. Complete source code and trained models are available at \texttt{[repository-url]}.
