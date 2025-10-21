@@ -1,0 +1,71 @@
+---
+alwaysApply: true
+---
+# Thesis Full Text Review Workflow
+
+## Build and Convert Script
+
+Use [build-and-convert.sh](mdc:build-and-convert.sh) to get the complete thesis in text format.
+
+### When to Use
+
+**Always use this script before:**
+- Performing operations that span multiple sections
+- Identifying duplicates or redundancies across the document
+- Checking consistency of terminology, notation, or claims
+- Verifying cross-references between sections
+- Searching for specific content across the entire thesis
+- Assessing overall document structure and flow
+
+### Usage
+
+```bash
+./build-and-convert.sh
+```
+
+This script:
+1. Builds the LaTeX thesis with `latexmk -pdf -g`
+2. Converts the PDF to text with `pdftotext -layout`
+3. Outputs to `build/main.txt`
+
+### Workflow Pattern
+
+```
+1. Run ./build-and-convert.sh
+2. Read build/main.txt (full thesis in text form)
+3. Perform cross-section analysis
+4. Make necessary changes to source files
+5. Rebuild to verify
+```
+
+### Why Text Format?
+
+The text version (`build/main.txt`) is ideal for:
+- Reading large sections of content efficiently
+- Searching for patterns and duplicates
+- Analyzing document structure without LaTeX markup
+- Quick full-document scans (~2000 lines vs ~7000 PDF lines)
+
+### Example Operations Requiring Full Text
+
+**Cross-section duplicate detection:**
+```bash
+./build-and-convert.sh
+# Then read build/main.txt to identify duplicates across sections
+```
+
+**Terminology consistency check:**
+```bash
+./build-and-convert.sh
+grep -i "specific term" build/main.txt
+```
+
+**Section flow verification:**
+```bash
+./build-and-convert.sh
+# Read build/main.txt to assess narrative flow
+```
+
+## Key Principle
+
+**Don't assume section independence.** When working on one section, be aware that content may be duplicated, referenced, or contradicted in other sections. Use the full text version to maintain consistency across the entire thesis.
