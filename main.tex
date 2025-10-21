@@ -37,7 +37,7 @@
 \begin{document}
 
 % ===== Title Page =====
-\input{title_page}
+\input{sections/00-title-page}
 \title{Knowledge Distillation for Map-Matched Trajectory Prediction: Improving Urban Route Prediction through Cross-Task Knowledge Transfer}
 \titlerunning{Knowledge Distillation for Trajectory Prediction}
 \author{Mateusz K{\k e}dzia\inst{1}\orcidID{0009-0001-4296-4479}}
@@ -45,15 +45,7 @@
 \institute{Vrije Universiteit Amsterdam, Amsterdam}
 \maketitle
 
-\begin{abstract}
-  Urban traffic management, transportation planning, and intelligent city systems require accurate real-time trajectory prediction to support policy decisions and optimize traffic flow. However, existing fast prediction models suffer from poor route completion rates (12-18\%), limiting their practical deployment for traffic regulators and urban planners. While sophisticated models like LM-TAD achieve superior spatial reasoning, their computational overhead (~3.4ms per trajectory vs ~0.1ms for fast models) prevents real-time application in city-wide traffic management systems, digital twin platforms, and large-scale simulations.
-
-  This thesis addresses this challenge through training-time knowledge distillation, transferring spatial understanding from LM-TAD (a trajectory anomaly detection model) to HOSER (a fast zone-based prediction model). We demonstrate that repurposing the ``normal trajectory'' knowledge learned by anomaly detection models enables dramatic improvements in route prediction without inference-time overhead. Our distillation framework achieves 85-89\% path completion success (47-74$\times$ improvement over vanilla baseline), 87\% better distance distribution matching, and 98\% better spatial pattern fidelity on Beijing's 40,060-road network with 629,380 training trajectories. Hyperparameter optimization reveals that minimal distillation weight ($\lambda$=0.0014) with high temperature ($\tau$=4.37) enables effective knowledge transfer while preserving the student model's fast inference speed.
-
-  The resulting system enables practical deployment for policy makers and traffic regulators, supporting applications in real-time traffic signal optimization, infrastructure planning, urban digital twins, agent-based traffic simulation, and high-quality synthetic trajectory data generation for training other models. This work demonstrates the viability of cross-task knowledge distillation for trajectory prediction and provides a scalable framework for integrating AI-based route prediction into operational traffic management systems.
-
-  \keywords{Knowledge distillation \and Trajectory prediction \and Urban transportation \and Traffic management \and Digital twins \and Deep learning}
-\end{abstract}
+\input{sections/00-abstract}
 
 \newpage
 
@@ -65,11 +57,13 @@
 
 \input{sections/03-methodology}
 
-\input{sections/04-data-preprocessing}
+\input{sections/04-implementation-details}
 
-\input{sections/05-evaluation}
+\input{sections/05-data-preprocessing}
 
-\input{sections/06-conclusion}
+\input{sections/06-evaluation}
+
+\input{sections/07-conclusion}
 
 \newpage
 

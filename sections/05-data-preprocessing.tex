@@ -1,0 +1,255 @@
+% Source: Complete rewrite for HOSER distillation project
+% References: notes/hoser/docs/DATASET_SETUP.md, notes/hoser/hoser-distill-optuna-6/EVALUATION_ANALYSIS.md
+
+\section{Datasets and Preprocessing}
+\label{sec:data-preprocessing}
+
+This section describes the datasets used for distillation experiments, their preprocessing pipeline, and the compatibility layer required to bridge HOSER's road-based and LM-TAD's grid-based representations. We evaluate our framework on three urban trajectory datasets representing different cities and data sources.
+
+\subsection{Dataset Overview}
+\label{sec:data-overview}
+
+We evaluate the distillation framework on three urban trajectory datasets, each presenting distinct characteristics and challenges for trajectory prediction.
+
+\subsubsection{Beijing HOSER Reference Dataset}
+
+The primary evaluation dataset originates from the original HOSER paper~\cite{yangHOSERHigherorderStructureaware2023}, providing a standardized benchmark for trajectory prediction research.
+
+\textbf{Network characteristics:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Road segments}: 40,060 map-matched road IDs
+\item \textbf{Spatial extent}: Beijing metropolitan area
+\item \textbf{Training trajectories}: 629,380 map-matched routes
+\item \textbf{Validation trajectories}: 78,673 routes
+\item \textbf{Test trajectories}: 179,823 routes
+\item \textbf{Average trajectory length}: 4.6 road segments
+\item \textbf{Average trip distance}: 5.16 km
+\end{itemize}
+
+\textbf{Data provenance:} This dataset was preprocessed and map-matched by the original HOSER authors, ensuring high-quality route alignment with the road network. For our experiments, we adapted the data format to ensure compatibility with LM-TAD's grid-based vocabulary while preserving HOSER's original train/validation/test splits.
+
+\subsubsection{Porto HOSER Dataset}
+
+The Porto dataset, also from the original HOSER paper~\cite{yangHOSERHigherorderStructureaware2023}, represents a different urban environment with distinct mobility patterns.
+
+\textbf{Network characteristics:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Road segments}: $\sim$11,024 map-matched road IDs
+\item \textbf{Spatial extent}: Porto metropolitan area, Portugal
+\item \textbf{Training trajectories}: $\sim$481,359 map-matched routes
+\item \textbf{Average trajectory length}: $\sim$8.0 road segments (longer than Beijing)
+\item \textbf{Grid configuration}: $46 \times 134 = 6{,}164$ cells for LM-TAD compatibility
+\end{itemize}
+
+\textbf{Evaluation status:} \textcolor{red}{[EVALUATION IN PROGRESS - Results to be completed after current experiments finish]}
+
+\subsubsection{Beijing Private (BJUT) Dataset}
+
+To validate generalization beyond public benchmarks, we prepared a private Beijing taxi dataset from independent sources.
+
+\textbf{Network characteristics:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Data source}: Private taxi GPS trajectories from Beijing University of Technology
+\item \textbf{Preprocessing}: Independently map-matched and formatted for HOSER compatibility
+\item \textbf{Purpose}: Cross-dataset validation and bias assessment
+\end{itemize}
+
+\textbf{Evaluation status:} \textcolor{red}{[TO BE COMPLETED - Dataset preparation and evaluation planned]}
+
+\subsection{HOSER Dataset Format}
+\label{sec:data-format}
+
+HOSER operates on \emph{map-matched} trajectories rather than raw GPS coordinates, enabling direct reasoning over road network topology. This representation significantly reduces noise and ensures graph-aware predictions.
+
+\subsubsection{Road Network Files}
+
+The road network is defined by two complementary files:
+
+\textbf{roadmap.geo} specifies geometric and semantic attributes:
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{road\_id}: Unique integer identifier (0 to $|\mathcal{V}| - 1$)
+\item \textbf{geometry}: Coordinate sequence defining road shape
+\item \textbf{highway}: Road type classification (primary, secondary, residential, etc.)
+\item \textbf{length}: Physical length in meters
+\item \textbf{lanes}: Number of traffic lanes
+\item \textbf{maxspeed}: Speed limit information
+\end{itemize}
+
+\textbf{roadmap.rel} encodes topological connectivity:
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{origin}: Source road segment ID
+\item \textbf{destination}: Target road segment ID
+\item \textbf{connection type}: Intersection or direct continuation
+\end{itemize}
+
+This explicit topology representation enables HOSER's candidate generation mechanism to efficiently prune unreachable roads at each prediction step.
+
+\subsubsection{Trajectory Format}
+
+Trajectories are stored as CSV files with the following schema:
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{traj\_id}: Unique trajectory identifier
+\item \textbf{road\_ids}: Ordered sequence of road segment IDs (e.g., \texttt{[142, 3891, 7234, ...]})
+\item \textbf{timestamps}: Corresponding arrival times at each road segment
+\item \textbf{origin/destination}: First and last road IDs (explicit OD pair)
+\end{itemize}
+
+This format contrasts with raw GPS trajectories, which require map-matching algorithms to infer road-level routes. Map-matching was performed by the original HOSER authors using state-of-the-art techniques, ensuring high alignment quality.
+
+\subsection{LM-TAD Compatibility Layer}
+\label{sec:data-lmtad-compat}
+
+The knowledge distillation framework requires aligning HOSER's road-based vocabulary ($\mathcal{V}$) with LM-TAD's grid-based vocabulary ($\mathcal{Z}$). This section details the compatibility layer that bridges these representations.
+
+\subsubsection{Grid Cell Discretization}
+
+LM-TAD discretizes geographic space into uniform grid cells for trajectory tokenization~\cite{heSpatiotemporalTrajectoryAnomaly2022}. Each cell becomes a vocabulary token, enabling transformer-based sequence modeling.
+
+\textbf{Grid configuration:}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Resolution}: $0.001^\circ$ latitude/longitude ($\sim$111 meters at Beijing's latitude)
+\item \textbf{Beijing grid}: $205 \times 252 = 51{,}660$ cells covering the metropolitan area
+\item \textbf{Porto grid}: $46 \times 134 = 6{,}164$ cells \textcolor{red}{[dimensions to be verified]}
+\item \textbf{Vocabulary size}: $|\mathcal{Z}| = $ grid width $\times$ grid height
+\end{itemize}
+
+This fine-grained resolution captures detailed spatial patterns while remaining computationally tractable for transformer models.
+
+\subsubsection{Road-to-Grid Mapping Function}
+
+We construct a deterministic mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ that assigns each road segment to its corresponding grid cell based on the road's geometric centroid. For a road $r$ with centroid coordinates $(x_r, y_r)$:
+
+\begin{equation}
+\phi(r) = \left\lfloor \frac{x_r - x_{\min}}{\Delta_x} \right\rfloor \cdot n_{\text{cols}} + \left\lfloor \frac{y_r - y_{\min}}{\Delta_y} \right\rfloor
+\label{eq:road-to-grid}
+\end{equation}
+
+where $x_{\min}$, $y_{\min}$ define the grid's southwest corner, $\Delta_x = 0.001^\circ$ is the cell width, $\Delta_y = 0.001^\circ$ is the cell height, and $n_{\text{cols}}$ is the number of columns in the grid.
+
+\textbf{Many-to-one mapping:} Multiple road segments may occupy the same grid cell, particularly in dense urban cores. For Beijing, the average occupancy is $40{,}060 / 51{,}660 \approx 0.78$ roads per cell, though downtown cells may contain 5--10 segments. During distillation, when multiple candidate roads map to the same grid cell, they all receive the teacher's probability for that cell (see Equation~\ref{eq:extract} in \autoref{sec:method-vocab}).
+
+\subsubsection{Vocabulary Alignment Statistics}
+
+Table~\ref{tab:vocab-alignment} summarizes the vocabulary alignment characteristics for each dataset.
+
+\begin{table}[h]
+\centering
+\caption{Vocabulary alignment between HOSER roads and LM-TAD grid cells}
+\label{tab:vocab-alignment}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dataset} & \textbf{Roads ($|\mathcal{V}|$)} & \textbf{Grid Size} & \textbf{Cells ($|\mathcal{Z}|$)} & \textbf{Avg. Roads/Cell} \\
+\midrule
+Beijing & 40,060 & $205 \times 252$ & 51,660 & 0.78 \\
+Porto & 11,024 & $46 \times 134$ & 6,164 & \textcolor{red}{[TBC]} \\
+BJUT & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This alignment enables the teacher's distributional knowledge over grid cells to inform the student's predictions over road segments, despite the vocabulary size mismatch.
+
+\subsection{Preprocessing Pipeline}
+\label{sec:data-pipeline}
+
+Preparing a dataset for distillation requires several preprocessing steps beyond the initial map-matching performed by HOSER authors.
+
+\subsubsection{Road Network Partitioning}
+
+HOSER's hierarchical architecture relies on spatial zone embeddings to capture regional connectivity patterns. We partition the road network into $Z = 300$ zones using the KaHIP graph partitioning library~\cite{sandersEngineeringMultilevelGraph2011}.
+
+\textbf{Partitioning objective:} Minimize edge cuts (roads connecting different zones) while balancing zone sizes. This produces geographically coherent zones that align with natural urban regions (neighborhoods, districts).
+
+\textbf{Output:} A \texttt{road\_network\_partition} file mapping each road ID to its zone (integers 0--299). This file is loaded during training to initialize zone embeddings.
+
+\textbf{Computation time:} Beijing (40,060 roads) requires $\sim$15--20 seconds; Porto (11,024 roads) requires $\sim$4 seconds.
+
+\subsubsection{Zone Transition Matrix}
+
+The zone transition matrix encodes aggregate movement patterns between spatial regions. Entry $(i, j)$ counts transitions from zone $i$ to zone $j$ across all training trajectories.
+
+\textbf{Construction:} For each trajectory in the training set, we map road IDs to zones via the partition file, then increment counters for each consecutive zone pair. The resulting $300 \times 300$ matrix captures regional flow patterns.
+
+\textbf{Usage:} This matrix initializes attention mechanisms in HOSER's navigator module, providing prior knowledge about likely zone-level routes before road-level training.
+
+\textbf{Computation time:} Beijing (629,380 trajectories) requires $\sim$10--15 seconds; Porto (481,359 trajectories) requires $\sim$67 seconds.
+
+\subsubsection{LM-TAD Teacher Preparation}
+
+The teacher model must be prepared from its training checkpoint:
+
+\begin{enumerate}[noitemsep,topsep=0pt]
+\item \textbf{Locate checkpoint}: Find \texttt{ckpt\_best.pt} from LM-TAD training on the target dataset
+\item \textbf{Verify grid dimensions}: Confirm the grid size matches the dataset's geographic extent (check LM-TAD's training configuration)
+\item \textbf{Extract weights}: Convert to \texttt{weights\_only.pt} format, stripping optimizer states and training metadata
+\item \textbf{Validate vocabulary}: Ensure the teacher's output vocabulary size equals $|\mathcal{Z}|$
+\end{enumerate}
+
+This lightweight checkpoint format enables efficient loading during distillation without the overhead of full training state restoration.
+
+\subsubsection{Data Splitting and OD Stratification}
+
+HOSER's original data splits are preserved to maintain comparability:
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Training set}: Used for distillation and model parameter updates
+\item \textbf{Validation set}: Used for hyperparameter tuning (Optuna objective)
+\item \textbf{Test set}: Held out for final evaluation (never seen during training or tuning)
+\end{itemize}
+
+Critically, these splits are stratified by origin-destination (OD) pairs. The test set contains OD pairs \emph{not present in training}, enabling evaluation of generalization to unseen routes rather than mere memorization.
+
+\subsection{Dataset Statistics}
+\label{sec:data-stats}
+
+Table~\ref{tab:dataset-stats} summarizes key statistics for each evaluation dataset.
+
+\begin{table}[h]
+\centering
+\caption{Trajectory dataset statistics}
+\label{tab:dataset-stats}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Statistic} & \textbf{Beijing} & \textbf{Porto} & \textbf{BJUT} \\
+\midrule
+\multicolumn{4}{l}{\textit{Road Network}} \\
+\quad Road segments & 40,060 & $\sim$11,024 & \textcolor{red}{[TBC]} \\
+\quad Spatial zones & 300 & 300 & \textcolor{red}{[TBC]} \\
+\quad Grid cells (LM-TAD) & 51,660 & 6,164 & \textcolor{red}{[TBC]} \\
+\midrule
+\multicolumn{4}{l}{\textit{Trajectories}} \\
+\quad Training & 629,380 & $\sim$481,359 & \textcolor{red}{[TBC]} \\
+\quad Validation & 78,673 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
+\quad Test & 179,823 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
+\midrule
+\multicolumn{4}{l}{\textit{Trajectory Characteristics}} \\
+\quad Avg. length (roads) & 4.6 & $\sim$8.0 & \textcolor{red}{[TBC]} \\
+\quad Avg. distance (km) & 5.16 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
+\quad Avg. duration (min) & 28.2 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
+\midrule
+\multicolumn{4}{l}{\textit{Preprocessing}} \\
+\quad Map-matching quality & High (HOSER authors) & High (HOSER authors) & \textcolor{red}{[Independent]} \\
+\quad Partition time (sec) & 15--20 & 4 & \textcolor{red}{[TBC]} \\
+\quad Zone trans. matrix (sec) & 10--15 & 67 & \textcolor{red}{[TBC]} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Note on trajectory length:} Porto trajectories are substantially longer than Beijing (8.0 vs 4.6 road segments on average), leading to quadratic memory scaling in attention mechanisms. This necessitates reduced batch sizes for Porto experiments (see \autoref{sec:impl-practical}).
+
+\subsection{Data Quality and Representativeness}
+\label{sec:data-quality}
+
+The datasets represent real-world urban mobility patterns with inherent characteristics:
+
+\textbf{Beijing:} High-density metropolitan area with complex road hierarchy. Trajectories span residential, commercial, and transportation hub regions, providing diverse route types.
+
+\textbf{Porto:} Smaller city with different urban structure. Longer trajectories suggest different mobility patterns (potentially more suburban routes or lower road density).
+
+\textbf{BJUT (planned):} Independent data source enables assessment of whether distillation benefits generalize beyond HOSER's curated benchmark datasets.
+
+All datasets are \emph{map-matched}, meaning GPS points have been aligned to road segments via sophisticated algorithms. This preprocessing step, performed by domain experts, eliminates GPS noise and ensures trajectory realism. Our distillation framework operates entirely on these cleaned, road-level trajectories.
+

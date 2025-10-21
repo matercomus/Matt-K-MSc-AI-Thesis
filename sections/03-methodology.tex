@@ -310,78 +310,7 @@ Algorithm~\ref{alg:distill-train} presents the complete distillation training pr
 \end{algorithm}
 
 \begin{remark}[Computational Complexity]
-Per-iteration complexity: $\mathcal{O}(B \cdot t \cdot (V + k^2))$ where $B$ is batch size, $t$ is trajectory length, $V$ is vocabulary size, and $k$ is candidate set size. The teacher inference dominates at $\mathcal{O}(B \cdot t \cdot V)$.
-\end{remark}
-
-\subsubsection{Efficiency Optimizations}
-\label{sec:method-opt}
-To enable practical training on commodity hardware, we implement several key optimizations:
-
-\textbf{1. Automatic Mixed Precision (AMP):}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item Teacher inference: FP16 with \texttt{autocast} reduces memory by 50\%
-\item Student training: TF32 for matrix operations maintains accuracy
-\item Gradient scaling prevents underflow in FP16 backward pass
-\end{itemize}
-
-\textbf{2. Memory Management:}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{RAM caching}: Pre-load 630k samples ($\sim$13GB) when available
-\item \textbf{Gradient accumulation}: Simulate batch 512 using 8 micro-batches of 64
-\item \textbf{Candidate filtering}: Limit to top-$k=64$ roads per timestep
-\end{itemize}
-
-\textbf{3. Batched Operations:}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item Vectorized road-to-grid mapping using PyTorch tensor operations
-\item GPU-accelerated label remapping with masked positions set to $-100$
-\item Parallel teacher inference across all timesteps in batch
-\end{itemize}
-
-These optimizations yield 11--13 iterations/second throughput, with teacher inference adding less than 2\% overhead compared to vanilla training.
-
-\subsection{Hyperparameter Optimization}
-\label{sec:method-hparam}
-
-\subsubsection{Search Space Design}
-We optimize three critical hyperparameters that govern the knowledge transfer process. Table~\ref{tab:hparam-space} details the search ranges and their effects.
-
-\begin{table}[h]
-\centering
-\caption{Hyperparameter search space and effects}
-\label{tab:hparam-space}
-\small
-\begin{tabular}{lllp{5cm}}
-\toprule
-\textbf{Parameter} & \textbf{Range} & \textbf{Scale} & \textbf{Effect on Training} \\
-\midrule
-$\lambda$ (distill weight) & [0.001, 0.1] & Log & Controls teacher influence vs. supervised signal \\
-$\tau$ (temperature) & [1.0, 5.0] & Linear & Smooths distributions; higher values expose more dark knowledge \\
-$w$ (window size) & [2, 8] & Integer & Teacher context length; trades accuracy for speed \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsubsection{Two-Phase Optuna Strategy}
-We employ a systematic optimization approach using the Optuna framework:
-
-\textbf{Phase 1: Exploration (12 trials)}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Sampler}: CMA-ES (Covariance Matrix Adaptation Evolution Strategy) for efficient continuous optimization
-\item \textbf{Pruner}: Hyperband with min\_resource=5 epochs to early-stop poor configurations
-\item \textbf{Objective}: Maximize validation accuracy after 8 epochs
-\item \textbf{Baseline}: Trial 0 always runs vanilla (no distillation) for comparison
-\end{itemize}
-
-\textbf{Phase 2: Validation (3 seeds)}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item Train best configuration for full 25 epochs
-\item Test with seeds \{42, 43, 44\} to estimate variance
-\item Generate trajectories and compute full evaluation metrics
-\end{itemize}
-
-\begin{remark}[Optimal Hyperparameters]
-Empirically, we find $\lambda \approx 0.0014$ (very low distillation weight), $\tau \approx 4.37$ (high temperature), and $w = 7$ yield best results, suggesting that subtle teacher guidance with broad distributional knowledge transfer is most effective.
+Per-iteration complexity: $\mathcal{O}(B \cdot t \cdot (V + k^2))$ where $B$ is batch size, $t$ is trajectory length, $V$ is vocabulary size, and $k$ is candidate set size. The teacher inference dominates at $\mathcal{O}(B \cdot t \cdot V)$. Practical optimizations and hyperparameter tuning are detailed in \autoref{sec:implementation}.
 \end{remark}
 
 \subsection{Inference and Evaluation}
@@ -445,19 +374,6 @@ We evaluate generated trajectories using two categories of metrics:
 
 All metrics are computed separately on training OD pairs (memorization) and held-out test OD pairs (generalization) to assess overfitting.
 
-\subsection{Implementation Details}
-\label{sec:method-impl}
+\bigskip
 
-\textbf{Hardware:} NVIDIA RTX 2080 Ti (11GB), 64GB RAM, NVMe SSD
-
-\textbf{Software:} Python 3.11, PyTorch 2.1, CUDA 12.1
-
-\textbf{Key Implementation Choices:}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item AdamW optimizer with $\eta = 5 \times 10^{-4}$, cosine schedule
-\item Batch size 64 with gradient accumulation to effective 512
-\item Training for 25 epochs takes $\sim$36 hours with distillation
-\item All random seeds fixed for reproducibility
-\end{itemize}
-
-\textbf{Code Organization:} The implementation follows a modular design with configuration-driven experiments. Core components include teacher wrappers (\texttt{critics/}), training scripts with Optuna integration, and comprehensive evaluation pipelines. Complete source code and trained models are available at \texttt{[repository-url]}.
+This completes the theoretical framework for knowledge distillation. Practical implementation details, including dataset preprocessing, hyperparameter optimization, training optimizations, and computational infrastructure, are described in \autoref{sec:implementation}.

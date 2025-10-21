@@ -1,0 +1,218 @@
+% Source: Moved from sections/03-methodology.tex (§3.3.2, §3.4, §3.5)
+% Additional content from notes/hoser/docs/DATASET_SETUP.md
+
+\section{Implementation}
+\label{sec:implementation}
+
+This section describes the practical implementation of our knowledge distillation framework, covering dataset preparation, hyperparameter tuning, training optimizations, and computational infrastructure. These implementation choices enable efficient training on commodity hardware while maintaining reproducibility.
+
+\subsection{Dataset Preparation Pipeline}
+\label{sec:impl-dataset-prep}
+
+The distillation framework requires careful preprocessing to bridge the representation gap between HOSER's road-based and LM-TAD's grid-based vocabularies. We detail the complete setup process below.
+
+\subsubsection{Road Network Preprocessing}
+
+\textbf{Road Network Partitioning.} The student model (HOSER) operates on hierarchical zones rather than individual road segments. We partition the road network into $Z = 300$ zones using the KaHIP graph partitioning library~\cite{sandersEngineeringMultilevelGraph2011}, which minimizes edge cuts while balancing zone sizes.
+
+\textbf{Zone Transition Matrix.} We pre-compute a $300 \times 300$ transition probability matrix by aggregating zone-to-zone movements from training trajectories. Entry $(i,j)$ contains the count of transitions from zone $i$ to zone $j$, enabling the student model to learn regional connectivity patterns. This preprocessing step processes $\sim$630k Beijing trajectories in approximately 10--15 seconds.
+
+\subsubsection{Teacher Model Preparation}
+
+The LM-TAD teacher model must be converted from its training checkpoint format to a weights-only format compatible with distillation. This involves:
+
+\begin{enumerate}[noitemsep,topsep=0pt]
+\item \textbf{Checkpoint extraction}: Load the best-performing checkpoint (\texttt{ckpt\_best.pt}) from LM-TAD training
+\item \textbf{Grid configuration}: Verify grid dimensions match the teacher's training configuration (Beijing: $205 \times 252 = 51{,}660$ cells; Porto: $46 \times 134 = 6{,}164$ cells)
+\item \textbf{Weight export}: Extract model parameters and grid configuration into a lightweight \texttt{weights\_only.pt} file
+\item \textbf{Validation}: Verify vocabulary size matches the expected grid cardinality
+\end{enumerate}
+
+\subsubsection{Road-to-Grid Mapping}
+
+Each road segment must be mapped to its corresponding grid cell for vocabulary alignment. We construct this mapping deterministically using road centroid coordinates:
+
+\begin{equation}
+\phi(r) = \left\lfloor \frac{x_r - x_{\min}}{\Delta_x} \right\rfloor \cdot n_{\text{cols}} + \left\lfloor \frac{y_r - y_{\min}}{\Delta_y} \right\rfloor
+\end{equation}
+
+where $(x_r, y_r)$ is the centroid of road $r$, and $\Delta_x$, $\Delta_y$ are the grid cell dimensions. This mapping is computed once during preprocessing and cached for training efficiency.
+
+\subsection{Hyperparameter Optimization}
+\label{sec:impl-hparam}
+
+We employ a systematic two-phase hyperparameter search using the Optuna framework~\cite{akibaOptunaNextgenerationHyperparameter2019} to identify optimal distillation parameters.
+
+\subsubsection{Search Space Design}
+
+Table~\ref{tab:hparam-space} details the three critical hyperparameters governing knowledge transfer.
+
+\begin{table}[h]
+\centering
+\caption{Hyperparameter search space and effects on distillation}
+\label{tab:hparam-space}
+\small
+\begin{tabular}{lllp{5cm}}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Scale} & \textbf{Effect on Training} \\
+\midrule
+$\lambda$ (distill weight) & [0.001, 0.1] & Log & Controls teacher influence vs. supervised signal \\
+$\tau$ (temperature) & [1.0, 5.0] & Linear & Smooths distributions; higher values expose more dark knowledge \\
+$w$ (window size) & [2, 8] & Integer & Teacher context length; trades accuracy for speed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Two-Phase Optimization Strategy}
+
+\textbf{Phase 1: Exploration (12 trials).} We employ CMA-ES (Covariance Matrix Adaptation Evolution Strategy)~\cite{hansenCMAESEvolutionStrategy2016} as the sampler, which efficiently navigates continuous parameter spaces. The Hyperband pruner~\cite{liHyperbandNovelBanditBased2018} with minimum resource allocation of 5 epochs terminates unpromising configurations early.
+
+Key configuration:
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Objective}: Maximize validation accuracy after 8 epochs
+\item \textbf{Baseline}: Trial 0 always runs vanilla training ($\lambda = 0$) for fair comparison
+\item \textbf{Budget}: 12 trials $\times$ 8 epochs = 96 training runs (pruning reduces actual compute)
+\end{itemize}
+
+\textbf{Phase 2: Validation (3 seeds).} The best configuration from Phase 1 is trained to completion (25 epochs) with three random seeds $\{42, 43, 44\}$ to assess robustness and estimate variance.
+
+\subsubsection{Optimal Configuration}
+
+The hyperparameter search yields an unexpected result: minimal distillation weight with high temperature proves most effective.
+
+\begin{table}[h]
+\centering
+\caption{Optimal distillation hyperparameters from Optuna tuning}
+\label{tab:optimal-hparams}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Parameter} & \textbf{Optimal Value} & \textbf{Interpretation} \\
+\midrule
+$\lambda$ & 0.0014 & Very subtle teacher guidance \\
+$\tau$ & 4.37 & High temperature (broad knowledge transfer) \\
+$w$ & 7 & Nearly full context window \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This configuration suggests that \emph{subtle distributional guidance} from the teacher, rather than aggressive knowledge transfer, enables the student to integrate spatial understanding without compromising its architectural strengths.
+
+\subsection{Training Optimizations}
+\label{sec:impl-opt}
+
+To enable practical training on commodity hardware (NVIDIA RTX 2080 Ti with 11GB memory), we implement several key optimizations that reduce memory consumption and accelerate training.
+
+\subsubsection{Automatic Mixed Precision}
+
+We employ PyTorch's Automatic Mixed Precision (AMP) framework to reduce memory footprint:
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Teacher inference}: FP16 precision with \texttt{autocast} context reduces memory by $\sim$50\% with negligible accuracy loss
+\item \textbf{Student training}: TF32 format for matrix operations maintains numerical stability
+\item \textbf{Gradient scaling}: Dynamic loss scaling prevents underflow in FP16 backward passes
+\end{itemize}
+
+The frozen teacher benefits most from FP16 inference, as it performs no gradient updates and requires only forward-pass accuracy.
+
+\subsubsection{Memory Management}
+
+\textbf{Intelligent Caching.} The framework automatically decides whether to cache the dataset in RAM based on available memory. For the Beijing dataset ($\sim$630k trajectories, $\sim$13GB), RAM caching eliminates disk I/O bottlenecks when sufficient memory is available. Otherwise, the system streams data from NVMe storage with minimal performance degradation.
+
+\textbf{Gradient Accumulation.} We simulate an effective batch size of 512 by accumulating gradients over 8 micro-batches of 64 samples each. This enables large-batch training benefits while respecting GPU memory constraints.
+
+\textbf{Candidate Filtering.} HOSER's spatial pruning limits the candidate set to $k = 64$ nearest roads per timestep, reducing the output dimensionality from $|\mathcal{V}| = 40{,}060$ to a manageable subset.
+
+\subsubsection{Batched Operations}
+
+All vocabulary mapping and teacher inference operations are fully vectorized:
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Road-to-grid mapping}: GPU-accelerated tensor operations via precomputed lookup tables
+\item \textbf{Label remapping}: Parallel remapping with masked positions set to $-100$ (ignored by loss)
+\item \textbf{Teacher inference}: Batch-wise forward pass processes all timesteps simultaneously
+\end{itemize}
+
+These optimizations yield 11--13 iterations/second training throughput. Crucially, teacher inference adds less than 2\% overhead compared to vanilla HOSER training, making distillation nearly cost-free.
+
+\subsection{Training Infrastructure}
+\label{sec:impl-infra}
+
+\subsubsection{Hardware Configuration}
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{GPU}: NVIDIA RTX 2080 Ti (11GB VRAM, Turing architecture)
+\item \textbf{CPU}: AMD Ryzen (16 threads for data loading)
+\item \textbf{RAM}: 64GB DDR4 (enables full dataset caching)
+\item \textbf{Storage}: NVMe SSD (high-throughput trajectory streaming)
+\end{itemize}
+
+\subsubsection{Software Stack}
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Framework}: PyTorch 2.1 with CUDA 12.1
+\item \textbf{Python}: 3.11 with \texttt{uv} package manager
+\item \textbf{Optimization}: Optuna 3.x for hyperparameter search
+\item \textbf{Logging}: Weights \& Biases (WandB) for experiment tracking
+\item \textbf{Graph Processing}: KaHIP for network partitioning
+\end{itemize}
+
+\subsubsection{Training Schedule}
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Optimizer}: AdamW with $\eta = 5 \times 10^{-4}$, weight decay $0.1$
+\item \textbf{Learning rate schedule}: Cosine annealing from $\eta$ to $10^{-6}$ over 25 epochs
+\item \textbf{Batch configuration}: 64 samples $\times$ 8 accumulation steps = 512 effective batch size
+\item \textbf{Training duration}: $\sim$36 hours per 25-epoch run (distillation enabled)
+\item \textbf{Reproducibility}: Fixed random seeds (42, 43, 44) across all experiments
+\end{itemize}
+
+\subsubsection{Experiment Tracking}
+
+All training runs are logged to WandB with comprehensive metrics:
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item Loss components ($\mathcal{L}_{\text{CE}}$, $\mathcal{L}_{\text{time}}$, $\mathcal{L}_{\text{KL}}$)
+\item Validation accuracy and path completion rate
+\item Hyperparameter values and model configuration
+\item System metrics (GPU utilization, memory usage, throughput)
+\end{itemize}
+
+This infrastructure enables systematic experimentation and reproducible results across multiple datasets and configurations.
+
+\subsection{Practical Considerations}
+\label{sec:impl-practical}
+
+\subsubsection{Dataset-Specific Adaptations}
+
+Different urban networks require minor adaptations:
+
+\textbf{Beijing}: Standard configuration with 1024 max trajectory length.
+
+\textbf{Porto}: Longer trajectories (avg. 8 vs 4.6 points) require reduced batch size (64 $\rightarrow$ 32) and gradient checkpointing to prevent memory overflow. Memory usage scales quadratically with trajectory length due to attention mechanisms and distance matrices.
+
+\textbf{BJUT (Private Beijing)}: Similar to Beijing reference dataset but requires independent map-matching and preprocessing pipeline.
+
+\subsubsection{Common Challenges and Solutions}
+
+\textbf{Grid dimension mismatch}: Ensure LM-TAD's \texttt{grip\_size} parameter matches the vocabulary mapping configuration. Beijing uses $205 \times 252$ grid, Porto uses $46 \times 134$.
+
+\textbf{Highway type parsing}: Some datasets use nested list formats (e.g., \texttt{["primary", "secondary"]}), others use integer codes. The data loader handles both via conditional parsing.
+
+\textbf{Memory overflow}: Reduce batch size or enable gradient checkpointing for datasets with longer trajectories. Porto requires 50\% smaller batches than Beijing despite similar dataset sizes.
+
+\subsection{Code Organization and Reproducibility}
+\label{sec:impl-code}
+
+The implementation follows a modular architecture with configuration-driven experiments:
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Core training}: \texttt{train\_with\_distill.py} orchestrates the distillation pipeline
+\item \textbf{Hyperparameter tuning}: \texttt{tune\_hoser.py} integrates Optuna with WandB logging
+\item \textbf{Teacher wrapper}: \texttt{critics/lmtad\_critic.py} encapsulates frozen teacher inference
+\item \textbf{Evaluation pipeline}: \texttt{python\_pipeline.py} generates and evaluates trajectories
+\item \textbf{Preprocessing tools}: \texttt{data/preprocess/} contains partitioning and mapping scripts
+\end{itemize}
+
+All experiments use YAML configuration files (e.g., \texttt{config/Beijing.yaml}) specifying dataset paths, hyperparameters, and training settings. Complete source code, trained models, and evaluation scripts are available in the supplementary materials.
+
