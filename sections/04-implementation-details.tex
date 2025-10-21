@@ -82,7 +82,7 @@ The frozen teacher benefits most from FP16 inference, as it performs no gradient
 
 \subsubsection{Memory Management}
 
-\textbf{Intelligent Caching.} The framework automatically decides whether to cache the dataset in RAM based on available memory. For the Beijing dataset ($\sim$630k trajectories, $\sim$13GB), RAM caching eliminates disk I/O bottlenecks when sufficient memory is available. Otherwise, the system streams data from NVMe storage with minimal performance degradation.
+\textbf{Intelligent Caching.} The framework automatically decides whether to cache the dataset in RAM based on available memory. For the Beijing dataset ($\sim$630k trajectories, $\sim$13GB), RAM caching eliminates disk I/O bottlenecks when sufficient memory is available. With 64GB system RAM, the dataset fits entirely in memory alongside model and optimizer states. Otherwise, the system streams data from NVMe storage with minimal performance degradation.
 
 \textbf{Gradient Accumulation.} We simulate an effective batch size of 512 by accumulating gradients over 8 micro-batches of 64 samples each. This enables large-batch training benefits while respecting GPU memory constraints.
 
@@ -103,7 +103,7 @@ These optimizations yield 11--13 iterations/second training throughput. Cruciall
 \subsection{Training Infrastructure}
 \label{sec:impl-infra}
 
-\textbf{Hardware:} NVIDIA RTX 2080 Ti (11GB)
+\textbf{Hardware:} NVIDIA RTX 2080 Ti GPU with 64GB system RAM (\hyperref[app:training-config]{Appendix~\ref*{app:training-config}} for complete specifications).
 
 \subsubsection{Training Configuration}
 
