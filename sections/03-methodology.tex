@@ -43,21 +43,9 @@ Given a partial trajectory $\mathbf{r}_{1:t}$ on road network $\mathcal{G}$, a d
 \subsubsection{Model Specifications}
 \label{sec:method-models}
 
-\textbf{Teacher (LM-TAD):} A pre-trained transformer for trajectory anomaly detection with:
-\begin{itemize}[leftmargin=*,noitemsep,topsep=0pt]
-\item Input: Grid cell sequences $\mathbf{z}_{1:t}$ where $z_i \in \mathcal{Z}$
-\item Architecture: 6-layer causal transformer, 512-dim embeddings, 8 attention heads
-\item Output: Next-token distribution $q(z_{t+1} | \mathbf{z}_{1:t})$ over $V$ grid cells
-\item Inference speed: $\sim$430 ms/batch (frozen during distillation)
-\end{itemize}
+\textbf{Teacher (LM-TAD)~\cite{mbuyaTrajectoryAnomalyDetection2024}:} A pre-trained transformer for trajectory anomaly detection that models trajectories as sequences of grid cell tokens. Input vocabulary size $|\mathcal{Z}| = 51{,}663$ for Beijing. Inference speed: $\sim$430 ms/batch (frozen during distillation). Architecture details in the original paper.
 
-\textbf{Student (HOSER):} A hierarchical graph-aware predictor with:
-\begin{itemize}[leftmargin=*,noitemsep,topsep=0pt]
-\item Input: Road sequences $\mathbf{r}_{1:t}$ where $r_i \in \mathcal{V}$
-\item Architecture: Zone embeddings (300) + 2-layer GCN + attention navigator
-\item Output: Logits $\ell_t \in \mathbb{R}^{|\mathcal{C}_t|}$ for candidate roads
-\item Inference speed: $\sim$13 ms/batch (trainable parameters)
-\end{itemize}
+\textbf{Student (HOSER)~\cite{caoHolisticSemanticRepresentation2025}:} A hierarchical graph-aware predictor operating on road sequences with spatial candidate pruning. Inference speed: $\sim$13 ms/batch (trainable parameters). Architecture details in the original paper.
 
 \begin{figure}[t]
 \centering
@@ -168,7 +156,7 @@ Given a partial trajectory $\mathbf{r}_{1:t}$ on road network $\mathcal{G}$, a d
 The teacher and student models operate on fundamentally different spatial representations. LM-TAD discretizes the city into $V = 51{,}663$ uniform grid cells for fine-grained anomaly detection, while HOSER directly predicts over $|\mathcal{V}| = 40{,}060$ road segments for efficient routing. This vocabulary mismatch necessitates a careful alignment strategy.
 
 \subsubsection{Mapping Construction}
-We construct a deterministic mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ that assigns each road segment to its corresponding grid cell based on the road's centroid coordinates. Algorithm~\ref{alg:vocab-map} details this preprocessing step.
+We construct a deterministic mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ that assigns each road segment to its corresponding grid cell based on the road's centroid coordinates, as detailed in Algorithm~\ref{alg:vocab-map}.
 
 \begin{algorithm}[t]
 \caption{BuildVocabularyMapping}
@@ -250,7 +238,7 @@ We employ the forward KL divergence to align the student's predictions with the 
 \end{algorithm}
 
 \begin{remark}[Gradient Scaling]
-The $\tau^2$ factor in line 9 ensures that gradients remain well-scaled as $\tau$ increases, preventing gradient vanishing during backpropagation~\cite{hintonDistillingKnowledgeNeural2015}.
+The $\tau^2$ scaling factor in the gradient correction step of Algorithm~\ref{alg:distill-loss} ensures that gradients remain well-scaled as $\tau$ increases, preventing gradient vanishing during backpropagation~\cite{hintonDistillingKnowledgeNeural2015}.
 \end{remark}
 
 \subsubsection{Combined Training Objective}
@@ -353,26 +341,7 @@ With beam width $b=4$, the student generates trajectories at $\sim$77 trajectori
 
 \subsubsection{Evaluation Protocol}
 \label{sec:method-eval-metrics}
-We evaluate generated trajectories using two categories of metrics:
-
-\textbf{Global Distribution Metrics:}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Jensen-Shannon Divergence (JSD)}: Measures similarity of aggregate statistics
-  \begin{equation}
-  \text{JSD}(P||Q) = \frac{1}{2}D_{KL}(P||M) + \frac{1}{2}D_{KL}(Q||M)
-  \end{equation}
-  where $M = \frac{1}{2}(P + Q)$ and evaluated for distance, duration, and radius distributions
-\end{itemize}
-
-\textbf{Local Trajectory Metrics:}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Hausdorff Distance}: Maximum deviation between trajectories
-\item \textbf{Dynamic Time Warping (DTW)}: Temporal alignment distance
-\item \textbf{Edit Distance on Real sequence (EDR)}: Discrete sequence similarity
-\item \textbf{Path Completion Rate}: Percentage reaching destination
-\end{itemize}
-
-All metrics are computed separately on training OD pairs (memorization) and held-out test OD pairs (generalization) to assess overfitting.
+We evaluate generated trajectories using two categories of metrics (detailed in \autoref{sec:eval-metrics}): \emph{global distribution metrics} (Jensen-Shannon Divergence for distance, duration, and radius distributions) and \emph{local trajectory metrics} (Hausdorff Distance, Dynamic Time Warping, Edit Distance on Real sequence, and Path Completion Rate). All metrics are computed separately on training OD pairs (memorization) and held-out test OD pairs (generalization) to assess overfitting.
 
 \bigskip
 

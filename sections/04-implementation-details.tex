@@ -9,34 +9,15 @@ This section describes the practical implementation of our knowledge distillatio
 \subsection{Dataset Preparation Pipeline}
 \label{sec:impl-dataset-prep}
 
-The distillation framework requires careful preprocessing to bridge the representation gap between HOSER's road-based and LM-TAD's grid-based vocabularies. We detail the complete setup process below.
+The distillation framework requires preprocessing to bridge HOSER's road-based and LM-TAD's grid-based representations. We use the Beijing dataset (\autoref{sec:data-overview}) from the original HOSER paper~\cite{caoHolisticSemanticRepresentation2025}.
 
 \subsubsection{Road Network Preprocessing}
 
-\textbf{Road Network Partitioning.} The student model (HOSER) operates on hierarchical zones rather than individual road segments. We partition the road network into $Z = 300$ zones using the KaHIP graph partitioning library~\cite{sandersEngineeringMultilevelGraph2011}, which minimizes edge cuts while balancing zone sizes.
-
-\textbf{Zone Transition Matrix.} We pre-compute a $300 \times 300$ transition probability matrix by aggregating zone-to-zone movements from training trajectories. Entry $(i,j)$ contains the count of transitions from zone $i$ to zone $j$, enabling the student model to learn regional connectivity patterns. This preprocessing step processes $\sim$630k Beijing trajectories in approximately 10--15 seconds.
+The student model operates on hierarchical zones as specified in the original HOSER paper~\cite{caoHolisticSemanticRepresentation2025}. Zone partitioning and transition matrix construction follow the procedures detailed in \autoref{sec:data-pipeline}.
 
 \subsubsection{Teacher Model Preparation}
 
-The LM-TAD teacher model must be converted from its training checkpoint format to a weights-only format compatible with distillation. This involves:
-
-\begin{enumerate}[noitemsep,topsep=0pt]
-\item \textbf{Checkpoint extraction}: Load the best-performing checkpoint (\texttt{ckpt\_best.pt}) from LM-TAD training
-\item \textbf{Grid configuration}: Verify grid dimensions match the teacher's training configuration (Beijing: $205 \times 252 = 51{,}660$ cells; Porto: $46 \times 134 = 6{,}164$ cells)
-\item \textbf{Weight export}: Extract model parameters and grid configuration into a lightweight \texttt{weights\_only.pt} file
-\item \textbf{Validation}: Verify vocabulary size matches the expected grid cardinality
-\end{enumerate}
-
-\subsubsection{Road-to-Grid Mapping}
-
-Each road segment must be mapped to its corresponding grid cell for vocabulary alignment. We construct this mapping deterministically using road centroid coordinates:
-
-\begin{equation}
-\phi(r) = \left\lfloor \frac{x_r - x_{\min}}{\Delta_x} \right\rfloor \cdot n_{\text{cols}} + \left\lfloor \frac{y_r - y_{\min}}{\Delta_y} \right\rfloor
-\end{equation}
-
-where $(x_r, y_r)$ is the centroid of road $r$, and $\Delta_x$, $\Delta_y$ are the grid cell dimensions. This mapping is computed once during preprocessing and cached for training efficiency.
+The LM-TAD teacher model is loaded from pre-trained checkpoints with vocabulary mapping $\phi$ (\autoref{sec:method-vocab}) precomputed and cached for efficient training. Checkpoint conversion details are provided in \autoref{sec:data-pipeline}.
 
 \subsection{Hyperparameter Optimization}
 \label{sec:impl-hparam}
@@ -65,7 +46,7 @@ $w$ (window size) & [2, 8] & Integer & Teacher context length; trades accuracy f
 
 \subsubsection{Two-Phase Optimization Strategy}
 
-\textbf{Phase 1: Exploration (12 trials).} We employ CMA-ES (Covariance Matrix Adaptation Evolution Strategy)~\cite{hansenCMAESEvolutionStrategy2016} as the sampler, which efficiently navigates continuous parameter spaces. The Hyperband pruner~\cite{liHyperbandNovelBanditBased2018} with minimum resource allocation of 5 epochs terminates unpromising configurations early.
+\textbf{Phase 1: Exploration (12 trials).} We employ CMA-ES (Covariance Matrix Adaptation Evolution Strategy)~\cite{hansenCMAEvolutionStrategy2023} as the sampler, which efficiently navigates continuous parameter spaces. The Hyperband pruner~\cite{liHyperbandNovelBanditBased2018} with minimum resource allocation of 5 epochs terminates unpromising configurations early.
 
 Key configuration:
 \begin{itemize}[noitemsep,topsep=0pt]
@@ -138,47 +119,11 @@ These optimizations yield 11--13 iterations/second training throughput. Cruciall
 \subsection{Training Infrastructure}
 \label{sec:impl-infra}
 
-\subsubsection{Hardware Configuration}
+\textbf{Hardware:} NVIDIA RTX 2080 Ti (11GB)
 
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{GPU}: NVIDIA RTX 2080 Ti (11GB VRAM, Turing architecture)
-\item \textbf{CPU}: AMD Ryzen (16 threads for data loading)
-\item \textbf{RAM}: 64GB DDR4 (enables full dataset caching)
-\item \textbf{Storage}: NVMe SSD (high-throughput trajectory streaming)
-\end{itemize}
+\subsubsection{Training Configuration}
 
-\subsubsection{Software Stack}
-
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Framework}: PyTorch 2.1 with CUDA 12.1
-\item \textbf{Python}: 3.11 with \texttt{uv} package manager
-\item \textbf{Optimization}: Optuna 3.x for hyperparameter search
-\item \textbf{Logging}: Weights \& Biases (WandB) for experiment tracking
-\item \textbf{Graph Processing}: KaHIP for network partitioning
-\end{itemize}
-
-\subsubsection{Training Schedule}
-
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Optimizer}: AdamW with $\eta = 5 \times 10^{-4}$, weight decay $0.1$
-\item \textbf{Learning rate schedule}: Cosine annealing from $\eta$ to $10^{-6}$ over 25 epochs
-\item \textbf{Batch configuration}: 64 samples $\times$ 8 accumulation steps = 512 effective batch size
-\item \textbf{Training duration}: $\sim$36 hours per 25-epoch run (distillation enabled)
-\item \textbf{Reproducibility}: Fixed random seeds (42, 43, 44) across all experiments
-\end{itemize}
-
-\subsubsection{Experiment Tracking}
-
-All training runs are logged to WandB with comprehensive metrics:
-
-\begin{itemize}[noitemsep,topsep=0pt]
-\item Loss components ($\mathcal{L}_{\text{CE}}$, $\mathcal{L}_{\text{time}}$, $\mathcal{L}_{\text{KL}}$)
-\item Validation accuracy and path completion rate
-\item Hyperparameter values and model configuration
-\item System metrics (GPU utilization, memory usage, throughput)
-\end{itemize}
-
-This infrastructure enables systematic experimentation and reproducible results across multiple datasets and configurations.
+We use AdamW optimizer with cosine annealing and effective batch size 512 (64 samples $\times$ 8 accumulation steps). Training runs 25 epochs ($\sim$36 hours) with fixed seeds (42, 43, 44) for reproducibility. Full configuration details are provided in Table~\ref{tab:fair-comparison}.
 
 \subsection{Practical Considerations}
 \label{sec:impl-practical}
@@ -201,18 +146,5 @@ Different urban networks require minor adaptations:
 
 \textbf{Memory overflow}: Reduce batch size or enable gradient checkpointing for datasets with longer trajectories. Porto requires 50\% smaller batches than Beijing despite similar dataset sizes.
 
-\subsection{Code Organization and Reproducibility}
-\label{sec:impl-code}
-
-The implementation follows a modular architecture with configuration-driven experiments:
-
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Core training}: \texttt{train\_with\_distill.py} orchestrates the distillation pipeline
-\item \textbf{Hyperparameter tuning}: \texttt{tune\_hoser.py} integrates Optuna with WandB logging
-\item \textbf{Teacher wrapper}: \texttt{critics/lmtad\_critic.py} encapsulates frozen teacher inference
-\item \textbf{Evaluation pipeline}: \texttt{python\_pipeline.py} generates and evaluates trajectories
-\item \textbf{Preprocessing tools}: \texttt{data/preprocess/} contains partitioning and mapping scripts
-\end{itemize}
-
-All experiments use YAML configuration files (e.g., \texttt{config/Beijing.yaml}) specifying dataset paths, hyperparameters, and training settings. Complete source code, trained models, and evaluation scripts are available in the supplementary materials.
+\textbf{Reproducibility:} Complete implementation, trained models, evaluation scripts, and configuration files are provided in the supplementary materials to facilitate reproduction of all experiments.
 

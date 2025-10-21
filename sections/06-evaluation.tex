@@ -49,18 +49,9 @@ Candidate top-$k$ & 64 & 64 \\
 
 This controlled experimental design ensures that performance differences stem purely from knowledge transfer, not confounding factors like different batch sizes, learning rates, or architectures.
 
-\subsubsection{Hyperparameter Tuning Process}
+\subsubsection{Hyperparameter Tuning}
 
-The optimal distillation hyperparameters were identified through a 12-trial Optuna study:
-
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Sampler}: CMA-ES for efficient continuous optimization
-\item \textbf{Pruner}: Hyperband (min. 5 epochs) for early stopping
-\item \textbf{Objective}: Validation accuracy after 8 epochs
-\item \textbf{Search space}: $\lambda \in [0.001, 0.1]$ (log scale), $\tau \in [1.0, 5.0]$ (linear), $w \in [2, 8]$ (integer)
-\end{itemize}
-
-Trial 0 always runs vanilla training ($\lambda = 0$) to establish the baseline. The best configuration from exploration is then validated with three random seeds (42, 43, 44) to assess robustness.
+Optimal distillation hyperparameters ($\lambda = 0.0014$, $\tau = 4.37$, $w = 7$) were identified via systematic Optuna search (\autoref{sec:impl-hparam}). Trial 0 establishes the vanilla baseline ($\lambda = 0$), validated with seeds 42, 43, 44.
 
 \subsubsection{Trajectory Generation Protocol}
 
