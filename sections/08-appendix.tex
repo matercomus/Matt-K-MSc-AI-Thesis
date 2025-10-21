@@ -156,15 +156,48 @@ Symmetric divergence measure comparing probability distributions:
 
 where $M = \frac{1}{2}(P + Q)$ is the mixture distribution and $D_{KL}(P \parallel Q) = \sum_i P(i) \log \frac{P(i)}{Q(i)}$ is the Kullback-Leibler divergence. JSD is bounded in $[0, 1]$, with 0 indicating identical distributions and 1 indicating completely disjoint distributions.
 
-We compute JSD for three trajectory attributes:
+We compute JSD for three trajectory attributes, each requiring specific calculations and histogram binning:
 
-\begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Distance JSD}: Compares trip distance distributions using 50 histogram bins spanning 0 to maximum observed distance. Lower values indicate generated trajectories have realistic trip lengths matching real data.
+\paragraph{Trip Distance Distribution}
 
-\item \textbf{Duration JSD}: Compares trip duration distributions using 50 bins. Correlated with distance but provides additional temporal perspective on trajectory realism.
+For each trajectory $T = \{r_1, r_2, \ldots, r_n\}$ of road segments, we compute total trip distance using Haversine (great-circle) distance between consecutive road centroids:
 
-\item \textbf{Radius of Gyration JSD}: Compares spatial spread distributions. The radius of gyration $R_g = \sqrt{\frac{1}{N} \sum_{i=1}^{N} d(p_i, \bar{p})^2}$ measures how geographically dispersed a trajectory is, where $p_i$ are trajectory points and $\bar{p} = \frac{1}{N}\sum_{i=1}^N p_i$ is the centroid. Lower JSD values indicate proper spatial complexity modeling.
-\end{itemize}
+\begin{equation}
+D(T) = \sum_{i=2}^{n} d_{\text{gc}}(\text{centroid}(r_{i-1}), \text{centroid}(r_i))
+\label{eq:trip-distance}
+\end{equation}
+
+where $d_{\text{gc}}(\cdot, \cdot)$ is the great-circle distance in kilometers. We create histograms with 100 bins spanning $[0, \max(\mathcal{D}_{\text{real}})]$ where $\mathcal{D}_{\text{real}}$ is the set of all real trajectory distances, plus one bin for $[\max(\mathcal{D}_{\text{real}}), \infty)$. JSD is computed between normalized histograms of real and generated distance distributions.
+
+\paragraph{Per-Segment Duration Distribution}
+
+For trajectories with timestamps $T = \{(r_1, t_1), (r_2, t_2), \ldots, (r_n, t_n)\}$, we extract \emph{per-segment} durations (not total trip duration):
+
+\begin{equation}
+\Delta t_i = \frac{t_i - t_{i-1}}{60} \quad \text{for } i = 2, \ldots, n
+\label{eq:segment-duration}
+\end{equation}
+
+where durations are measured in minutes. Each segment contributes one sample to the duration distribution. Histograms use 100 bins spanning $[0, \max(\mathcal{T}_{\text{real}})]$ plus infinity bin. JSD compares normalized histograms of all segment durations from real and generated trajectories.
+
+\paragraph{Radius of Gyration Distribution}
+
+For each trajectory, we calculate the radius of gyration as the \emph{mean distance} from trajectory points to their centroid (following the original HOSER evaluation implementation, not the RMS formula):
+
+\begin{equation}
+R_g(T) = \frac{1}{|T|} \sum_{i=1}^{|T|} d_{\text{gc}}(\text{centroid}(r_i), \bar{c})
+\label{eq:radius-gyration}
+\end{equation}
+
+where $\bar{c} = (\bar{\text{lat}}, \bar{\text{lon}})$ is the geographic centroid of all road centroids in the trajectory:
+
+\begin{equation}
+\bar{\text{lat}} = \frac{1}{|T|} \sum_{i=1}^{|T|} \text{lat}(\text{centroid}(r_i)), \quad
+\bar{\text{lon}} = \frac{1}{|T|} \sum_{i=1}^{|T|} \text{lon}(\text{centroid}(r_i))
+\label{eq:trajectory-centroid}
+\end{equation}
+
+Histograms use 100 bins spanning $[0, \max(\mathcal{R}_{\text{real}})]$ plus infinity bin. Lower JSD values indicate proper spatial complexity modeling.
 
 \subsubsection{Local Trajectory Metrics}
 \label{app:local-metrics}
