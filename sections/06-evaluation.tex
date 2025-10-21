@@ -5,7 +5,7 @@
 \section{Experimental Evaluation}
 \label{sec:evaluation}
 
-This section presents a comprehensive empirical evaluation of knowledge distillation for trajectory prediction. We begin by describing the experimental setup and evaluation metrics (\autoref{sec:eval-setup}, \autoref{sec:eval-metrics}), then present detailed results for the Beijing dataset (\autoref{sec:eval-beijing}), followed by placeholders for ongoing Porto and planned BJUT evaluations (\autoref{sec:eval-porto}, \autoref{sec:eval-bjut}). We conclude with cross-dataset analysis and ablation studies (\autoref{sec:eval-cross}, \autoref{sec:eval-inference}, \autoref{sec:eval-ablation}).
+This section presents a comprehensive empirical evaluation of knowledge distillation for trajectory prediction. We begin by describing the experimental setup and evaluation metrics (\autoref{sec:eval-setup}, \autoref{sec:eval-metrics}), then present detailed results for the Beijing dataset (\autoref{sec:eval-beijing}), followed by placeholders for ongoing Porto and planned BJUT evaluations (\autoref{sec:eval-porto}, \autoref{sec:eval-bjut}). We conclude with cross-dataset analysis and inference speed discussion (\autoref{sec:eval-cross}, \autoref{sec:eval-inference}).
 
 \subsection{Experimental Setup}
 \label{sec:eval-setup}
@@ -387,35 +387,4 @@ Figure~\ref{fig:performance-radar} synthesizes all metrics into a radar chart.
 
 \textbf{Hypothesis:} Distilled models achieve transformer-level \emph{accuracy} with lightweight model \emph{speed}, validating the core thesis claim. This hypothesis requires empirical confirmation.
 
-\subsection{Ablation Studies}
-\label{sec:eval-ablation}
-
-\textcolor{red}{[OPTIONAL - Suggested in writing notes but not yet conducted]}
-
-\subsubsection{Distillation Weight Sensitivity ($\lambda$)}
-
-\textbf{Proposed experiment:} Train models with $\lambda \in \{0, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0\}$ to understand the influence curve.
-
-\textbf{Research questions:}
-\begin{itemize}[noitemsep,topsep=0pt]
-\item Why does minimal $\lambda = 0.0014$ outperform higher values?
-\item Is there a sharp drop-off in performance beyond optimal $\lambda$?
-\item Does $\lambda = 1.0$ (pure distillation, no hard labels) completely fail?
-\end{itemize}
-
-\subsubsection{Learning Rate Sensitivity}
-
-\textbf{Observation from writing notes:} "The learning rate seems to have big influence but is kind of ignored so far."
-
-\textbf{Proposed experiment:} Evaluate distillation with learning rates $\{10^{-3}, 5 \times 10^{-4}, 10^{-4}, 5 \times 10^{-5}\}$ while keeping $\lambda$ and $\tau$ fixed.
-
-\textbf{Hypothesis:} Lower learning rates may enable finer-grained integration of teacher knowledge, potentially improving convergence.
-
-\subsubsection{Temperature Sensitivity ($\tau$)}
-
-\textbf{Current understanding:} Optuna found $\tau = 4.37$ optimal, but the full sensitivity curve is unknown.
-
-\textbf{Proposed experiment:} Systematic evaluation with $\tau \in \{1.0, 2.0, 3.0, 4.0, 5.0, 7.0, 10.0\}$ to characterize the temperature-performance relationship.
-
-\textbf{Expected finding:} Very low $\tau \approx 1$ provides minimal distributional smoothing (limited dark knowledge), while very high $\tau > 7$ over-smooths and loses discriminative information.
 
