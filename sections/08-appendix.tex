@@ -160,7 +160,7 @@ We compute JSD for three trajectory attributes, each requiring specific calculat
 
 \paragraph{Trip Distance Distribution}
 
-For each trajectory $T = \{r_1, r_2, \ldots, r_n\}$ of road segments, we compute total trip distance using Haversine (great-circle) distance between consecutive road centroids:
+For each trajectory (\autoref{def:trajectory}), we compute total trip distance using Haversine (great-circle) distance between consecutive road centroids:
 
 \begin{equation}
 D(T) = \sum_{i=2}^{n} d_{\text{gc}}(\text{centroid}(r_{i-1}), \text{centroid}(r_i))
@@ -180,7 +180,7 @@ where $H_{\text{real}}(\mathcal{D})$ and $H_{\text{gen}}(\mathcal{D})$ are the n
 
 \paragraph{Per-Segment Duration Distribution}
 
-For trajectories with timestamps $T = \{(r_1, t_1), (r_2, t_2), \ldots, (r_n, t_n)\}$, we extract \emph{per-segment} durations (not total trip duration):
+For timestamped trajectories (\autoref{def:trajectory-timestamped}), we extract \emph{per-segment} durations (not total trip duration):
 
 \begin{equation}
 \Delta t_i = \frac{t_i - t_{i-1}}{60} \quad \text{for } i = 2, \ldots, n
@@ -200,7 +200,7 @@ where $H_{\text{real}}(\mathcal{T})$ and $H_{\text{gen}}(\mathcal{T})$ are the n
 
 \paragraph{Radius of Gyration Distribution}
 
-For each trajectory, we calculate the radius of gyration as the \emph{mean distance} from trajectory points to their centroid (following the original HOSER evaluation implementation, not the RMS formula):
+For each trajectory (\autoref{def:trajectory}), we calculate the radius of gyration as the \emph{mean distance} from trajectory points to their centroid (following the original HOSER evaluation implementation, not the RMS formula):
 
 \begin{equation}
 R_g(T) = \frac{1}{|T|} \sum_{i=1}^{|T|} d_{\text{gc}}(\text{centroid}(r_i), \bar{c})
