@@ -1,10 +1,359 @@
+% Appendix
 \appendix
-\section{Appendix}
+\section{Technical Specifications and Supplementary Details}
 \label{sec:appendix}
 
-\subsection{Appendix Section}
-\label{sec:appendix-section}
+This appendix provides detailed technical specifications, algorithmic implementations, and metric formulations that support the main text. Content is organized to facilitate reference while maintaining the narrative flow of the core contributions.
 
-\subsection{Appendix Section}
-\label{sec:appendix-section-2}
+\subsection{Algorithm Specifications}
+\label{app:algorithms}
 
+This section details the algorithmic implementations of the distillation framework described in \autoref{sec:methodology}.
+
+\subsubsection{Vocabulary Mapping Construction}
+\label{app:vocab-mapping-alg}
+
+Algorithm~\ref{alg:vocab-map-appendix} details the construction of the road-to-grid mapping $\phi: \mathcal{V} \to \mathcal{Z}$ introduced in \autoref{sec:method-vocab}.
+
+\begin{algorithm}[H]
+\caption{BuildVocabularyMapping}
+\label{alg:vocab-map-appendix}
+\begin{algorithmic}
+\Require Road network $\mathcal{V}$ with centroid coordinates, Grid bounds and resolution
+\Ensure Mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$
+\State Initialize $\phi \gets \{\}$
+\For{each road $r \in \mathcal{V}$}
+    \State $(x_r, y_r) \gets \text{centroid}(r)$
+    \State $i \gets \lfloor (x_r - x_{\min}) / \Delta_x \rfloor$ \Comment{Grid row index}
+    \State $j \gets \lfloor (y_r - y_{\min}) / \Delta_y \rfloor$ \Comment{Grid column index}
+    \State $z \gets i \cdot n_{\text{cols}} + j$ \Comment{Flatten to token ID}
+    \State $\phi[r] \gets z$
+\EndFor
+\State \Return $\phi$
+\end{algorithmic}
+\end{algorithm}
+
+This deterministic mapping assigns each road segment's centroid to its containing grid cell, enabling alignment between HOSER's road-based and LM-TAD's grid-based vocabularies. Multiple roads may map to the same grid cell, particularly in dense urban areas.
+
+\subsubsection{Distillation Loss Computation}
+\label{app:distill-loss-alg}
+
+Algorithm~\ref{alg:distill-loss-appendix} presents the forward KL divergence computation with gradient correction scaling described in \autoref{sec:method-kl}.
+
+\begin{algorithm}[H]
+\caption{ComputeDistillationLoss}
+\label{alg:distill-loss-appendix}
+\begin{algorithmic}
+\Require Teacher logits $\ell^T_t$, Student logits $\ell^S_t$, Candidates $\mathcal{C}_t$, Temperature $\tau$
+\Ensure Distillation loss $\mathcal{L}_{\text{KL}}$
+\State $q^{(\tau)}_t \gets \text{Softmax}(\ell^T_t / \tau)$ \Comment{Teacher distribution}
+\State $p^{(\tau)}_t \gets \text{Softmax}(\ell^S_t / \tau)$ \Comment{Student distribution}
+\State $\mathcal{L}_{\text{KL}} \gets 0$
+\For{each candidate $c \in \mathcal{C}_t$}
+    \If{$q^{(\tau)}_t(c) > 0$} \Comment{Avoid $\log(0)$}
+        \State $\mathcal{L}_{\text{KL}} \gets \mathcal{L}_{\text{KL}} + q^{(\tau)}_t(c) \cdot [\log q^{(\tau)}_t(c) - \log p^{(\tau)}_t(c)]$
+    \EndIf
+\EndFor
+\State $\mathcal{L}_{\text{KL}} \gets \tau^2 \cdot \mathcal{L}_{\text{KL}}$ \Comment{Gradient correction}
+\State \Return $\mathcal{L}_{\text{KL}}$
+\end{algorithmic}
+\end{algorithm}
+
+The $\tau^2$ scaling factor ensures that gradients remain well-scaled as temperature increases, preventing gradient vanishing during backpropagation~\cite{hintonDistillingKnowledgeNeural2015}.
+
+\subsubsection{Training Procedure}
+\label{app:training-alg}
+
+Algorithm~\ref{alg:distill-train-appendix} specifies the complete distillation training loop integrating teacher inference, loss computation, and optimization described in \autoref{sec:method-training}.
+
+\begin{algorithm}[H]
+\caption{DistillationTraining}
+\label{alg:distill-train-appendix}
+\begin{algorithmic}
+\Require Dataset $\mathcal{D}$, Teacher $f_T$, Student $f_S$, Hyperparameters $\{\lambda, \tau, w, \eta\}$
+\Ensure Trained student parameters $\theta_S$
+\State Initialize student parameters $\theta_S$
+\State Freeze teacher parameters $\theta_T$ \Comment{No gradients}
+\For{epoch $= 1$ to $E$}
+    \For{batch $(\mathbf{r}, \mathbf{y}, \mathbf{t}) \in \mathcal{D}$} \Comment{Roads, labels, times}
+        \State $\mathbf{z} \gets \phi(\mathbf{r})$ \Comment{Map roads to grid cells}
+        \State \textbf{// Teacher inference (no gradient)}
+        \State $\mathbf{q} \gets f_T(\mathbf{z}_{t-w:t})$ with \texttt{torch.no\_grad()}
+        \State Extract $q_t^{(\tau)}$ for candidates $\mathcal{C}_t$ \Comment{Eq.~\eqref{eq:renorm}}
+        \State \textbf{// Student forward pass}
+        \State $\mathbf{\ell} \gets f_S(\mathbf{r}, \mathcal{C})$ \Comment{Student logits}
+        \State $p_t^{(\tau)} \gets \text{Softmax}(\mathbf{\ell} / \tau)$
+        \State \textbf{// Compute losses}
+        \State $\mathcal{L}_{\text{CE}} \gets \text{CrossEntropy}(\mathbf{\ell}, \mathbf{y})$
+        \State $\mathcal{L}_{\text{time}} \gets \text{MAPE}(\hat{\mathbf{t}}, \mathbf{t})$
+        \State $\mathcal{L}_{\text{KL}} \gets \text{ComputeDistillationLoss}(q_t^{(\tau)}, p_t^{(\tau)}, \tau)$
+        \State $\mathcal{L} \gets \mathcal{L}_{\text{CE}} + \alpha \cdot \mathcal{L}_{\text{time}} + \lambda \cdot \mathcal{L}_{\text{KL}}$
+        \State \textbf{// Optimization step}
+        \State $\nabla_{\theta_S} \mathcal{L} \gets \text{Backward}(\mathcal{L})$
+        \State $\theta_S \gets \text{AdamW}(\theta_S, \nabla_{\theta_S} \mathcal{L}, \eta)$
+    \EndFor
+    \State Validate and save best checkpoint
+\EndFor
+\State \Return $\theta_S$
+\end{algorithmic}
+\end{algorithm}
+
+The teacher remains frozen throughout training, providing soft targets without parameter updates. Gradient accumulation (not shown) enables larger effective batch sizes within GPU memory constraints.
+
+\subsubsection{Beam Search Generation}
+\label{app:beam-search-alg}
+
+Algorithm~\ref{alg:beam-search-appendix} details the trajectory generation procedure using beam search described in \autoref{sec:method-inference}.
+
+\begin{algorithm}[H]
+\caption{BeamSearchGeneration}
+\label{alg:beam-search-appendix}
+\begin{algorithmic}
+\Require Origin $r_o$, Destination $r_d$, Student model $f_S$, Beam width $b$
+\Ensure Generated trajectory $\hat{\mathbf{r}}$
+\State Initialize beams $\mathcal{B} \gets \{(r_o, 0.0)\}$ \Comment{(path, log-prob)}
+\State $t \gets 0$
+\While{$t < T_{\max}$ and no beam reached $r_d$}
+    \State $\mathcal{B}_{\text{new}} \gets \{\}$
+    \For{each $(path, score) \in \mathcal{B}$}
+        \State $r_{\text{curr}} \gets \text{last}(path)$
+        \State $\mathcal{C} \gets \text{GetCandidates}(r_{\text{curr}}, r_d)$ \Comment{Spatial pruning}
+        \State $\mathbf{\ell} \gets f_S(path, \mathcal{C})$ \Comment{Student inference only}
+        \State $\mathbf{p} \gets \text{Softmax}(\mathbf{\ell})$
+        \For{each $c \in \text{top-}k(\mathbf{p}, b)$}
+            \State $path' \gets path + [c]$
+            \State $score' \gets score + \log p(c)$
+            \State $\mathcal{B}_{\text{new}} \gets \mathcal{B}_{\text{new}} \cup \{(path', score')\}$
+        \EndFor
+    \EndFor
+    \State $\mathcal{B} \gets \text{top-}b(\mathcal{B}_{\text{new}})$ by score
+    \State $t \gets t + 1$
+\EndWhile
+\State \Return best complete path from $\mathcal{B}$
+\end{algorithmic}
+\end{algorithm}
+
+With beam width $b=4$, the student generates trajectories at $\sim$77 trajectories/second on a single GPU. Only the student model is used during inference---the teacher is discarded after training.
+
+\subsection{Evaluation Metrics}
+\label{app:metrics}
+
+This section provides detailed formulations for the evaluation metrics introduced in \autoref{sec:eval-metrics}.
+
+\subsubsection{Global Distribution Metrics}
+\label{app:global-metrics}
+
+These metrics assess whether aggregate statistics of generated trajectories match real data distributions, regardless of individual trajectory alignment.
+
+\paragraph{Jensen-Shannon Divergence (JSD)}
+
+Symmetric divergence measure comparing probability distributions:
+
+\begin{equation}
+\text{JSD}(P \parallel Q) = \frac{1}{2} D_{KL}(P \parallel M) + \frac{1}{2} D_{KL}(Q \parallel M)
+\label{eq:jsd-appendix}
+\end{equation}
+
+where $M = \frac{1}{2}(P + Q)$ is the mixture distribution and $D_{KL}(P \parallel Q) = \sum_i P(i) \log \frac{P(i)}{Q(i)}$ is the Kullback-Leibler divergence. JSD is bounded in $[0, 1]$, with 0 indicating identical distributions and 1 indicating completely disjoint distributions.
+
+We compute JSD for three trajectory attributes:
+
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Distance JSD}: Compares trip distance distributions using 50 histogram bins spanning 0 to maximum observed distance. Lower values indicate generated trajectories have realistic trip lengths matching real data.
+
+\item \textbf{Duration JSD}: Compares trip duration distributions using 50 bins. Correlated with distance but provides additional temporal perspective on trajectory realism.
+
+\item \textbf{Radius of Gyration JSD}: Compares spatial spread distributions. The radius of gyration $R_g = \sqrt{\frac{1}{N} \sum_{i=1}^{N} d(p_i, \bar{p})^2}$ measures how geographically dispersed a trajectory is, where $p_i$ are trajectory points and $\bar{p} = \frac{1}{N}\sum_{i=1}^N p_i$ is the centroid. Lower JSD values indicate proper spatial complexity modeling.
+\end{itemize}
+
+\subsubsection{Local Trajectory Metrics}
+\label{app:local-metrics}
+
+These metrics compare individual trajectory pairs with matching OD endpoints, measuring point-by-point similarity.
+
+\paragraph{Hausdorff Distance}
+
+Maximum spatial deviation between two trajectories:
+
+\begin{equation}
+H(A, B) = \max \left\{ \sup_{a \in A} \inf_{b \in B} d(a, b), \, \sup_{b \in B} \inf_{a \in A} d(a, b) \right\}
+\label{eq:hausdorff-appendix}
+\end{equation}
+
+where $A$ and $B$ are sets of trajectory points and $d(\cdot, \cdot)$ is Euclidean distance. This metric captures the worst-case spatial error between trajectories. Note: Hausdorff distance scales with trajectory length, so longer trajectories naturally have larger values.
+
+\paragraph{Dynamic Time Warping (DTW)}
+
+Cumulative distance under optimal temporal alignment:
+
+\begin{equation}
+\text{DTW}(A, B) = \min_{\pi} \sum_{i=1}^{|\pi|} d(A[\pi_A(i)], B[\pi_B(i)])
+\label{eq:dtw-appendix}
+\end{equation}
+
+where $\pi = (\pi_A, \pi_B)$ is the warping path allowing non-linear time alignment, and $d(\cdot, \cdot)$ is Euclidean distance. DTW handles trajectories with different sampling rates or temporal variations but, like Hausdorff distance, also scales with trajectory length.
+
+\paragraph{Edit Distance on Real Sequence (EDR)}
+
+Normalized edit operations needed to transform one trajectory into another:
+
+\begin{equation}
+\text{EDR}(A, B, \varepsilon) = \frac{\text{EditOps}(A, B, \varepsilon)}{\max(|A|, |B|)}
+\label{eq:edr-appendix}
+\end{equation}
+
+where $\text{EditOps}(A, B, \varepsilon)$ counts the minimum insertions, deletions, and substitutions needed to transform trajectory $A$ into $B$, with points within threshold $\varepsilon = 100$ meters considered matches. EDR is length-normalized ($\in [0,1]$) and robust to outliers, making it suitable for comparing trajectories of different lengths.
+
+\subsubsection{Coverage Metrics}
+\label{app:coverage-metrics}
+
+\paragraph{OD Pair Matching Rate}
+
+The percentage of generated trajectories whose \emph{actual endpoints} match real OD pairs in the dataset:
+
+\begin{equation}
+\text{OD Match Rate} = \frac{|\{(o_{\text{gen}}, d_{\text{gen}}) \in \text{RealODs}\}|}{|\text{GeneratedTrajectories}|} \times 100\%
+\label{eq:od-match-appendix}
+\end{equation}
+
+\textbf{Critical distinction:} The model receives a target OD pair $(r_o, r_d)$ as input but may fail to reach $r_d$ during generation (e.g., getting stuck at intermediate road $r_i$). We extract the OD pair from the \emph{generated trajectory's actual endpoints} (first and last road ID), then check if this OD pair exists in real data using grid-based spatial binning (0.001° resolution, approximately 111m).
+
+High matching rates indicate:
+\begin{enumerate}[noitemsep,topsep=0pt]
+\item \textbf{Path completion success}: Model reaches intended destinations
+\item \textbf{Realistic OD patterns}: Generated endpoints align with real mobility patterns
+\end{enumerate}
+
+Low matching rates reveal fundamental navigation failures, even if other trajectory similarity metrics seem reasonable.
+
+\subsection{Implementation Details}
+\label{app:implementation}
+
+\subsubsection{Hyperparameter Search Space}
+\label{app:hyperparam-space}
+
+Table~\ref{tab:hyperparam-search-appendix} details the complete hyperparameter search space for Optuna-based optimization described in \autoref{sec:impl-hparam}.
+
+\begin{table}[H]
+\centering
+\caption{Hyperparameter search space and effects on knowledge distillation}
+\label{tab:hyperparam-search-appendix}
+\begin{tabular}{lll p{5.5cm}}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Scale} & \textbf{Effect on Training} \\
+\midrule
+$\lambda$ (distill weight) & [0.001, 0.1] & Log & Controls teacher influence vs. supervised signal. Higher values prioritize soft targets. \\
+\addlinespace
+$\tau$ (temperature) & [1.0, 5.0] & Linear & Smooths distributions; higher values expose more ``dark knowledge'' through relative probabilities. \\
+\addlinespace
+$w$ (window size) & [2, 8] & Integer & Teacher context length; larger windows provide more historical information but increase computation. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Optuna framework employs CMA-ES (Covariance Matrix Adaptation Evolution Strategy)~\cite{hansenCMAEvolutionStrategy2023} as the sampler for efficient continuous parameter space exploration, with Hyperband pruner~\cite{liHyperbandNovelBanditBased2018} terminating unpromising configurations early (minimum 5 epochs).
+
+\subsubsection{Training Configuration}
+\label{app:training-config}
+
+Table~\ref{tab:training-config-appendix} provides complete training configuration ensuring fair comparison between vanilla and distilled models (referenced in \autoref{sec:eval-setup}).
+
+\begin{table}[H]
+\centering
+\caption{Complete training configuration for fair model comparison}
+\label{tab:training-config-appendix}
+\begin{tabular}{lll}
+\toprule
+\textbf{Parameter} & \textbf{Vanilla (Trial 0)} & \textbf{Distilled (Optimal)} \\
+\midrule
+Architecture & HOSER & HOSER (identical) \\
+Optimizer & AdamW ($\eta = 5 \times 10^{-4}$) & AdamW ($\eta = 5 \times 10^{-4}$) \\
+Weight decay & $1 \times 10^{-5}$ & $1 \times 10^{-5}$ \\
+Batch size & 128 & 128 \\
+Accumulation steps & 8 (effective 1024) & 8 (effective 1024) \\
+Max epochs & 25 & 25 \\
+Learning rate schedule & Cosine annealing & Cosine annealing \\
+Warmup epochs & 2 & 2 \\
+Data splits & Train/val/test & Train/val/test (identical) \\
+Candidate top-$k$ & 64 & 64 \\
+Random seeds & 42, 43, 44 & 42, 43, 44 \\
+\midrule
+Distillation weight ($\lambda$) & 0 (disabled) & 0.0014 \\
+Temperature ($\tau$) & N/A & 4.37 \\
+Teacher window ($w$) & N/A & 7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This controlled experimental design ensures that performance differences stem purely from knowledge distillation, not confounding factors like different batch sizes, learning rates, or architectural choices.
+
+\subsection{Dataset Specifications}
+\label{app:datasets}
+
+\subsubsection{Complete Dataset Statistics}
+\label{app:dataset-stats}
+
+Table~\ref{tab:dataset-stats-appendix} provides comprehensive statistics for all evaluation datasets (summary in \autoref{sec:data-overview}).
+
+\begin{table}[H]
+\centering
+\caption{Complete trajectory dataset statistics and preprocessing details}
+\label{tab:dataset-stats-appendix}
+\small
+\begin{tabular}{llll}
+\toprule
+\textbf{Statistic} & \textbf{Beijing} & \textbf{Porto} & \textbf{BJUT} \\
+\midrule
+\multicolumn{4}{l}{\textit{Road Network}} \\
+\quad Road segments & 40,060 & $\sim$11,024 & [TBC] \\
+\quad Spatial zones & 300 & 300 & [TBC] \\
+\quad Grid cells (LM-TAD) & 51,660 (205$\times$252) & 6,164 (46$\times$134) & [TBC] \\
+\midrule
+\multicolumn{4}{l}{\textit{Trajectories}} \\
+\quad Training & 629,380 & $\sim$481,359 & [TBC] \\
+\quad Validation & 78,673 & [TBC] & [TBC] \\
+\quad Test & 179,823 & [TBC] & [TBC] \\
+\quad Total & 887,876 & $\sim$700,000 & [TBC] \\
+\midrule
+\multicolumn{4}{l}{\textit{Trajectory Characteristics}} \\
+\quad Avg. length (roads) & 4.6 & $\sim$8.0 & [TBC] \\
+\quad Avg. distance (km) & 5.16 & [TBC] & [TBC] \\
+\quad Avg. duration (min) & 28.2 & [TBC] & [TBC] \\
+\quad Max length (roads) & 1024 (truncated) & 1024 (truncated) & [TBC] \\
+\midrule
+\multicolumn{4}{l}{\textit{Preprocessing}} \\
+\quad Map-matching quality & High (HOSER authors) & High (HOSER authors) & [Independent] \\
+\quad Partition time (sec) & 15--20 & 4 & [TBC] \\
+\quad Zone trans. matrix (sec) & 10--15 & 67 & [TBC] \\
+\quad Vocab. mapping time (sec) & $<$1 & $<$1 & [TBC] \\
+\midrule
+\multicolumn{4}{l}{\textit{Data Splits}} \\
+\quad Split strategy & OD-stratified & OD-stratified & [TBC] \\
+\quad Test OD overlap & 0\% (held-out) & 0\% (held-out) & [TBC] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Note on trajectory length:} Porto trajectories are substantially longer than Beijing (8.0 vs 4.6 road segments on average), leading to quadratic memory scaling in attention mechanisms. This necessitates reduced batch sizes for Porto experiments (see \autoref{sec:impl-practical}).
+
+\subsubsection{Vocabulary Alignment Details}
+\label{app:vocab-stats}
+
+Table~\ref{tab:vocab-alignment-appendix} summarizes vocabulary alignment characteristics between HOSER roads and LM-TAD grid cells (introduced in \autoref{sec:data-lmtad-compat}).
+
+\begin{table}[H]
+\centering
+\caption{Vocabulary alignment between HOSER roads and LM-TAD grid cells}
+\label{tab:vocab-alignment-appendix}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dataset} & \textbf{Roads ($|\mathcal{V}|$)} & \textbf{Grid Size} & \textbf{Cells ($|Z|$)} & \textbf{Avg. Roads/Cell} \\
+\midrule
+Beijing & 40,060 & 205 $\times$ 252 & 51,660 & 0.78 \\
+Porto & 11,024 & 46 $\times$ 134 & 6,164 & [TBC] \\
+BJUT & [TBC] & [TBC] & [TBC] & [TBC] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The many-to-one mapping (multiple roads per grid cell) is inevitable in dense urban areas. Grid resolution is chosen to balance spatial granularity (finer grids capture local patterns) with vocabulary size (larger vocabularies increase computational cost).

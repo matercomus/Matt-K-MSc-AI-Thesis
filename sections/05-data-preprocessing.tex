@@ -9,7 +9,7 @@ This section describes the datasets used for distillation experiments, their pre
 \subsection{Dataset Overview}
 \label{sec:data-overview}
 
-We evaluate the distillation framework on three urban trajectory datasets (statistics in Table~\ref{tab:dataset-stats}). The Beijing HOSER reference dataset~\cite{caoHolisticSemanticRepresentation2025} provides our primary evaluation benchmark, while Porto and BJUT datasets enable cross-dataset validation.
+We evaluate the distillation framework on three urban trajectory datasets (statistics in \hyperref[app:dataset-stats]{Table~\ref*{tab:dataset-stats-appendix}, Appendix~\ref*{app:dataset-stats}}). The Beijing HOSER reference dataset~\cite{caoHolisticSemanticRepresentation2025} provides our primary evaluation benchmark, while Porto and BJUT datasets enable cross-dataset validation.
 
 \textbf{Beijing HOSER Reference Dataset:} Standardized benchmark from the original HOSER paper with 40,060 road segments and 629,380 training trajectories. Map-matched by the original authors, ensuring high alignment quality. We adapted the format for LM-TAD compatibility while preserving train/validation/test splits.
 
@@ -25,29 +25,11 @@ We use the HOSER dataset format~\cite{caoHolisticSemanticRepresentation2025}, wh
 \subsection{Vocabulary Alignment}
 \label{sec:data-lmtad-compat}
 
-LM-TAD tokenizes trajectories using a uniform spatial grid~\cite{mbuyaTrajectoryAnomalyDetection2024}, while HOSER predicts over road segments. We construct the mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ (Algorithm~\ref{alg:vocab-map} in \autoref{sec:method-vocab}) that assigns each road to its corresponding grid cell based on centroid coordinates, enabling teacher knowledge to inform student predictions despite the vocabulary mismatch. Grid configuration: Beijing uses $205 \times 252 = 51{,}660$ cells; Porto uses $46 \times 134 = 6{,}164$ cells.
+LM-TAD tokenizes trajectories using a uniform spatial grid~\cite{mbuyaTrajectoryAnomalyDetection2024}, while HOSER predicts over road segments. We construct the mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ (Algorithm~\ref{alg:vocab-map-appendix} in \autoref{sec:method-vocab}) that assigns each road to its corresponding grid cell based on centroid coordinates, enabling teacher knowledge to inform student predictions despite the vocabulary mismatch. Grid configuration: Beijing uses $205 \times 252 = 51{,}660$ cells; Porto uses $46 \times 134 = 6{,}164$ cells.
 
 \subsubsection{Vocabulary Alignment Statistics}
 
-Table~\ref{tab:vocab-alignment} summarizes the vocabulary alignment characteristics for each dataset.
-
-\begin{table}[h]
-\centering
-\caption{Vocabulary alignment between HOSER roads and LM-TAD grid cells}
-\label{tab:vocab-alignment}
-\small
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Dataset} & \textbf{Roads ($|\mathcal{V}|$)} & \textbf{Grid Size} & \textbf{Cells ($|\mathcal{Z}|$)} & \textbf{Avg. Roads/Cell} \\
-\midrule
-Beijing & 40,060 & $205 \times 252$ & 51,660 & 0.78 \\
-Porto & 11,024 & $46 \times 134$ & 6,164 & \textcolor{red}{[TBC]} \\
-BJUT & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-This alignment enables the teacher's distributional knowledge over grid cells to inform the student's predictions over road segments, despite the vocabulary size mismatch.
+The vocabulary alignment characteristics (\hyperref[app:vocab-stats]{Table~\ref*{tab:vocab-alignment-appendix}, Appendix~\ref*{app:vocab-stats}}) show Beijing averages 0.78 roads per grid cell. This many-to-one mapping (multiple roads per cell, particularly in dense urban cores) enables the teacher's distributional knowledge over grid cells to inform the student's predictions over road segments, despite the vocabulary size mismatch.
 
 \subsection{Preprocessing Pipeline}
 \label{sec:data-pipeline}
@@ -69,41 +51,15 @@ Critically, these splits are stratified by origin-destination (OD) pairs. The te
 \subsection{Dataset Statistics}
 \label{sec:data-stats}
 
-Table~\ref{tab:dataset-stats} summarizes key statistics for each evaluation dataset.
+Complete dataset statistics are provided in \hyperref[app:dataset-stats]{Table~\ref*{tab:dataset-stats-appendix}, Appendix~\ref*{app:dataset-stats}}. Key characteristics:
 
-\begin{table}[h]
-\centering
-\caption{Trajectory dataset statistics}
-\label{tab:dataset-stats}
-\small
-\begin{tabular}{lccc}
-\toprule
-\textbf{Statistic} & \textbf{Beijing} & \textbf{Porto} & \textbf{BJUT} \\
-\midrule
-\multicolumn{4}{l}{\textit{Road Network}} \\
-\quad Road segments & 40,060 & $\sim$11,024 & \textcolor{red}{[TBC]} \\
-\quad Spatial zones & 300 & 300 & \textcolor{red}{[TBC]} \\
-\quad Grid cells (LM-TAD) & 51,660 & 6,164 & \textcolor{red}{[TBC]} \\
-\midrule
-\multicolumn{4}{l}{\textit{Trajectories}} \\
-\quad Training & 629,380 & $\sim$481,359 & \textcolor{red}{[TBC]} \\
-\quad Validation & 78,673 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
-\quad Test & 179,823 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
-\midrule
-\multicolumn{4}{l}{\textit{Trajectory Characteristics}} \\
-\quad Avg. length (roads) & 4.6 & $\sim$8.0 & \textcolor{red}{[TBC]} \\
-\quad Avg. distance (km) & 5.16 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
-\quad Avg. duration (min) & 28.2 & \textcolor{red}{[TBC]} & \textcolor{red}{[TBC]} \\
-\midrule
-\multicolumn{4}{l}{\textit{Preprocessing}} \\
-\quad Map-matching quality & High (HOSER authors) & High (HOSER authors) & \textcolor{red}{[Independent]} \\
-\quad Partition time (sec) & 15--20 & 4 & \textcolor{red}{[TBC]} \\
-\quad Zone trans. matrix (sec) & 10--15 & 67 & \textcolor{red}{[TBC]} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item \textbf{Beijing}: 40,060 roads, 629,380 training trajectories, average length 4.6 roads, 5.16 km trips
+\item \textbf{Porto}: $\sim$11,024 roads, $\sim$481,359 training trajectories, average length 8.0 roads (substantially longer)
+\item \textbf{BJUT}: Planned for cross-dataset validation (independent preprocessing)
+\end{itemize}
 
-\textbf{Note on trajectory length:} Porto trajectories are substantially longer than Beijing (8.0 vs 4.6 road segments on average), leading to quadratic memory scaling in attention mechanisms. This necessitates reduced batch sizes for Porto experiments (see \autoref{sec:impl-practical}).
+\textbf{Note on trajectory length:} Porto trajectories are substantially longer than Beijing (8.0 vs 4.6 road segments), leading to quadratic memory scaling in attention mechanisms. This necessitates reduced batch sizes for Porto experiments (see \autoref{sec:impl-practical}).
 
 \subsection{Data Quality and Representativeness}
 \label{sec:data-quality}

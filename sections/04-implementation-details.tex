@@ -26,23 +26,7 @@ We employ a systematic two-phase hyperparameter search using the Optuna framewor
 
 \subsubsection{Search Space Design}
 
-Table~\ref{tab:hparam-space} details the three critical hyperparameters governing knowledge transfer.
-
-\begin{table}[h]
-\centering
-\caption{Hyperparameter search space and effects on distillation}
-\label{tab:hparam-space}
-\small
-\begin{tabular}{lllp{5cm}}
-\toprule
-\textbf{Parameter} & \textbf{Range} & \textbf{Scale} & \textbf{Effect on Training} \\
-\midrule
-$\lambda$ (distill weight) & [0.001, 0.1] & Log & Controls teacher influence vs. supervised signal \\
-$\tau$ (temperature) & [1.0, 5.0] & Linear & Smooths distributions; higher values expose more dark knowledge \\
-$w$ (window size) & [2, 8] & Integer & Teacher context length; trades accuracy for speed \\
-\bottomrule
-\end{tabular}
-\end{table}
+Three hyperparameters govern knowledge transfer (\hyperref[app:hyperparam-space]{Table~\ref*{tab:hyperparam-search-appendix}, Appendix~\ref*{app:hyperparam-space}}): $\lambda$ (distillation weight, log scale [0.001, 0.1]) controls teacher influence vs. supervised signal; $\tau$ (temperature, linear [1.0, 5.0]) smooths distributions to expose ``dark knowledge''; and $w$ (window size, [2, 8]) determines teacher context length, trading accuracy for speed.
 
 \subsubsection{Two-Phase Optimization Strategy}
 
@@ -123,7 +107,7 @@ These optimizations yield 11--13 iterations/second training throughput. Cruciall
 
 \subsubsection{Training Configuration}
 
-We use AdamW optimizer with cosine annealing and effective batch size 512 (64 samples $\times$ 8 accumulation steps). Training runs 25 epochs ($\sim$36 hours) with fixed seeds (42, 43, 44) for reproducibility. Full configuration details are provided in Table~\ref{tab:fair-comparison}.
+We use AdamW optimizer with cosine annealing and effective batch size 512 (64 samples $\times$ 8 accumulation steps). Training runs 25 epochs ($\sim$36 hours) with fixed seeds (42, 43, 44) for reproducibility. Full configuration details are provided in \hyperref[app:training-config]{Table~\ref*{tab:training-config-appendix}, Appendix~\ref*{app:training-config}}.
 
 \subsection{Practical Considerations}
 \label{sec:impl-practical}

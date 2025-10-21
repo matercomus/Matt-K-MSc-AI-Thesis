@@ -156,25 +156,7 @@ Given a partial trajectory $\mathbf{r}_{1:t}$ on road network $\mathcal{G}$, a d
 The teacher and student models operate on fundamentally different spatial representations. LM-TAD discretizes the city into $V = 51{,}663$ uniform grid cells for fine-grained anomaly detection, while HOSER directly predicts over $|\mathcal{V}| = 40{,}060$ road segments for efficient routing. This vocabulary mismatch necessitates a careful alignment strategy.
 
 \subsubsection{Mapping Construction}
-We construct a deterministic mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ that assigns each road segment to its corresponding grid cell based on the road's centroid coordinates, as detailed in Algorithm~\ref{alg:vocab-map}.
-
-\begin{algorithm}[t]
-\caption{BuildVocabularyMapping}
-\label{alg:vocab-map}
-\begin{algorithmic}
-\Require Road network $\mathcal{V}$ with centroid coordinates, Grid bounds and resolution
-\Ensure Mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$
-\State Initialize $\phi \gets \{\}$
-\For{each road $r \in \mathcal{V}$}
-    \State $(x_r, y_r) \gets \text{centroid}(r)$
-    \State $i \gets \lfloor (x_r - x_{\min}) / \Delta_x \rfloor$ \Comment{Grid row index}
-    \State $j \gets \lfloor (y_r - y_{\min}) / \Delta_y \rfloor$ \Comment{Grid column index}
-    \State $z \gets i \cdot n_{\text{cols}} + j$ \Comment{Flatten to token ID}
-    \State $\phi[r] \gets z$
-\EndFor
-\State \Return $\phi$
-\end{algorithmic}
-\end{algorithm}
+We construct a deterministic mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ that assigns each road segment to its corresponding grid cell based on the road's centroid coordinates (Algorithm~\ref{alg:vocab-map-appendix}, \hyperref[app:vocab-mapping-alg]{Appendix~\ref*{app:vocab-mapping-alg}}). The algorithm computes grid indices from centroid coordinates and flattens the 2D grid position to a single token ID.
 
 \begin{remark}[Many-to-One Mapping]
 Multiple roads may map to the same grid cell, particularly in dense urban cores. On average, each grid cell corresponds to $|\mathcal{V}|/V \approx 0.78$ roads, though downtown cells may contain 5--10 road segments.
@@ -216,30 +198,7 @@ The temperature parameter serves a crucial role in distillation by exposing the 
 
 \subsubsection{Distillation Loss Formulation}
 \label{sec:method-kl}
-We employ the forward KL divergence to align the student's predictions with the teacher's knowledge. Algorithm~\ref{alg:distill-loss} shows the computation.
-
-\begin{algorithm}[t]
-\caption{ComputeDistillationLoss}
-\label{alg:distill-loss}
-\begin{algorithmic}
-\Require Teacher logits $\ell^T_t$, Student logits $\ell^S_t$, Candidates $\mathcal{C}_t$, Temperature $\tau$
-\Ensure Distillation loss $\mathcal{L}_{\text{KL}}$
-\State $q^{(\tau)}_t \gets \text{Softmax}(\ell^T_t / \tau)$ \Comment{Teacher distribution}
-\State $p^{(\tau)}_t \gets \text{Softmax}(\ell^S_t / \tau)$ \Comment{Student distribution}
-\State $\mathcal{L}_{\text{KL}} \gets 0$
-\For{each candidate $c \in \mathcal{C}_t$}
-    \If{$q^{(\tau)}_t(c) > 0$} \Comment{Avoid $\log(0)$}
-        \State $\mathcal{L}_{\text{KL}} \gets \mathcal{L}_{\text{KL}} + q^{(\tau)}_t(c) \cdot [\log q^{(\tau)}_t(c) - \log p^{(\tau)}_t(c)]$
-    \EndIf
-\EndFor
-\State $\mathcal{L}_{\text{KL}} \gets \tau^2 \cdot \mathcal{L}_{\text{KL}}$ \Comment{Gradient correction}
-\State \Return $\mathcal{L}_{\text{KL}}$
-\end{algorithmic}
-\end{algorithm}
-
-\begin{remark}[Gradient Scaling]
-The $\tau^2$ scaling factor in the gradient correction step of Algorithm~\ref{alg:distill-loss} ensures that gradients remain well-scaled as $\tau$ increases, preventing gradient vanishing during backpropagation~\cite{hintonDistillingKnowledgeNeural2015}.
-\end{remark}
+We employ the forward KL divergence to align the student's predictions with the teacher's knowledge. The computation (Algorithm~\ref{alg:distill-loss-appendix}, \hyperref[app:distill-loss-alg]{Appendix~\ref*{app:distill-loss-alg}}) applies temperature scaling to both teacher and student distributions, computes the KL divergence over candidate roads, and applies $\tau^2$ gradient correction to prevent gradient vanishing~\cite{hintonDistillingKnowledgeNeural2015}.
 
 \subsubsection{Combined Training Objective}
 \label{sec:method-combined}
@@ -263,81 +222,23 @@ The hyperparameters $\alpha = 0.1$ (fixed) and $\lambda \in [0.001, 0.1]$ (tuned
 \label{sec:method-training}
 
 \subsubsection{Main Training Loop}
-Algorithm~\ref{alg:distill-train} presents the complete distillation training procedure, integrating teacher inference, loss computation, and optimization.
+The complete distillation training procedure (Algorithm~\ref{alg:distill-train-appendix}, \hyperref[app:training-alg]{Appendix~\ref*{app:training-alg}}) integrates teacher inference, loss computation, and optimization. Key implementation details:
 
-\begin{algorithm}[t]
-\caption{DistillationTraining}
-\label{alg:distill-train}
-\begin{algorithmic}
-\Require Dataset $\mathcal{D}$, Teacher $f_T$, Student $f_S$, Hyperparameters $\{\lambda, \tau, w, \eta\}$
-\Ensure Trained student parameters $\theta_S$
-\State Initialize student parameters $\theta_S$
-\State Freeze teacher parameters $\theta_T$ \Comment{No gradients}
-\For{epoch $= 1$ to $E$}
-    \For{batch $(\mathbf{r}, \mathbf{y}, \mathbf{t}) \in \mathcal{D}$} \Comment{Roads, labels, times}
-        \State $\mathbf{z} \gets \phi(\mathbf{r})$ \Comment{Map roads to grid cells}
-        \State \textbf{// Teacher inference (no gradient)}
-        \State $\mathbf{q} \gets f_T(\mathbf{z}_{t-w:t})$ with \texttt{torch.no\_grad()}
-        \State Extract $q_t^{(\tau)}$ for candidates $\mathcal{C}_t$ \Comment{Eq.~\eqref{eq:renorm}}
-        \State \textbf{// Student forward pass}
-        \State $\mathbf{\ell} \gets f_S(\mathbf{r}, \mathcal{C})$ \Comment{Student logits}
-        \State $p_t^{(\tau)} \gets \text{Softmax}(\mathbf{\ell} / \tau)$
-        \State \textbf{// Compute losses}
-        \State $\mathcal{L}_{\text{CE}} \gets \text{CrossEntropy}(\mathbf{\ell}, \mathbf{y})$
-        \State $\mathcal{L}_{\text{time}} \gets \text{MAPE}(\hat{\mathbf{t}}, \mathbf{t})$
-        \State $\mathcal{L}_{\text{KL}} \gets \text{ComputeDistillationLoss}(q_t^{(\tau)}, p_t^{(\tau)}, \tau)$
-        \State $\mathcal{L} \gets \mathcal{L}_{\text{CE}} + \alpha \cdot \mathcal{L}_{\text{time}} + \lambda \cdot \mathcal{L}_{\text{KL}}$
-        \State \textbf{// Optimization step}
-        \State $\nabla_{\theta_S} \mathcal{L} \gets \text{Backward}(\mathcal{L})$
-        \State $\theta_S \gets \text{AdamW}(\theta_S, \nabla_{\theta_S} \mathcal{L}, \eta)$
-    \EndFor
-    \State Validate and save best checkpoint
-\EndFor
-\State \Return $\theta_S$
-\end{algorithmic}
-\end{algorithm}
+\begin{itemize}[noitemsep,topsep=0pt]
+\item Teacher parameters remain frozen (no gradient computation)
+\item Vocabulary mapping $\phi$ converts road sequences to grid sequences for teacher
+\item Both teacher and student distributions are temperature-scaled before KL divergence
+\item Three loss components (\autoref{eq:total-loss}) are combined and backpropagated only to student
+\item Validation checkpointing saves the best model based on validation accuracy
+\end{itemize}
 
-\begin{remark}[Computational Complexity]
-Per-iteration complexity: $\mathcal{O}(B \cdot t \cdot (V + k^2))$ where $B$ is batch size, $t$ is trajectory length, $V$ is vocabulary size, and $k$ is candidate set size. The teacher inference dominates at $\mathcal{O}(B \cdot t \cdot V)$. Practical optimizations and hyperparameter tuning are detailed in \autoref{sec:implementation}.
-\end{remark}
+Per-iteration computational complexity is $\mathcal{O}(B \cdot t \cdot (V + k^2))$ where $B$ is batch size, $t$ is trajectory length, $V$ is vocabulary size, and $k$ is candidate set size. Teacher inference dominates at $\mathcal{O}(B \cdot t \cdot V)$. Practical optimizations and hyperparameter tuning are detailed in \autoref{sec:implementation}.
 
 \subsection{Inference and Evaluation}
 \label{sec:method-inference}
 
 \subsubsection{Trajectory Generation}
-At inference time, we use only the trained student model to generate complete trajectories. Algorithm~\ref{alg:beam-search} details our beam search procedure.
-
-\begin{algorithm}[t]
-\caption{BeamSearchGeneration}
-\label{alg:beam-search}
-\begin{algorithmic}
-\Require Origin $r_o$, Destination $r_d$, Student model $f_S$, Beam width $b$
-\Ensure Generated trajectory $\hat{\mathbf{r}}$
-\State Initialize beams $\mathcal{B} \gets \{(r_o, 0.0)\}$ \Comment{(path, log-prob)}
-\State $t \gets 0$
-\While{$t < T_{\max}$ and no beam reached $r_d$}
-    \State $\mathcal{B}_{\text{new}} \gets \{\}$
-    \For{each $(path, score) \in \mathcal{B}$}
-        \State $r_{\text{curr}} \gets \text{last}(path)$
-        \State $\mathcal{C} \gets \text{GetCandidates}(r_{\text{curr}}, r_d)$ \Comment{Spatial pruning}
-        \State $\mathbf{\ell} \gets f_S(path, \mathcal{C})$ \Comment{Student inference only}
-        \State $\mathbf{p} \gets \text{Softmax}(\mathbf{\ell})$
-        \For{each $c \in \text{top-}k(\mathbf{p}, b)$}
-            \State $path' \gets path + [c]$
-            \State $score' \gets score + \log p(c)$
-            \State $\mathcal{B}_{\text{new}} \gets \mathcal{B}_{\text{new}} \cup \{(path', score')\}$
-        \EndFor
-    \EndFor
-    \State $\mathcal{B} \gets \text{top-}b(\mathcal{B}_{\text{new}})$ by score
-    \State $t \gets t + 1$
-\EndWhile
-\State \Return best complete path from $\mathcal{B}$
-\end{algorithmic}
-\end{algorithm}
-
-\begin{remark}[Inference Speed]
-With beam width $b=4$, the student generates trajectories at $\sim$77 trajectories/second on a single GPU, enabling real-time deployment for urban-scale applications.
-\end{remark}
+At inference time, we use only the trained student model to generate complete trajectories (Algorithm~\ref{alg:beam-search-appendix}, \hyperref[app:beam-search-alg]{Appendix~\ref*{app:beam-search-alg}}). Our beam search procedure maintains multiple candidate paths simultaneously, selecting the highest-probability completions at each step. Given an origin-destination pair $(r_o, r_d)$, the algorithm iteratively expands beams using the student's predictions over spatially-pruned candidate roads until reaching the destination or a maximum length. With beam width $b=4$, the student generates trajectories at $\sim$77 trajectories/second on a single GPU, enabling real-time deployment for urban-scale applications.
 
 \subsubsection{Evaluation Protocol}
 \label{sec:method-eval-metrics}
