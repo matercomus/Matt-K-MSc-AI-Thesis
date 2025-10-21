@@ -24,7 +24,7 @@ The student model operates on hierarchical zones as specified in the original HO
 
 \subsubsection{Teacher Model Preparation}
 
-The LM-TAD teacher model is loaded from pre-trained checkpoints with vocabulary mapping $\phi$ (\autoref{sec:method-vocab}) precomputed and cached for efficient training. Checkpoint conversion details are provided in \autoref{sec:data-pipeline}.
+The LM-TAD teacher model is loaded from pre-trained checkpoints with vocabulary mapping $\psi$ (\autoref{def:vocab-mapping}) precomputed and cached for efficient training. Checkpoint conversion details are provided in \autoref{sec:data-pipeline}.
 
 \subsection{Hyperparameter Optimization}
 \label{sec:impl-hparam}
@@ -41,9 +41,9 @@ Three hyperparameters govern knowledge transfer (\hyperref[app:hyperparam-space]
 
 Key configuration:
 \begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Objective}: Maximize validation accuracy after 8 epochs
-\item \textbf{Baseline}: Trial 0 always runs vanilla training ($\lambda = 0$) for fair comparison
-\item \textbf{Budget}: 12 trials $\times$ 8 epochs = 96 training runs (pruning reduces actual compute)
+    \item \textbf{Objective}: Maximize validation accuracy after 8 epochs
+    \item \textbf{Baseline}: Trial 0 always runs vanilla training ($\lambda = 0$) for fair comparison
+    \item \textbf{Budget}: 12 trials $\times$ 8 epochs = 96 training runs (pruning reduces actual compute)
 \end{itemize}
 
 \textbf{Phase 2: Validation (3 seeds).} The best configuration from Phase 1 is trained to completion (25 epochs) with three random seeds $\{42, 43, 44\}$ to assess robustness and estimate variance.
@@ -53,19 +53,19 @@ Key configuration:
 The hyperparameter search yields an unexpected result: minimal distillation weight with high temperature proves most effective.
 
 \begin{table}[h]
-\centering
-\caption{Optimal distillation hyperparameters from Optuna tuning}
-\label{tab:optimal-hparams}
-\small
-\begin{tabular}{lll}
-\toprule
-\textbf{Parameter} & \textbf{Optimal Value} & \textbf{Interpretation} \\
-\midrule
-$\lambda$ & 0.0014 & Very subtle teacher guidance \\
-$\tau$ & 4.37 & High temperature (broad knowledge transfer) \\
-$w$ & 7 & Nearly full context window \\
-\bottomrule
-\end{tabular}
+    \centering
+    \caption{Optimal distillation hyperparameters from Optuna tuning}
+    \label{tab:optimal-hparams}
+    \small
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Parameter} & \textbf{Optimal Value} & \textbf{Interpretation}                     \\
+        \midrule
+        $\lambda$          & 0.0014                 & Very subtle teacher guidance                \\
+        $\tau$             & 4.37                   & High temperature (broad knowledge transfer) \\
+        $w$                & 7                      & Nearly full context window                  \\
+        \bottomrule
+    \end{tabular}
 \end{table}
 
 This configuration suggests that \emph{subtle distributional guidance} from the teacher, rather than aggressive knowledge transfer, enables the student to integrate spatial understanding without compromising its architectural strengths.
@@ -80,9 +80,9 @@ To enable practical training on commodity GPU hardware, we implement several key
 We employ PyTorch's Automatic Mixed Precision (AMP) framework to reduce memory footprint:
 
 \begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Teacher inference}: FP16 precision with \texttt{autocast} context reduces memory by $\sim$50\% with negligible accuracy loss
-\item \textbf{Student training}: TF32 format for matrix operations maintains numerical stability
-\item \textbf{Gradient scaling}: Dynamic loss scaling prevents underflow in FP16 backward passes
+    \item \textbf{Teacher inference}: FP16 precision with \texttt{autocast} context reduces memory by $\sim$50\% with negligible accuracy loss
+    \item \textbf{Student training}: TF32 format for matrix operations maintains numerical stability
+    \item \textbf{Gradient scaling}: Dynamic loss scaling prevents underflow in FP16 backward passes
 \end{itemize}
 
 The frozen teacher benefits most from FP16 inference, as it performs no gradient updates and requires only forward-pass accuracy.
@@ -100,9 +100,9 @@ The frozen teacher benefits most from FP16 inference, as it performs no gradient
 All vocabulary mapping and teacher inference operations are fully vectorized:
 
 \begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{Road-to-grid mapping}: GPU-accelerated tensor operations via precomputed lookup tables
-\item \textbf{Label remapping}: Parallel remapping with masked positions set to $-100$ (ignored by loss)
-\item \textbf{Teacher inference}: Batch-wise forward pass processes all timesteps simultaneously
+    \item \textbf{Road-to-grid mapping}: GPU-accelerated tensor operations via precomputed lookup tables
+    \item \textbf{Label remapping}: Parallel remapping with masked positions set to $-100$ (ignored by loss)
+    \item \textbf{Teacher inference}: Batch-wise forward pass processes all timesteps simultaneously
 \end{itemize}
 
 These optimizations yield 11--13 iterations/second training throughput. Crucially, teacher inference adds less than 2\% overhead compared to vanilla HOSER training, making distillation nearly cost-free.

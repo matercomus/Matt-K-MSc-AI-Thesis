@@ -14,10 +14,10 @@ We make four primary contributions to trajectory prediction research:
 
 \textbf{2. Dramatic Performance Improvements.} On the Beijing dataset with 40,060 roads and 629,380 training trajectories, our distilled models achieve:
 \begin{itemize}[noitemsep,topsep=0pt]
-\item \textbf{85--89\% path completion success} vs. vanilla's 12--18\% (47--74$\times$ improvement)
-\item \textbf{87\% better distance distribution matching} (JSD: 0.016--0.022 vs 0.145--0.153)
-\item \textbf{98\% better spatial pattern fidelity} (radius JSD: 0.003--0.004 vs 0.198--0.206)
-\item \textbf{Realistic trip lengths} (6.4 km vs vanilla's 2.4 km, real: 5.2 km)
+    \item \textbf{85--89\% path completion success} vs. vanilla's 12--18\% (47--74$\times$ improvement)
+    \item \textbf{87\% better distance distribution matching} (JSD: 0.016--0.022 vs 0.145--0.153)
+    \item \textbf{98\% better spatial pattern fidelity} (radius JSD: 0.003--0.004 vs 0.198--0.206)
+    \item \textbf{Realistic trip lengths} (6.4 km vs vanilla's 2.4 km, real: 5.2 km)
 \end{itemize}
 
 \textbf{3. Optimal Hyperparameter Discovery.} Systematic Optuna-based tuning reveals that \emph{minimal distillation weight} ($\lambda = 0.0014$) with \emph{high temperature} ($\tau = 4.37$) enables effective knowledge transfer. This counter-intuitive result suggests subtle distributional guidance is more effective than aggressive knowledge transfer, allowing students to integrate teacher knowledge while preserving their architectural strengths.
@@ -65,10 +65,10 @@ Despite promising results, several limitations warrant acknowledgment:
 
 \textbf{Limited Ablation Studies.} We lack comprehensive ablation studies for key design choices:
 \begin{itemize}[noitemsep,topsep=0pt]
-\item Distillation weight sensitivity ($\lambda$ from 0 to 1)
-\item Learning rate influence (noted as impactful but not systematically studied)
-\item Temperature sensitivity beyond Optuna's explored range
-\item Alternative teacher models or multi-teacher configurations
+    \item Distillation weight sensitivity ($\lambda$ from 0 to 1)
+    \item Learning rate influence (noted as impactful but not systematically studied)
+    \item Temperature sensitivity beyond Optuna's explored range
+    \item Alternative teacher models or multi-teacher configurations
 \end{itemize}
 
 \textbf{Single Teacher-Student Pair.} We evaluate only LM-TAD $\rightarrow$ HOSER distillation. Whether the benefits generalize to other teacher-student combinations (e.g., other anomaly detectors, different prediction models) remains unknown.
@@ -102,10 +102,10 @@ Several promising directions extend this research:
 
 \textbf{Formal Benchmarking.} Conduct systematic latency measurements comparing:
 \begin{itemize}[noitemsep,topsep=0pt]
-\item Vanilla vs distilled HOSER (should be identical—validate this claim)
-\item HOSER vs LM-TAD teacher (expected $\sim$33$\times$ speedup)
-\item Batch size sensitivity and optimal batch configuration
-\item Hardware-specific performance (different GPUs, CPU-only inference)
+    \item Vanilla vs distilled HOSER (should be identical—validate this claim)
+    \item HOSER vs LM-TAD teacher (expected $\sim$33$\times$ speedup)
+    \item Batch size sensitivity and optimal batch configuration
+    \item Hardware-specific performance (different GPUs, CPU-only inference)
 \end{itemize}
 
 \textbf{Production Deployment Profiling.} Characterize end-to-end latency including data loading, candidate generation, model inference, and post-processing. Identify bottlenecks and optimization opportunities for real-time deployment.
@@ -114,10 +114,10 @@ Several promising directions extend this research:
 
 \textbf{Alternative Teacher Models.} Explore distillation from other spatial knowledge sources:
 \begin{itemize}[noitemsep,topsep=0pt]
-\item Large trajectory foundation models~\cite{maLearningUniversalHuman2025}
-\item Graph neural networks with rich spatial embeddings
-\item Diffusion-based trajectory generators~\cite{chuSimulatingHumanMobility2024}
-\item Ensemble teachers combining multiple models
+    \item Large trajectory foundation models~\cite{maLearningUniversalHuman2025}
+    \item Graph neural networks with rich spatial embeddings
+    \item Diffusion-based trajectory generators~\cite{chuSimulatingHumanMobility2024}
+    \item Ensemble teachers combining multiple models
 \end{itemize}
 
 \textbf{Multi-Teacher Distillation.} Investigate whether combining knowledge from multiple teachers (e.g., anomaly detector + foundation model) provides complementary benefits. Develop strategies for weighting and integrating diverse teacher signals.

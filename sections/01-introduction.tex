@@ -1,7 +1,7 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Accurate trajectory prediction is foundational to intelligent transportation systems, underpinning applications from dynamic navigation and fleet dispatch to digital-twin simulation of urban flow.  Modern cities contain tens of thousands of interconnected road segments; a practical predictor must therefore reason over large graphs 
+Accurate trajectory prediction is foundational to intelligent transportation systems, underpinning applications from dynamic navigation and fleet dispatch to digital-twin simulation of urban flow.  Modern cities contain tens of thousands of interconnected road segments; a practical predictor must therefore reason over large graphs
 while delivering sub-second latency at metropolitan scale.
 
 State-of-the-art transformer models excel at learning long-range spatial dependencies, yet their quadratic self-attention incurs inference times incompatible with real-time traffic management.  Conversely, lightweight graph-aware models such as\ HOSER achieve millisecond-level speed but fall short in route-completion accuracy.  This accuracy–latency dichotomy poses a central research challenge: \emph{how can one inherit the rich spatial knowledge of heavy models without deploying them at run time?}

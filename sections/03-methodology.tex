@@ -1,7 +1,7 @@
 \section{Methodology}
 \label{sec:methodology}
 
-This section presents our knowledge distillation framework for transferring spatial reasoning from a trajectory anomaly detector to a fast route predictor. Figure~\ref{fig:distillation-framework} illustrates the complete pipeline, showing how the frozen teacher and trainable student interact through vocabulary mapping and temperature-scaled distributions. We detail the vocabulary alignment mechanism (\autoref{sec:method-vocab}), the temperature-scaled distillation objective (\autoref{sec:method-distill}), the optimized training pipeline (\autoref{sec:method-training}), and the inference procedure (\autoref{sec:method-inference}).
+This section presents our knowledge distillation framework for transferring spatial reasoning from a trajectory anomaly detector to a fast route predictor. Figure~\ref{fig:distillation-framework} illustrates the complete pipeline, showing how the frozen teacher and trainable student interact through vocabulary mapping and temperature-scaled distributions. We detail the vocabulary alignment mechanism (\autoref{sec:method-vocab}), the temperature-scaled distillation objective (\autoref{sec:method-kl}), the optimized training pipeline (\autoref{sec:method-training}), and the inference procedure (\autoref{sec:method-inference}).
 
 \subsection{Preliminaries}
 \label{sec:method-prelim}
@@ -10,263 +10,267 @@ This section presents our knowledge distillation framework for transferring spat
 Table~\ref{tab:notation} summarizes the mathematical notation used throughout this section.
 
 \begin{table}[h]
-\centering
-\caption{Mathematical notation}
-\label{tab:notation}
-\small
-\begin{tabular}{ll}
-\toprule
-\textbf{Symbol} & \textbf{Description} \\
-\midrule
-$\mathcal{G} = (\mathcal{V}, \mathcal{E})$ & Road network graph with $|\mathcal{V}|$ segments \\
-$\mathbf{r}_{1:t} = (r_1, \ldots, r_t)$ & Partial trajectory of $t$ road segments \\
-$\mathcal{C}_t \subseteq \mathcal{V}$ & Candidate set at timestep $t$ (top-$k$ roads) \\
-$\mathcal{Z} = \{1, \ldots, V\}$ & Grid cell vocabulary, $V = 51{,}663$ \\
-$\phi: \mathcal{V} \rightarrow \mathcal{Z}$ & Road-to-grid mapping function \\
-$q_t^{(\tau)}$ & Teacher distribution (temperature $\tau$) \\
-$p_t^{(\tau)}$ & Student distribution (temperature $\tau$) \\
-$\lambda$ & Distillation loss weight \\
-$\tau$ & Temperature parameter \\
-$w$ & History window size \\
-$k$ & Candidate set size (typically 64) \\
-\bottomrule
-\end{tabular}
+    \centering
+    \caption{Mathematical notation}
+    \label{tab:notation}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Symbol}                                                                    & \textbf{Description}                             \\
+        \midrule
+        $\mathcal{G} = (\mathcal{V}, \mathcal{E})$                                         & Road network graph with $|\mathcal{V}|$ segments \\
+        $\mathbf{r}_{1:t} = (r_1, \ldots, r_t)$                                            & Partial trajectory of $t$ road segments          \\
+        $\mathcal{C}_t \subseteq \mathcal{V}$                                              & Candidate set at timestep $t$ (top-$k$ roads)    \\
+        $\mathcal{Z} = \{1, \ldots, V\}$                                                   & Grid cell vocabulary, $V = 51{,}663$             \\
+        \midrule
+        $\mathcal{L}_\phi : \mathcal{Z}^w \to \Delta^{|\mathcal{Z}|}$                      & Teacher model (frozen)                           \\
+        $\mathcal{H}_\theta : \mathcal{V}^t \times \mathcal{V} \to \Delta^{|\mathcal{C}|}$ & Student model (trainable)                        \\
+        $\psi : \mathcal{V} \to \mathcal{Z}$                                               & Cross-vocabulary mapping                         \\
+        $q^{(\tau)}, p^{(\tau)}$                                                           & Temperature-scaled distributions                 \\
+        $\tau$                                                                             & Temperature parameter                            \\
+        $\lambda$                                                                          & Distillation loss weight                         \\
+        \bottomrule
+    \end{tabular}
 \end{table}
 
 \subsubsection{Problem Definition}
 \label{sec:method-problem}
 
 \begin{definition}[Trajectory]
-\label{def:trajectory}
-A \emph{trajectory} $T$ is a sequence of road segments:
-\[
-T = \{r_1, r_2, \ldots, r_n\} \quad \text{where } r_i \in \mathcal{V}
-\]
-representing a path through the road network $\mathcal{G} = (\mathcal{V}, \mathcal{E})$.
+    \label{def:trajectory}
+    A \emph{trajectory} $T$ is a sequence of road segments:
+    \[
+        T = \{r_1, r_2, \ldots, r_n\} \quad \text{where } r_i \in \mathcal{V}
+    \]
+    representing a path through the road network $\mathcal{G} = (\mathcal{V}, \mathcal{E})$.
 \end{definition}
 
 \begin{definition}[Timestamped Trajectory]
-\label{def:trajectory-timestamped}
-A \emph{timestamped trajectory} $T$ includes arrival times at each road segment:
-\[
-T = \{(r_1, t_1), (r_2, t_2), \ldots, (r_n, t_n)\} \quad \text{where } r_i \in \mathcal{V}, t_i \in \mathbb{R}_+
-\]
-with timestamps satisfying $t_1 < t_2 < \cdots < t_n$.
+    \label{def:trajectory-timestamped}
+    A \emph{timestamped trajectory} $T$ includes arrival times at each road segment:
+    \[
+        T = \{(r_1, t_1), (r_2, t_2), \ldots, (r_n, t_n)\} \quad \text{where } r_i \in \mathcal{V}, t_i \in \mathbb{R}_+
+    \]
+    with timestamps satisfying $t_1 < t_2 < \cdots < t_n$.
 \end{definition}
 
-\begin{definition}[Map-Matched Trajectory Prediction]
-\label{def:trajectory-prediction}
-Given a partial trajectory $\mathbf{r}_{1:t}$ on road network $\mathcal{G}$, destination $r_d \in \mathcal{V}$, and candidate set $\mathcal{C}_t$, predict the probability distribution:
-\[
-p(r_{t+1} | \mathbf{r}_{1:t}, r_d, \mathcal{C}_t)
-\]
-over next road segments with inference time $t_{\text{inf}} < 15$ ms.
+\begin{definition}[Cross-Vocabulary Mapping]
+    \label{def:vocab-mapping}
+    The mapping $\psi : \mathcal{V} \to \mathcal{Z}$ assigns each road segment to its containing grid cell:
+    \begin{equation}
+        \psi(v) = \left\lfloor \frac{x_v - x_{\min}}{\Delta_x} \right\rfloor \cdot n_{\text{cols}} +
+        \left\lfloor \frac{y_v - y_{\min}}{\Delta_y} \right\rfloor
+    \end{equation}
+    where $(x_v, y_v) = \text{centroid}(v)$ and $\Delta_x, \Delta_y$ are grid resolutions.
+\end{definition}
+
+\begin{definition}[Cross-Task Knowledge Distillation]
+    \label{def:distillation-problem}
+    Given frozen teacher $\mathcal{L}_\phi$ trained for anomaly detection and trajectory dataset $\mathcal{D} = \{(\mathbf{r}_i, y_i)\}_{i=1}^N$, learn student parameters:
+    \begin{equation}
+        \theta^* = \arg\min_{\theta \in \Theta} \mathbb{E}_{(\mathbf{r}, y) \sim \mathcal{D}}
+        \left[ \mathcal{L}_{\text{CE}}(\mathcal{H}_\theta(\mathbf{r}), y) +
+        \lambda \mathcal{L}_{\text{KL}}^{(\tau)}(\mathcal{L}_\phi \circ \psi(\mathbf{r}), \mathcal{H}_\theta(\mathbf{r})) \right]
+    \end{equation}
 \end{definition}
 
 \subsubsection{Model Specifications}
 \label{sec:method-models}
 
-\textbf{Teacher (LM-TAD)~\cite{mbuyaTrajectoryAnomalyDetection2024}:} A pre-trained transformer for trajectory anomaly detection that models trajectories as sequences of grid cell tokens. Input vocabulary size $|\mathcal{Z}| = 51{,}663$ for Beijing. Inference speed: $\sim$430 ms/batch (frozen during distillation). Architecture details in the original paper.
-
-\textbf{Student (HOSER)~\cite{caoHolisticSemanticRepresentation2025}:} A hierarchical graph-aware predictor operating on road sequences with spatial candidate pruning. Inference speed: $\sim$13 ms/batch (trainable parameters). Architecture details in the original paper.
+We transfer knowledge from the pre-trained LM-TAD teacher $\mathcal{L}_\phi$~\cite{mbuyaTrajectoryAnomalyDetection2024} to the HOSER student $\mathcal{H}_\theta$~\cite{caoHolisticSemanticRepresentation2025}. The teacher operates on grid cell sequences with vocabulary size $|\mathcal{Z}| = 51{,}663$, while the student predicts over $|\mathcal{V}| = 40{,}060$ road segments.
 
 \begin{figure}[t]
-\centering
-\begin{tikzpicture}[
-    node distance=1.2cm and 1.5cm,
-    every node/.style={font=\small},
-    box/.style={draw, rectangle, rounded corners, minimum width=3cm, minimum height=0.8cm, align=center},
-    frozen/.style={box, fill=blue!15, draw=blue!50, very thick, dashed},
-    trainable/.style={box, fill=green!15, draw=green!50, thick},
-    data/.style={box, fill=gray!10, draw=gray!50},
-    loss/.style={box, fill=red!10, draw=red!50},
-    arrow/.style={-{Stealth[scale=0.8]}, thick},
-    label/.style={font=\footnotesize}
-]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.2cm and 1.5cm,
+        every node/.style={font=\small},
+        box/.style={draw, rectangle, rounded corners, minimum width=3cm, minimum height=0.8cm, align=center},
+        frozen/.style={box, fill=blue!15, draw=blue!50, very thick, dashed},
+        trainable/.style={box, fill=green!15, draw=green!50, thick},
+        data/.style={box, fill=gray!10, draw=gray!50},
+        loss/.style={box, fill=red!10, draw=red!50},
+        arrow/.style={-{Stealth[scale=0.8]}, thick},
+        label/.style={font=\footnotesize}
+        ]
 
-% Input trajectory
-\node[data] (input) {Input Trajectory\\$\mathbf{r}_{1:t} = (r_1, \ldots, r_t)$\\{\footnotesize Road IDs}};
+        % Input trajectory
+        \node[data] (input) {Input Trajectory\\$\mathbf{r}_{1:t} = (r_1, \ldots, r_t)$\\{\footnotesize Road IDs}};
 
-% Vocabulary mapping
-\node[data, below=0.7cm of input, minimum width=4cm] (mapping) {Vocabulary Mapping $\phi$\\{\footnotesize $\mathcal{V} \rightarrow \mathcal{Z}$}};
-\draw[arrow] (input) -- (mapping);
+            % Vocabulary mapping
+            \node[data, below=0.7cm of input, minimum width=4cm] (mapping) {Vocabulary Mapping $\psi$\\{\footnotesize $\mathcal{V} \rightarrow \mathcal{Z}$}};
+            \draw[arrow] (input) -- (mapping);
 
-% Grid sequence
-\node[data, below left=0.7cm and 2cm of mapping] (grid) {Grid Sequence\\$\mathbf{z}_{1:t}$\\{\footnotesize 51,663 cells}};
-\draw[arrow] (mapping.south) -- ++(0,-0.3) -| (grid.north);
+            % Grid sequence
+            \node[data, below left=0.7cm and 2cm of mapping] (grid) {Grid Sequence\\$\mathbf{z}_{1:t}$\\{\footnotesize 51,663 cells}};
+        \draw[arrow] (mapping.south) -- ++(0,-0.3) -| (grid.north);
 
-% Candidate set
-\node[data, below right=0.7cm and 2cm of mapping] (candidates) {Candidate Set\\$\mathcal{C}_t \subseteq \mathcal{V}$\\{\footnotesize top-64 roads}};
-\draw[arrow] (mapping.south) -- ++(0,-0.3) -| (candidates.north);
+        % Candidate set
+        \node[data, below right=0.7cm and 2cm of mapping] (candidates) {Candidate Set\\$\mathcal{C}_t \subseteq \mathcal{V}$\\{\footnotesize top-64 roads}};
+            \draw[arrow] (mapping.south) -- ++(0,-0.3) -| (candidates.north);
 
-% Teacher model (frozen)
-\node[frozen, below=1.2cm of grid, minimum width=4.5cm, minimum height=1.2cm] (teacher) {
-    \textbf{LM-TAD Teacher}\\
-    {\footnotesize Transformer (6 layers)}\\
-    {\footnotesize \textit{Frozen weights}}
-};
-\draw[arrow] (grid) -- (teacher);
+            % Teacher model (frozen)
+            \node[frozen, below=1.2cm of grid, minimum width=4.5cm, minimum height=1.2cm] (teacher) {
+            \textbf{LM-TAD Teacher}\\
+            {\footnotesize Transformer (6 layers)}\\
+            {\footnotesize \textit{Frozen weights}}
+            };
+            \draw[arrow] (grid) -- (teacher);
 
-% Teacher output
-\node[data, below=0.7cm of teacher, minimum width=3.5cm] (teacher_out) {Teacher Probs\\$q(z | \mathbf{z}_{1:t})$};
-\draw[arrow] (teacher) -- (teacher_out);
+            % Teacher output
+            \node[data, below=0.7cm of teacher, minimum width=3.5cm] (teacher_out) {Teacher Probs\\$q(z | \mathbf{z}_{1:t})$};
+            \draw[arrow] (teacher) -- (teacher_out);
 
-% Student model (trainable)
-\node[trainable, below=1.2cm of candidates, minimum width=4.5cm, minimum height=1.2cm] (student) {
-    \textbf{HOSER Student}\\
-    {\footnotesize Zone GCN + Navigator}\\
-    {\footnotesize \textit{Trainable weights}}
-};
-\draw[arrow] (candidates) -- (student);
+            % Student model (trainable)
+            \node[trainable, below=1.2cm of candidates, minimum width=4.5cm, minimum height=1.2cm] (student) {
+            \textbf{HOSER Student}\\
+            {\footnotesize Zone GCN + Navigator}\\
+            {\footnotesize \textit{Trainable weights}}
+            };
+            \draw[arrow] (candidates) -- (student);
 
-% Better arrow from input to student
-\coordinate (inputright) at ([xshift=3cm]input.east);
-\draw[arrow] (input.east) -- (inputright) |- (student.north east);
+            % Better arrow from input to student
+            \coordinate (inputright) at ([xshift=3cm]input.east);
+            \draw[arrow] (input.east) -- (inputright) |- (student.north east);
 
-% Student output
-\node[data, below=0.7cm of student, minimum width=3.5cm] (student_out) {Student Logits\\$\ell_t \in \mathbb{R}^{|\mathcal{C}_t|}$};
-\draw[arrow] (student) -- (student_out);
+            % Student output
+            \node[data, below=0.7cm of student, minimum width=3.5cm] (student_out) {Student Logits\\$\ell_t \in \mathbb{R}^{|\mathcal{C}_t|}$};
+        \draw[arrow] (student) -- (student_out);
 
-% Temperature scaling and renormalization
-\node[data, below right=0.5cm and 0.5cm of teacher_out, minimum width=4cm] (temp) {Temperature Scaling\\$q_t^{(\tau)}, p_t^{(\tau)}$};
-\draw[arrow] (teacher_out.south) -- ++(0,-0.2) -| (temp.west);
-\draw[arrow] (student_out.south) -- ++(0,-0.2) -| (temp.east);
+        % Temperature scaling and renormalization
+        \node[data, below right=0.5cm and 0.5cm of teacher_out, minimum width=4cm] (temp) {Temperature Scaling\\$q_t^{(\tau)}, p_t^{(\tau)}$};
+            \draw[arrow] (teacher_out.south) -- ++(0,-0.2) -| (temp.west);
+            \draw[arrow] (student_out.south) -- ++(0,-0.2) -| (temp.east);
 
-% KL divergence
-\node[loss, below=0.7cm of temp] (kl) {KL Divergence\\$\mathcal{L}_{\text{KL}} = \text{KL}(q_t^{(\tau)} || p_t^{(\tau)})$};
-\draw[arrow] (temp) -- (kl);
+            % KL divergence
+            \node[loss, below=0.7cm of temp] (kl) {KL Divergence\\$\mathcal{L}_{\text{KL}} = \text{KL}(q_t^{(\tau)} || p_t^{(\tau)})$};
+        \draw[arrow] (temp) -- (kl);
 
-% Other losses
-\node[loss, left=1.2cm of kl] (ce) {Cross-Entropy\\$\mathcal{L}_{\text{CE}}$};
-\node[loss, right=1.2cm of kl] (time) {Time MAPE\\$\mathcal{L}_{\text{time}}$};
+        % Other losses
+        \node[loss, left=1.2cm of kl] (ce) {Cross-Entropy\\$\mathcal{L}_{\text{CE}}$};
+            \node[loss, right=1.2cm of kl] (time) {Time MAPE\\$\mathcal{L}_{\text{time}}$};
 
-% Better ground truth connection
-\coordinate (leftpoint) at ([xshift=-1.5cm]input.west);
-\draw[arrow, dashed] (input.west) -- (leftpoint) -- ([yshift=0cm]leftpoint |- ce.north) -- (ce.north) node[midway, left, label] {\footnotesize Ground truth};
+        % Better ground truth connection
+        \coordinate (leftpoint) at ([xshift=-1.5cm]input.west);
+        \draw[arrow, dashed] (input.west) -- (leftpoint) -- ([yshift=0cm]leftpoint |- ce.north) -- (ce.north) node[midway, left, label] {\footnotesize Ground truth};
 
-% Student output to time loss
-\draw[arrow, dashed] (student_out.east) -- ++(0.5,0) |- (time.east);
+        % Student output to time loss
+        \draw[arrow, dashed] (student_out.east) -- ++(0.5,0) |- (time.east);
 
-% Total loss
-\node[loss, below=1cm of kl, minimum width=5cm] (total) {\textbf{Total Loss}\\$\mathcal{L} = \mathcal{L}_{\text{CE}} + \alpha \mathcal{L}_{\text{time}} + \lambda \mathcal{L}_{\text{KL}}$};
-\draw[arrow] (ce.south) -- ++(0,-0.3) -| (total.west);
-\draw[arrow] (kl) -- (total);
-\draw[arrow] (time.south) -- ++(0,-0.3) -| (total.east);
+        % Total loss
+        \node[loss, below=1cm of kl, minimum width=5cm] (total) {\textbf{Total Loss}\\$\mathcal{L} = \mathcal{L}_{\text{CE}} + \alpha \mathcal{L}_{\text{time}} + \lambda \mathcal{L}_{\text{KL}}$};
+        \draw[arrow] (ce.south) -- ++(0,-0.3) -| (total.west);
+        \draw[arrow] (kl) -- (total);
+        \draw[arrow] (time.south) -- ++(0,-0.3) -| (total.east);
 
-% Gradient flow
-\draw[arrow, very thick, red!70] (total.south) -- ++(0,-0.5) node[below, label] {\textbf{Backprop to Student Only}};
+        % Gradient flow
+        \draw[arrow, very thick, red!70] (total.south) -- ++(0,-0.5) node[below, label] {\textbf{Backprop to Student Only}};
 
-% Annotations
-\node[above=0.1cm of teacher, font=\footnotesize\bfseries, blue!70] {[Frozen]};
-\node[above=0.1cm of student, font=\footnotesize\bfseries, green!70] {[Trainable]};
+        % Annotations
+        \node[above=0.1cm of teacher, font=\footnotesize\bfseries, blue!70] {[Frozen]};
+        \node[above=0.1cm of student, font=\footnotesize\bfseries, green!70] {[Trainable]};
 
-% Better background box
-\begin{scope}[on background layer]
-    \coordinate (topleft) at ([xshift=-0.5cm, yshift=0.5cm]input.north west);
-    \coordinate (bottomright) at ([xshift=0.5cm, yshift=-1cm]total.south east);
-    \node[draw=gray!30, fill=gray!5, fit=(topleft) (bottomright), inner sep=0cm] {};
-\end{scope}
+        % Better background box
+        \begin{scope}[on background layer]
+            \coordinate (topleft) at ([xshift=-0.5cm, yshift=0.5cm]input.north west);
+            \coordinate (bottomright) at ([xshift=0.5cm, yshift=-1cm]total.south east);
+            \node[draw=gray!30, fill=gray!5, fit=(topleft) (bottomright), inner sep=0cm] {};
+        \end{scope}
 
-\end{tikzpicture}
-\caption{Knowledge distillation framework. The frozen LM-TAD teacher (blue, dashed) provides soft targets via temperature-scaled distributions over grid cells. The trainable HOSER student (green) learns from both hard labels (cross-entropy) and soft teacher knowledge (KL divergence). Vocabulary mapping $\phi$ bridges the representation gap between road IDs and grid cells.}
-\label{fig:distillation-framework}
+    \end{tikzpicture}
+    \caption{Knowledge distillation framework. The frozen teacher $\mathcal{L}_\phi$ provides soft targets via temperature-scaled distributions. The trainable student $\mathcal{H}_\theta$ learns from both hard labels (cross-entropy) and soft teacher knowledge (KL divergence). The mapping $\psi$ bridges road segments to grid cells.}
+    \label{fig:distillation-framework}
 \end{figure}
 
 \subsection{Vocabulary Alignment}
 \label{sec:method-vocab}
 
-\subsubsection{The Representation Gap}
-The teacher and student models operate on fundamentally different spatial representations. LM-TAD discretizes the city into $V = 51{,}663$ uniform grid cells for fine-grained anomaly detection, while HOSER directly predicts over $|\mathcal{V}| = 40{,}060$ road segments for efficient routing. This vocabulary mismatch necessitates a careful alignment strategy.
-
-\subsubsection{Mapping Construction}
-We construct a deterministic mapping $\phi: \mathcal{V} \rightarrow \mathcal{Z}$ that assigns each road segment to its corresponding grid cell based on the road's centroid coordinates (Algorithm~\ref{alg:vocab-map-appendix}, \hyperref[app:vocab-mapping-alg]{Appendix~\ref*{app:vocab-mapping-alg}}). The algorithm computes grid indices from centroid coordinates and flattens the 2D grid position to a single token ID.
+The cross-vocabulary mapping $\psi$ (\autoref{def:vocab-mapping}) enables knowledge transfer between the teacher's grid-based representation and the student's road-based representation. The mapping assigns each road segment to its containing grid cell based on centroid coordinates (detailed algorithm in \hyperref[app:vocab-mapping-alg]{Appendix~\ref*{app:vocab-mapping-alg}}).
 
 \begin{remark}[Many-to-One Mapping]
-Multiple roads may map to the same grid cell, particularly in dense urban cores. On average, each grid cell corresponds to $|\mathcal{V}|/V \approx 0.78$ roads, though downtown cells may contain 5--10 road segments.
+    Multiple roads may map to the same grid cell, particularly in dense urban cores. On average, each grid cell corresponds to $|\mathcal{V}|/V \approx 0.78$ roads, though downtown cells may contain 5--10 road segments.
 \end{remark}
 
 \subsubsection{Probability Renormalization}
 \label{sec:method-renorm}
-Given teacher probabilities $q(z | \mathbf{z}_{1:t})$ over all grid cells and student candidates $\mathcal{C}_t$, we extract and renormalize the relevant probabilities:
 
-\begin{align}
-\tilde{q}_t(c) &= q(\phi(c) | \mathbf{z}_{1:t}) \quad \forall c \in \mathcal{C}_t \label{eq:extract}\\
-q_t^{(\tau)}(c) &= \frac{\exp(\log \tilde{q}_t(c) / \tau)}{\sum_{c' \in \mathcal{C}_t} \exp(\log \tilde{q}_t(c') / \tau)} \label{eq:renorm}
-\end{align}
-
-Equation~\eqref{eq:extract} gathers teacher probabilities for candidate roads, while Equation~\eqref{eq:renorm} applies temperature scaling and ensures the distribution sums to 1 over $\mathcal{C}_t$.
+Since the teacher produces distributions over all grid cells $\mathcal{Z}$ while the student operates over candidate roads $\mathcal{C}_t$, we extract and renormalize:
+\begin{equation}
+    \tilde{q}_t(c) = q(\psi(c) \mid \mathbf{z}_{1:t}) \quad \forall c \in \mathcal{C}_t
+    \label{eq:extract}
+\end{equation}
+\begin{equation}
+    q_t^{(\tau)}(c) = \frac{\exp(\log \tilde{q}_t(c) / \tau)}{\sum_{c' \in \mathcal{C}_t} \exp(\log \tilde{q}_t(c') / \tau)}
+    \label{eq:renorm}
+\end{equation}
 
 \subsection{Knowledge Distillation Framework}
-\label{sec:method-distill}
+\label{sec:method-kl}
 
 \subsubsection{Temperature Scaling}
-\label{sec:method-temp}
-Temperature scaling controls the smoothness of probability distributions. For a distribution over logits $\ell$, the temperature-scaled softmax is:
 
-\begin{equation}
-p^{(\tau)}_i = \frac{\exp(\ell_i / \tau)}{\sum_j \exp(\ell_j / \tau)}
-\label{eq:temp-softmax}
-\end{equation}
+\begin{theorem}[Temperature-Scaled Knowledge Transfer]
+    \label{thm:temp-scaling}
+    Given teacher logits $\boldsymbol{\ell}^{\mathcal{L}} \in \mathbb{R}^{|\mathcal{C}|}$ and student logits $\boldsymbol{\ell}^{\mathcal{H}} \in \mathbb{R}^{|\mathcal{C}|}$, the distillation loss is:
+    \begin{equation}
+        \mathcal{L}_{\text{KL}}^{(\tau)} = \tau^2 \sum_{i \in \mathcal{C}_t} q_i^{(\tau)} \log \frac{q_i^{(\tau)}}{p_i^{(\tau)}}
+        \label{eq:distill-loss}
+    \end{equation}
+    where:
+    \begin{align}
+        q_i^{(\tau)} & = \frac{\exp(\ell_i^{\mathcal{L}} / \tau)}{\sum_{j \in \mathcal{C}_t} \exp(\ell_j^{\mathcal{L}} / \tau)} \label{eq:teacher-dist} \\
+        p_i^{(\tau)} & = \frac{\exp(\ell_i^{\mathcal{H}} / \tau)}{\sum_{j \in \mathcal{C}_t} \exp(\ell_j^{\mathcal{H}} / \tau)} \label{eq:student-dist}
+    \end{align}
+    The $\tau^2$ scaling factor preserves gradient magnitudes as $\tau$ increases.
+\end{theorem}
 
-\begin{definition}[Temperature Effect on Entropy]
-As temperature $\tau$ increases:
-\begin{itemize}[noitemsep,topsep=0pt]
-\item $\tau \rightarrow 1$: Original distribution (sharp)
-\item $\tau > 1$: Smoother distribution, higher entropy
-\item $\tau \rightarrow \infty$: Uniform distribution
-\end{itemize}
-\end{definition}
-
-The temperature parameter serves a crucial role in distillation by exposing the relative probabilities of non-maximum choices---what Hinton et al.~\cite{hintonDistillingKnowledgeNeural2015} term ``dark knowledge.''
-
-\subsubsection{Distillation Loss Formulation}
-\label{sec:method-kl}
-We employ the forward KL divergence to align the student's predictions with the teacher's knowledge. The computation (Algorithm~\ref{alg:distill-loss-appendix}, \hyperref[app:distill-loss-alg]{Appendix~\ref*{app:distill-loss-alg}}) applies temperature scaling to both teacher and student distributions, computes the KL divergence over candidate roads, and applies $\tau^2$ gradient correction to prevent gradient vanishing~\cite{hintonDistillingKnowledgeNeural2015}.
+\begin{proof}
+    The gradient with respect to student logit $\ell_i^{\mathcal{H}}$ is:
+    \begin{equation}
+        \frac{\partial \mathcal{L}_{\text{KL}}}{\partial \ell_i^{\mathcal{H}}} = \frac{1}{\tau}(p_i^{(\tau)} - q_i^{(\tau)})
+    \end{equation}
+    which scales as $\mathcal{O}(1/\tau)$. Multiplying by $\tau^2$ ensures $\mathcal{O}(\tau)$ scaling, preventing gradient vanishing in the high-temperature regime where distillation is most effective~\cite{hintonDistillingKnowledgeNeural2015}.
+\end{proof}
 
 \subsubsection{Combined Training Objective}
-\label{sec:method-combined}
-The total loss combines three components, each serving a distinct purpose:
 
+The total loss combines supervised learning with knowledge distillation:
 \begin{equation}
-\mathcal{L} = \mathcal{L}_{\text{CE}} + \alpha \cdot \mathcal{L}_{\text{time}} + \lambda \cdot \mathcal{L}_{\text{KL}}
-\label{eq:total-loss}
+    \mathcal{L}_{\text{total}} = \underbrace{\mathcal{L}_{\text{CE}}(p, y)}_{\text{hard targets}} +
+    \alpha \underbrace{\mathcal{L}_{\text{time}}(\hat{t}, t)}_{\text{auxiliary}} +
+    \lambda \underbrace{\mathcal{L}_{\text{KL}}^{(\tau)}(q^{(\tau)}, p^{(\tau)})}_{\text{soft targets}}
+    \label{eq:total-loss}
 \end{equation}
-
-where:
-\begin{itemize}[noitemsep,topsep=0pt]
-\item $\mathcal{L}_{\text{CE}}$: Cross-entropy loss against ground-truth road (hard target)
-\item $\mathcal{L}_{\text{time}}$: Mean Absolute Percentage Error for travel time prediction
-\item $\mathcal{L}_{\text{KL}}$: Knowledge distillation loss (soft target)
-\end{itemize}
-
-The hyperparameters $\alpha = 0.1$ (fixed) and $\lambda \in [0.001, 0.1]$ (tuned) balance the loss components.
+where $\alpha = 0.1$ (fixed) and $\lambda \in [0.001, 0.1]$ (tuned).
 
 \subsection{Training Pipeline}
 \label{sec:method-training}
 
-\subsubsection{Main Training Loop}
-The complete distillation training procedure (Algorithm~\ref{alg:distill-train-appendix}, \hyperref[app:training-alg]{Appendix~\ref*{app:training-alg}}) integrates teacher inference, loss computation, and optimization. Key implementation details:
+\begin{algorithm}[t]
+    \caption{Knowledge Distillation Training}
+    \label{alg:distillation}
+    \begin{algorithmic}[1]
+        \Require Dataset $\mathcal{D}$, Teacher $\mathcal{L}_\phi$, Student $\mathcal{H}_\theta$, hyperparameters $\{\lambda, \tau, w, \eta\}$
+        \Ensure Trained parameters $\theta^*$
+        \State Initialize $\theta \sim \mathcal{N}(0, 0.02)$
+        \For{epoch $= 1$ to $E$}
+        \For{$(\mathbf{r}, y) \in \mathcal{D}$}
+        \State $\mathbf{z} \gets \psi(\mathbf{r})$ \Comment{Map roads to grid cells}
+        \State $\mathbf{q} \gets \mathcal{L}_\phi(\mathbf{z}_{t-w:t})$ \Comment{Teacher inference (no gradient)}
+        \State $q^{(\tau)} \gets \text{Renormalize}(\mathbf{q}, \mathcal{C}_t, \tau)$ \Comment{Eq.~\eqref{eq:renorm}}
+        \State $\boldsymbol{\ell} \gets \mathcal{H}_\theta(\mathbf{r}, \mathcal{C}_t)$ \Comment{Student logits}
+        \State $p^{(\tau)} \gets \text{Softmax}(\boldsymbol{\ell} / \tau)$
+        \State $\mathcal{L} \gets \mathcal{L}_{\text{CE}}(\boldsymbol{\ell}, y) + \lambda \mathcal{L}_{\text{KL}}^{(\tau)}(q^{(\tau)}, p^{(\tau)})$
+        \State $\theta \gets \theta - \eta \nabla_\theta \mathcal{L}$
+        \EndFor
+        \EndFor
+        \State \Return $\theta^*$
+    \end{algorithmic}
+\end{algorithm}
 
-\begin{itemize}[noitemsep,topsep=0pt]
-\item Teacher parameters remain frozen (no gradient computation)
-\item Vocabulary mapping $\phi$ converts road sequences to grid sequences for teacher
-\item Both teacher and student distributions are temperature-scaled before KL divergence
-\item Three loss components (\autoref{eq:total-loss}) are combined and backpropagated only to student
-\item Validation checkpointing saves the best model based on validation accuracy
-\end{itemize}
-
-Per-iteration computational complexity is $\mathcal{O}(B \cdot t \cdot (V + k^2))$ where $B$ is batch size, $t$ is trajectory length, $V$ is vocabulary size, and $k$ is candidate set size. Teacher inference dominates at $\mathcal{O}(B \cdot t \cdot V)$. Practical optimizations and hyperparameter tuning are detailed in \autoref{sec:implementation}.
+The teacher parameters $\phi$ remain frozen throughout training. Per-iteration complexity is $\mathcal{O}(B \cdot t \cdot (V + k^2))$ where teacher inference dominates at $\mathcal{O}(B \cdot t \cdot V)$. Implementation details are provided in \autoref{sec:implementation}.
 
 \subsection{Inference and Evaluation}
 \label{sec:method-inference}
 
-\subsubsection{Trajectory Generation}
-At inference time, we use only the trained student model to generate complete trajectories (Algorithm~\ref{alg:beam-search-appendix}, \hyperref[app:beam-search-alg]{Appendix~\ref*{app:beam-search-alg}}). Our beam search procedure maintains multiple candidate paths simultaneously (beam width $b=4$), selecting the highest-probability completions at each step. Given an origin-destination pair $(r_o, r_d)$, the algorithm iteratively expands beams using the student's predictions over spatially-pruned candidate roads until reaching the destination or a maximum length. With beam width $b=4$, the student generates trajectories at $\sim$77 trajectories/second on a single GPU, enabling real-time deployment for urban-scale applications.
+At inference time, we employ only the trained student $\mathcal{H}_{\theta^*}$ with standard beam search (width $b=4$) to generate trajectories. Given origin-destination pair $(r_o, r_d)$, the student produces complete trajectories at $\sim$77 trajectories/second.
 
-\subsubsection{Evaluation Protocol}
-\label{sec:method-eval-metrics}
-We evaluate generated trajectories using two categories of metrics (detailed in \autoref{sec:eval-metrics}): \emph{global distribution metrics} (Jensen-Shannon Divergence for distance, duration, and radius distributions) and \emph{local trajectory metrics} (Hausdorff Distance, Dynamic Time Warping, Edit Distance on Real sequence, and Path Completion Rate). All metrics are computed separately on training OD pairs (memorization) and held-out test OD pairs (generalization) to assess overfitting.
-
-\bigskip
-
-This completes the theoretical framework for knowledge distillation. Practical implementation details, including dataset preprocessing, hyperparameter optimization, training optimizations, and computational infrastructure, are described in \autoref{sec:implementation}.
+We evaluate using global distribution metrics (Jensen-Shannon Divergence) and local trajectory metrics (Hausdorff, DTW, EDR) computed separately on training and test OD pairs. Full evaluation details are provided in \autoref{sec:eval-metrics}.
