@@ -167,7 +167,16 @@ D(T) = \sum_{i=2}^{n} d_{\text{gc}}(\text{centroid}(r_{i-1}), \text{centroid}(r_
 \label{eq:trip-distance}
 \end{equation}
 
-where $d_{\text{gc}}(\cdot, \cdot)$ is the great-circle distance in kilometers. We create histograms with 100 bins spanning $[0, \max(\mathcal{D}_{\text{real}})]$ where $\mathcal{D}_{\text{real}}$ is the set of all real trajectory distances, plus one bin for $[\max(\mathcal{D}_{\text{real}}), \infty)$. JSD is computed between normalized histograms of real and generated distance distributions.
+where $d_{\text{gc}}(\cdot, \cdot)$ is the great-circle distance in kilometers. We create histograms with 100 bins spanning $[0, \max(\mathcal{D}_{\text{real}})]$ where $\mathcal{D}_{\text{real}}$ is the set of all real trajectory distances, plus one bin for $[\max(\mathcal{D}_{\text{real}}), \infty)$.
+
+The Distance JSD is computed between normalized histograms:
+
+\begin{equation}
+\text{JSD}_{\text{distance}} = \text{JSD}(H_{\text{real}}(\mathcal{D}) \parallel H_{\text{gen}}(\mathcal{D}))
+\label{eq:distance-jsd}
+\end{equation}
+
+where $H_{\text{real}}(\mathcal{D})$ and $H_{\text{gen}}(\mathcal{D})$ are the normalized histograms of real and generated trajectory distances.
 
 \paragraph{Per-Segment Duration Distribution}
 
@@ -178,7 +187,16 @@ For trajectories with timestamps $T = \{(r_1, t_1), (r_2, t_2), \ldots, (r_n, t_
 \label{eq:segment-duration}
 \end{equation}
 
-where durations are measured in minutes. Each segment contributes one sample to the duration distribution. Histograms use 100 bins spanning $[0, \max(\mathcal{T}_{\text{real}})]$ plus infinity bin. JSD compares normalized histograms of all segment durations from real and generated trajectories.
+where durations are measured in minutes. Each segment contributes one sample to the duration distribution. Histograms use 100 bins spanning $[0, \max(\mathcal{T}_{\text{real}})]$ plus infinity bin.
+
+The Duration JSD is computed between normalized histograms:
+
+\begin{equation}
+\text{JSD}_{\text{duration}} = \text{JSD}(H_{\text{real}}(\mathcal{T}) \parallel H_{\text{gen}}(\mathcal{T}))
+\label{eq:duration-jsd}
+\end{equation}
+
+where $H_{\text{real}}(\mathcal{T})$ and $H_{\text{gen}}(\mathcal{T})$ are the normalized histograms of all segment durations from real and generated trajectories.
 
 \paragraph{Radius of Gyration Distribution}
 
@@ -197,7 +215,16 @@ where $\bar{c} = (\bar{\text{lat}}, \bar{\text{lon}})$ is the geographic centroi
 \label{eq:trajectory-centroid}
 \end{equation}
 
-Histograms use 100 bins spanning $[0, \max(\mathcal{R}_{\text{real}})]$ plus infinity bin. Lower JSD values indicate proper spatial complexity modeling.
+Histograms use 100 bins spanning $[0, \max(\mathcal{R}_{\text{real}})]$ plus infinity bin.
+
+The Radius of Gyration JSD is computed between normalized histograms:
+
+\begin{equation}
+\text{JSD}_{\text{radius}} = \text{JSD}(H_{\text{real}}(\mathcal{R}) \parallel H_{\text{gen}}(\mathcal{R}))
+\label{eq:radius-jsd}
+\end{equation}
+
+where $H_{\text{real}}(\mathcal{R})$ and $H_{\text{gen}}(\mathcal{R})$ are the normalized histograms of radius of gyration values from real and generated trajectories. Lower JSD values indicate proper spatial complexity modeling.
 
 \subsubsection{Local Trajectory Metrics}
 \label{app:local-metrics}
