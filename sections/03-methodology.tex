@@ -238,7 +238,7 @@ Per-iteration computational complexity is $\mathcal{O}(B \cdot t \cdot (V + k^2)
 \label{sec:method-inference}
 
 \subsubsection{Trajectory Generation}
-At inference time, we use only the trained student model to generate complete trajectories (Algorithm~\ref{alg:beam-search-appendix}, \hyperref[app:beam-search-alg]{Appendix~\ref*{app:beam-search-alg}}). Our beam search procedure maintains multiple candidate paths simultaneously, selecting the highest-probability completions at each step. Given an origin-destination pair $(r_o, r_d)$, the algorithm iteratively expands beams using the student's predictions over spatially-pruned candidate roads until reaching the destination or a maximum length. With beam width $b=4$, the student generates trajectories at $\sim$77 trajectories/second on a single GPU, enabling real-time deployment for urban-scale applications.
+At inference time, we use only the trained student model to generate complete trajectories (Algorithm~\ref{alg:beam-search-appendix}, \hyperref[app:beam-search-alg]{Appendix~\ref*{app:beam-search-alg}}). Our beam search procedure maintains multiple candidate paths simultaneously (beam width $b=4$), selecting the highest-probability completions at each step. Given an origin-destination pair $(r_o, r_d)$, the algorithm iteratively expands beams using the student's predictions over spatially-pruned candidate roads until reaching the destination or a maximum length. With beam width $b=4$, the student generates trajectories at $\sim$77 trajectories/second on a single GPU, enabling real-time deployment for urban-scale applications.
 
 \subsubsection{Evaluation Protocol}
 \label{sec:method-eval-metrics}

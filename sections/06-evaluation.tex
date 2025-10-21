@@ -44,7 +44,7 @@ This protocol separately assesses \emph{memorization} (train OD) and \emph{gener
 \subsection{Evaluation Metrics}
 \label{sec:eval-metrics}
 
-We employ a comprehensive metric suite covering global distribution quality, local trajectory similarity, and path completion capability. Detailed formulations are provided in \hyperref[app:metrics]{Appendix~\ref*{app:metrics}}.
+We employ a comprehensive metric suite covering global distribution quality, local trajectory similarity, and path completion capability. Most metrics follow the HOSER evaluation framework~\cite{caoHolisticSemanticRepresentation2025,HOSEREvaluationMainipynb} to enable direct comparison. Our key methodological contribution is the systematic generation and evaluation on both training OD pairs and held-out test OD pairs separately---extending HOSER's approach of sampling OD pairs from the training distribution only. This train/test comparative analysis enables assessment of memorization versus generalization, revealing that distilled models learn transferable spatial reasoning rather than overfitting training routes. We also introduce OD pair matching rate as an explicit metric for path completion success. Detailed formulations are provided in \hyperref[app:metrics]{Appendix~\ref*{app:metrics}}.
 
 \subsubsection{Global Distribution Metrics}
 

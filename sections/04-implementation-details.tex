@@ -6,6 +6,13 @@
 
 This section describes the practical implementation of our knowledge distillation framework, covering dataset preparation, hyperparameter tuning, training optimizations, and computational infrastructure. These implementation choices enable efficient training on commodity hardware while maintaining reproducibility.
 
+\subsection{Codebase and Modifications}
+\label{sec:impl-codebase}
+
+Our experiments build upon the official implementations of both LM-TAD~\cite{mbuyaTrajectoryAnomalyDetection2024,JonathankabalaLMTAD} and HOSER~\cite{caoHolisticSemanticRepresentation2025,HOSEREvaluationMainipynb}. We modified both codebases to integrate the distillation framework while preserving the original model architectures and hyperparameters from their respective papers. Both vanilla HOSER (baseline) and distilled HOSER (proposed) variants run on our unified modified implementation to ensure fair comparison---the distillation loss ($\lambda \mathcal{L}_{\text{KL}}$) is the only difference between the two configurations. This controlled setup isolates the impact of knowledge transfer from other implementation factors.
+
+Additional engineering optimizations include: replacing HOSER's A* greedy search with beam search for trajectory generation (improved efficiency), vectorizing data collation functions, and adding WandB integration for experiment tracking. These modifications improve computational performance without affecting model behavior or evaluation fairness.
+
 \subsection{Dataset Preparation Pipeline}
 \label{sec:impl-dataset-prep}
 
