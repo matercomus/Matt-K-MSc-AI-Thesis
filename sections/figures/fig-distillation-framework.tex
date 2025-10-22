@@ -1,8 +1,14 @@
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}[
+        % Layout structure:
+        % - Input at origin (0,0)
+        % - Vertical spacing: ~0.9cm between layers  
+        % - Horizontal spacing: ±1.9cm for branches
+        % - Left margin: -1.7cm for label path
+        % - Temperature layer: yshift=3.9cm
         % Base styles
-        node distance=1cm and 2.2cm,
+        node distance=0.9cm and 2.1cm,
         every node/.style={font=\small},
         % Box styles (professional colors)
         mainbox/.style={draw, rectangle, rounded corners=2pt, minimum width=2.5cm, minimum height=0.7cm, align=center, line width=0.5pt},
@@ -23,26 +29,26 @@
         };
         
         % 2. Vocabulary Mapping
-        \node[data, above=1cm of input] (mapping) {
+        \node[data, above=0.9cm of input] (mapping) {
             \textbf{Road-Grid Mapping}
         };
         \draw[flowArrow] (input) -- (mapping);
         
         % 3a. Grid sequence (left branch)
-        \node[data, above left=1cm and 2cm of mapping, minimum width=2.3cm] (grid) {
+        \node[data, above left=0.9cm and 1.9cm of mapping, minimum width=2.3cm] (grid) {
             \textbf{Grid Sequence}
         };
         \draw[arrow] (mapping) -| (grid);
         
         % 3b. Candidate set (right branch)
-        \node[data, above right=1cm and 2cm of mapping, minimum width=2.3cm] (candidates) {
+        \node[data, above right=0.9cm and 1.9cm of mapping, minimum width=2.3cm] (candidates) {
             \textbf{Road Candidates}\\
             {\footnotesize (Top-64)}
         };
         \draw[arrow] (mapping) -| (candidates);
         
         % 4a. Teacher model with winter icon
-        \node[frozen, above=1cm of grid, minimum width=2.8cm, minimum height=0.9cm] (teacher) {
+        \node[frozen, above=0.9cm of grid, minimum width=2.8cm, minimum height=0.9cm] (teacher) {
             \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-winter-100.png}
             \hspace{0.1cm}\textbf{LM-TAD}\\
             {\footnotesize Transformer, Frozen}
@@ -50,62 +56,64 @@
         \draw[arrow] (grid) -- (teacher);
         
         % 4b. Student model with fire icon
-        \node[trainable, above=1cm of candidates, minimum width=2.8cm, minimum height=0.9cm, anchor=west] (student) {
+        \node[trainable, above=0.9cm of candidates, minimum width=2.8cm, minimum height=0.9cm] (student) {
             \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-fire-100.png}
             \hspace{0.1cm}\textbf{HOSER}\\
             {\footnotesize GCN + Navigator, Trainable}
         };
-        \draw[arrow] (candidates) -- (student.west);
-        % Arrow from input to student - end at right edge with gentle bend
-        \coordinate (input_to_student_mid) at ($(input.east)+(1.1,0)$);
+        \draw[arrow] (candidates) -- (student);
+        
+        % Arrow from input to HOSER: Route right, then up to HOSER east edge
+        \coordinate (input_to_student_mid) at ($(input.east)+(1.0,0)$);
         \draw[arrow] (input.east) -- (input_to_student_mid) |- (student.east);
         
         % 5a. Teacher output
-        \node[data, above=1cm of teacher, minimum width=2.3cm] (teacher_out) {
+        \node[data, above=0.9cm of teacher, minimum width=2.3cm] (teacher_out) {
             \textbf{Probabilities}\\
             {\footnotesize (Teacher)}
         };
         \draw[arrow] (teacher) -- (teacher_out);
         
         % 5b. Student output
-        \node[data, above=1cm of student, minimum width=2.3cm] (student_out) {
+        \node[data, above=0.9cm of student, minimum width=2.3cm] (student_out) {
             \textbf{Logits}\\
             {\footnotesize (Student)}
         };
         \draw[arrow] (student) -- (student_out);
         
-        % 6. Temperature scaling - reduced spacing
-        \node[data, above=1.2cm of mapping, yshift=4.3cm, minimum width=3cm] (temp) {
+        % 6. Temperature scaling - optimized spacing
+        \node[data, above=1.1cm of mapping, yshift=3.9cm, minimum width=3cm] (temp) {
             \textbf{Temperature Scaling}
         };
         \draw[arrow] (teacher_out) |- (temp.west);
         \draw[arrow] (student_out) |- (temp.east);
         
         % 7. Multi-task losses
-        \node[loss, above left=1.0cm and 1.3cm of temp] (ce) {
+        \node[loss, above left=0.9cm and 1.3cm of temp] (ce) {
             \textbf{Cross-Entropy}
         };
-        \node[loss, above=1.0cm of temp] (kl) {
+        \node[loss, above=0.9cm of temp] (kl) {
             \textbf{KL Divergence}
         };
-        \node[loss, above right=1.0cm and 1.3cm of temp] (time_loss) {
+        \node[loss, above right=0.9cm and 1.3cm of temp] (time_loss) {
             \textbf{Time Loss}
         };
         
         \draw[arrow] (temp) -- (kl);
-        % Ground truth to CE - clean routed path with rotated label
-        \coordinate (labels_left) at ($(input.west)+(-1.6,0)$);
-        \coordinate (labels_up) at ($(labels_left)+(0,4.8)$);
-        \coordinate (ce_left) at ($(ce.west)+(-0.35,0)$);
-        \draw[arrow, dashed]
-            (input.west) -- (labels_left)
-            -- (labels_up) node[pos=0.6, rotate=90, above, font=\footnotesize] {labels}
-            -- (ce_left) -- (ce.west);
-        % Student output to time loss - end at right edge
-        \draw[arrow, dashed] (student_out.east) -- ++(0.7,0) |- (time_loss.east);
+        
+        % Input → Cross-Entropy: Route left, up, then right to CE west edge
+        % Clean vertical path with properly positioned label
+        \coordinate (labels_left) at ($(input.west)+(-1.7,0)$);
+        \coordinate (labels_up) at (labels_left |- ce.west);
+        \draw[arrow, dashed] (input.west) -- (labels_left) 
+            -- (labels_up) node[midway, rotate=90, above, font=\footnotesize] {labels} 
+            -- (ce.west);
+        
+        % Logits → Time Loss: Route right to Time Loss east edge
+        \draw[arrow, dashed] (student_out.east) -- ++(0.6,0) |- (time_loss.east);
         
         % 8. Total loss
-        \node[loss, above=1.0cm of kl, minimum width=4.5cm, minimum height=0.8cm] (total) {
+        \node[loss, above=0.9cm of kl, minimum width=4.5cm, minimum height=0.8cm] (total) {
             \textbf{Total Loss}\\
             {\footnotesize Weighted Combination}
         };
