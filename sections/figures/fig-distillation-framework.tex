@@ -56,8 +56,8 @@
             {\footnotesize GCN + Navigator, Trainable}
         };
         \draw[arrow] (candidates) -- (student);
-        % Arrow from input to student - end at left edge
-        \draw[arrow] (input.east) -- ++(0.8,0) |- (student.west);
+        % Arrow from input to student - end at right edge
+        \draw[arrow] (input.east) -- ++(0.8,0) |- (student.east);
         
         % 5a. Teacher output
         \node[data, above=1cm of teacher, minimum width=2.3cm] (teacher_out) {
@@ -73,33 +73,34 @@
         };
         \draw[arrow] (student) -- (student_out);
         
-        % 6. Temperature scaling
-        \node[data, above=1.4cm of mapping, yshift=5.5cm, minimum width=3cm] (temp) {
+        % 6. Temperature scaling - reduced spacing
+        \node[data, above=1.2cm of mapping, yshift=4.8cm, minimum width=3cm] (temp) {
             \textbf{Temperature Scaling}
         };
         \draw[arrow] (teacher_out) |- (temp.west);
         \draw[arrow] (student_out) |- (temp.east);
         
         % 7. Multi-task losses
-        \node[loss, above left=1.1cm and 1.3cm of temp] (ce) {
+        \node[loss, above left=1.0cm and 1.3cm of temp] (ce) {
             \textbf{Cross-Entropy}
         };
-        \node[loss, above=1.1cm of temp] (kl) {
+        \node[loss, above=1.0cm of temp] (kl) {
             \textbf{KL Divergence}
         };
-        \node[loss, above right=1.1cm and 1.3cm of temp] (time_loss) {
+        \node[loss, above right=1.0cm and 1.3cm of temp] (time_loss) {
             \textbf{Time Loss}
         };
         
         \draw[arrow] (temp) -- (kl);
-        % Ground truth to CE - connect to left edge with rotated label
+        % Ground truth to CE - connect to left edge with properly positioned rotated label
         \coordinate (gt_point) at ([xshift=-2.5cm]input.west);
-        \draw[arrow, dashed] (input.west) -- (gt_point) node[pos=0.5, rotate=90, above, font=\footnotesize] {labels} |- (ce.west);
+        \coordinate (gt_vertical_mid) at ([xshift=-2.5cm, yshift=5cm]input.west);
+        \draw[arrow, dashed] (input.west) -- (gt_point) -- (gt_vertical_mid) node[pos=0.5, rotate=90, above, font=\footnotesize] {labels} -- (gt_vertical_mid |- ce.west) -- (ce.west);
         % Student output to time loss - end at right edge
         \draw[arrow, dashed] (student_out.east) -- ++(0.7,0) |- (time_loss.east);
         
         % 8. Total loss
-        \node[loss, above=1.1cm of kl, minimum width=4.5cm, minimum height=0.8cm] (total) {
+        \node[loss, above=1.0cm of kl, minimum width=4.5cm, minimum height=0.8cm] (total) {
             \textbf{Total Loss}\\
             {\footnotesize Weighted Combination}
         };
