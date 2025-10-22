@@ -1,10 +1,10 @@
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}[
-        scale=0.75,
+        scale=0.8,
         transform shape,
         % Base styles
-        node distance=1.2cm and 1.8cm,
+        node distance=0.9cm and 2cm,
         every node/.style={font=\footnotesize},
         % Box styles (professional colors)
         mainbox/.style={draw, rectangle, rounded corners=2pt, minimum width=2.5cm, minimum height=0.65cm, align=center, line width=0.5pt},
@@ -29,35 +29,35 @@
         };
         
         % 2. Vocabulary Mapping
-        \node[data, above=1.0cm of input] (mapping) {
+        \node[data, above=0.9cm of input] (mapping) {
             \textbf{Vocab Map} $\psi$\\
             {\tiny $\mathcal{V} \rightarrow \mathcal{Z}$}
         };
         \draw[flowArrow] (input) -- (mapping);
         
         % 3a. Grid sequence (left branch)
-        \node[data, above left=1.0cm and 1.6cm of mapping, minimum width=2.2cm] (grid) {
+        \node[data, above left=0.9cm and 1.8cm of mapping, minimum width=2.2cm] (grid) {
             Grid Sequence\\
             {\tiny $\mathbf{z}_{1:t}$}
         };
         \draw[arrow] (mapping) -| (grid);
         
         % 3b. Candidate set (right branch)
-        \node[data, above right=1.0cm and 1.6cm of mapping, minimum width=2.2cm] (candidates) {
+        \node[data, above right=0.9cm and 1.8cm of mapping, minimum width=2.2cm] (candidates) {
             Candidate Set\\
             {\tiny $\mathcal{C}_t \subseteq \mathcal{V}$}
         };
         \draw[arrow] (mapping) -| (candidates);
         
         % 4a. Teacher model
-        \node[frozen, above=1.0cm of grid, minimum width=2.5cm] (teacher) {
+        \node[frozen, above=0.9cm of grid, minimum width=2.5cm] (teacher) {
             \textbf{Teacher} $\mathcal{L}_\phi$\\
             {\tiny Transformer, \textit{Frozen}}
         };
         \draw[arrow] (grid) -- (teacher);
         
         % 4b. Student model
-        \node[trainable, above=1.0cm of candidates, minimum width=2.5cm] (student) {
+        \node[trainable, above=0.9cm of candidates, minimum width=2.5cm] (student) {
             \textbf{Student} $\mathcal{H}_\theta$\\
             {\tiny GCN + Navigator, \textit{Trainable}}
         };
@@ -66,21 +66,21 @@
         \draw[arrow] (input.east) -- ++(0.7,0) |- (student.south east);
         
         % 5a. Teacher output
-        \node[data, above=1.0cm of teacher, minimum width=2.2cm] (teacher_out) {
+        \node[data, above=0.9cm of teacher, minimum width=2.2cm] (teacher_out) {
             Teacher Probs\\
             {\tiny $q(z | \mathbf{z}_{1:t})$}
         };
         \draw[arrow] (teacher) -- (teacher_out);
         
         % 5b. Student output
-        \node[data, above=1.0cm of student, minimum width=2.2cm] (student_out) {
+        \node[data, above=0.9cm of student, minimum width=2.2cm] (student_out) {
             Student Logits\\
             {\tiny $\ell_t \in \mathbb{R}^{|\mathcal{C}_t|}$}
         };
         \draw[arrow] (student) -- (student_out);
         
         % 6. Temperature scaling (positioned between outputs and losses)
-        \node[data, above=1.5cm of mapping, yshift=5.8cm, minimum width=2.8cm] (temp) {
+        \node[data, above=1.3cm of mapping, yshift=5cm, minimum width=2.8cm] (temp) {
             \textbf{Temp Scaling} $\tau$\\
             {\tiny $q_t^{(\tau)}, p_t^{(\tau)}$}
         };
@@ -88,15 +88,15 @@
         \draw[arrow] (student_out) |- (temp.east);
         
         % 7. Multi-task losses
-        \node[loss, above left=1.2cm and 1.2cm of temp] (ce) {
+        \node[loss, above left=1.0cm and 1.2cm of temp] (ce) {
             $\mathcal{L}_{\text{CE}}$\\
             {\tiny Cross-entropy}
         };
-        \node[loss, above=1.2cm of temp] (kl) {
+        \node[loss, above=1.0cm of temp] (kl) {
             $\mathcal{L}_{\text{KL}}$\\
             {\tiny KL divergence}
         };
-        \node[loss, above right=1.2cm and 1.2cm of temp] (time_loss) {
+        \node[loss, above right=1.0cm and 1.2cm of temp] (time_loss) {
             $\mathcal{L}_{\text{time}}$\\
             {\tiny Time MAPE}
         };
@@ -109,7 +109,7 @@
         \draw[arrow, dashed] (student_out.east) -- ++(0.6,0) |- (time_loss.south);
         
         % 8. Total loss
-        \node[loss, above=1.2cm of kl, minimum width=4.2cm, minimum height=0.85cm] (total) {
+        \node[loss, above=1.0cm of kl, minimum width=4.2cm, minimum height=0.85cm] (total) {
             \textbf{Total Loss}\\
             {\tiny $\mathcal{L} = \mathcal{L}_{\text{CE}} + \alpha \mathcal{L}_{\text{time}} + \lambda \mathcal{L}_{\text{KL}}$}
         };
@@ -122,8 +122,9 @@
         
         
         % ===== LEFT MAGNIFICATION: VOCABULARY ALIGNMENT =====
+        % Positioned at the level of mapping (lower in diagram)
         
-        \begin{scope}[shift={(-6, 1.2)}]
+        \begin{scope}[shift={(-5.5, 0.8)}]
             \node[magnify, minimum width=3cm, minimum height=3.5cm] (mag_vocab_box) at (0, 0) {};
             \node[above=0.03cm of mag_vocab_box.north, font=\footnotesize\bfseries, text=orange!70!black] {\tiny Vocabulary Alignment};
             
@@ -163,14 +164,15 @@
         
         
         % ===== RIGHT MAGNIFICATION: MODEL ARCHITECTURES =====
+        % Positioned higher (at level of teacher/student models)
         
-        \begin{scope}[shift={(6, 3.5)}]
-            \node[magnify, minimum width=3cm, minimum height=4.5cm] (mag_arch_box) at (0, 0) {};
+        \begin{scope}[shift={(5.5, 2.5)}]
+            \node[magnify, minimum width=3cm, minimum height=4.8cm] (mag_arch_box) at (0, 0) {};
             \node[above=0.03cm of mag_arch_box.north, font=\footnotesize\bfseries, text=orange!70!black] {\tiny Model Architectures};
             
             % Teacher architecture
-            \node[font=\tiny\bfseries, text=blue!70] at (0, 1.8) {Teacher (Frozen)};
-            \node[smallbox, fill=blue!8, draw=blue!50, font=\tiny, text width=2.4cm, minimum height=1.5cm] (teacher_arch) at (0, 0.8) {
+            \node[font=\tiny\bfseries, text=blue!70] at (0, 1.9) {Teacher (Frozen)};
+            \node[smallbox, fill=blue!8, draw=blue!50, font=\tiny, text width=2.4cm, minimum height=1.6cm] (teacher_arch) at (0, 0.85) {
                 \textbf{LM-TAD}\\[1pt]
                 {\scriptsize • Transformer (6 layers)}\\
                 {\scriptsize • Grid cell input}\\
@@ -179,11 +181,11 @@
             };
             
             % Separator
-            \draw[draw=gray!30] (-1.2, -0.15) -- (1.2, -0.15);
+            \draw[draw=gray!30] (-1.2, -0.2) -- (1.2, -0.2);
             
             % Student architecture  
-            \node[font=\tiny\bfseries, text=green!70!black] at (0, -0.6) {Student (Trainable)};
-            \node[smallbox, fill=green!8, draw=green!50, font=\tiny, text width=2.4cm, minimum height=1.5cm] (student_arch) at (0, -1.6) {
+            \node[font=\tiny\bfseries, text=green!70!black] at (0, -0.7) {Student (Trainable)};
+            \node[smallbox, fill=green!8, draw=green!50, font=\tiny, text width=2.4cm, minimum height=1.6cm] (student_arch) at (0, -1.75) {
                 \textbf{HOSER}\\[1pt]
                 {\scriptsize • Zone GCN}\\
                 {\scriptsize • Navigator network}\\
