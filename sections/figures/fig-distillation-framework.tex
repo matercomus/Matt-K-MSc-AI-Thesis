@@ -63,9 +63,8 @@
         };
         \draw[arrow] (candidates) -- (student);
         
-        % Arrow from input to HOSER: Route right, then up to HOSER east edge
-        \coordinate (input_to_student_mid) at ($(input.east)+(1.0,0)$);
-        \draw[arrow] (input.east) -- (input_to_student_mid) |- (student.east);
+        % Arrow from input to HOSER: Route right to HOSER south edge
+        \draw[arrow] (input) -| (student.south);
         
         % 5a. Teacher output
         \node[data, above=0.9cm of teacher, minimum width=2.3cm] (teacher_out) {
@@ -85,8 +84,8 @@
         \node[data, above=1.1cm of mapping, yshift=3.9cm, minimum width=3cm] (temp) {
             \textbf{Temperature Scaling}
         };
-        \draw[arrow] (teacher_out) |- (temp.west);
-        \draw[arrow] (student_out) |- (temp.east);
+        \draw[arrow] (teacher_out) -| (temp.west);
+        \draw[arrow] (student_out) -| (temp.east);
         
         % 7. Multi-task losses
         \node[loss, above left=0.9cm and 1.3cm of temp] (ce) {
@@ -101,13 +100,8 @@
         
         \draw[arrow] (temp) -- (kl);
         
-        % Input → Cross-Entropy: Route left, up, then right to CE west edge
-        % Clean vertical path with properly positioned label
-        \coordinate (labels_left) at ($(input.west)+(-1.7,0)$);
-        \coordinate (labels_up) at (labels_left |- ce.west);
-        \draw[arrow, dashed] (input.west) -- (labels_left) 
-            -- (labels_up) node[midway, rotate=90, above, font=\footnotesize] {labels} 
-            -- (ce.west);
+        % Input → Cross-Entropy: Route left to CE south edge with label
+        \draw[arrow, dashed] (input) -| node[pos=0.25, rotate=90, above, font=\footnotesize] {labels} (ce.south);
         
         % Logits → Time Loss: Route right to Time Loss east edge
         \draw[arrow, dashed] (student_out.east) -- ++(0.6,0) |- (time_loss.east);
