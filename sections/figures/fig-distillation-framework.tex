@@ -34,58 +34,33 @@
         };
         \draw[flowArrow] (input) -- (mapping);
         
-        % 3a. Grid sequence (left branch)
-        \node[data, above left=0.9cm and 1.9cm of mapping, minimum width=2.3cm] (grid) {
-            \textbf{Grid Sequence}
-        };
-        \draw[arrow] (mapping) -| (grid);
-        
-        % 3b. Candidate set (right branch)
-        \node[data, above right=0.9cm and 1.9cm of mapping, minimum width=2.3cm] (candidates) {
-            \textbf{Road Candidates}\\
-            {\footnotesize (Top-64)}
-        };
-        \draw[arrow] (mapping) -| (candidates);
-        
-        % 4a. Teacher model with winter icon
-        \node[frozen, above=0.9cm of grid, minimum width=2.8cm, minimum height=0.9cm] (teacher) {
+        % 3a. Teacher model with winter icon
+        \node[frozen, above left=2cm and 1.9cm of mapping, minimum width=2.8cm, minimum height=0.9cm] (teacher) {
             \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-winter-100.png}
-            \hspace{0.1cm}\textbf{LM-TAD}\\
-            {\footnotesize Transformer, Frozen}
+            \hspace{0.1cm}$\mathcal{L}_\phi$\\
+            {\footnotesize LM-TAD, Frozen}
         };
-        \draw[arrow] (grid) -- (teacher);
         
-        % 4b. Student model with fire icon
-        \node[trainable, above=0.9cm of candidates, minimum width=2.8cm, minimum height=0.9cm] (student) {
+        % 3b. Student model with fire icon
+        \node[trainable, above right=2cm and 1.9cm of mapping, minimum width=2.8cm, minimum height=0.9cm] (student) {
             \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-fire-100.png}
-            \hspace{0.1cm}\textbf{HOSER}\\
-            {\footnotesize GCN + Navigator, Trainable}
+            \hspace{0.1cm}$\mathcal{H}_\theta$\\
+            {\footnotesize HOSER, Trainable}
         };
-        \draw[arrow] (candidates) -- (student);
+        
+        % 4. Arrows with data flow labels
+        \draw[arrow] (mapping) -| node[pos=0.7, above, font=\footnotesize] {$\mathbf{z}_{1:t} \in \mathcal{Z}^t$} (teacher.south);
+        \draw[arrow] (mapping) -| node[pos=0.7, above, font=\footnotesize] {$\mathcal{C}_t \subseteq \mathcal{V}$} (student.south);
         
         % Arrow from input to HOSER: Route right to HOSER south edge
         \draw[arrow] (input) -| (student.south);
         
-        % 5a. Teacher output
-        \node[data, above=0.9cm of teacher, minimum width=2.3cm] (teacher_out) {
-            \textbf{Probabilities}\\
-            {\footnotesize (Teacher)}
-        };
-        \draw[arrow] (teacher) -- (teacher_out);
-        
-        % 5b. Student output
-        \node[data, above=0.9cm of student, minimum width=2.3cm] (student_out) {
-            \textbf{Logits}\\
-            {\footnotesize (Student)}
-        };
-        \draw[arrow] (student) -- (student_out);
-        
-        % 6. Temperature scaling - optimized spacing
+        % 5. Temperature scaling - optimized spacing
         \node[data, above=1.1cm of mapping, yshift=3.9cm, minimum width=3cm] (temp) {
             \textbf{Temperature Scaling}
         };
-        \draw[arrow] (teacher_out) -| (temp.west);
-        \draw[arrow] (student_out) -| (temp.east);
+        \draw[arrow] (teacher) -- ++(0,1.5) -| node[pos=0.15, above, font=\footnotesize] {$q^{(\tau)}$} (temp.west);
+        \draw[arrow] (student) -- ++(0,1.5) -| node[pos=0.15, above, font=\footnotesize] {$\boldsymbol{\ell}^{\mathcal{H}}$} (temp.east);
         
         % 7. Multi-task losses
         \node[loss, above left=0.9cm and 1.3cm of temp] (ce) {
@@ -103,8 +78,8 @@
         % Input → Cross-Entropy: Route left to CE south edge with label
         \draw[arrow, dashed] (input) -| node[pos=0.25, rotate=90, above, font=\footnotesize] {labels} (ce.south);
         
-        % Logits → Time Loss: Route right to Time Loss east edge
-        \draw[arrow, dashed] (student_out.east) -- ++(0.6,0) |- (time_loss.east);
+        % Logits → Time Loss: Route from student around to Time Loss
+        \draw[arrow, dashed] (student.east) -- ++(0.8,0) |- node[pos=0.85, right, font=\footnotesize] {$\hat{t}$} (time_loss.east);
         
         % 8. Total loss
         \node[loss, above=0.9cm of kl, minimum width=4.5cm, minimum height=0.8cm] (total) {
