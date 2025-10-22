@@ -10,9 +10,9 @@
         trainable/.style={mainbox, fill=green!12, draw=green!60},
         data/.style={mainbox, fill=gray!8, draw=gray!50},
         loss/.style={mainbox, fill=red!10, draw=red!50, minimum width=2cm},
-        % Arrow styles
-        arrow/.style={-{Stealth[scale=0.7]}, thick, draw=gray!70},
-        flowArrow/.style={-{Stealth[scale=0.8]}, very thick, draw=blue!60},
+        % Arrow styles - sleeker
+        arrow/.style={-{Stealth[scale=0.6]}, semithick, draw=gray!60},
+        flowArrow/.style={-{Stealth[scale=0.65]}, thick, draw=blue!50},
         ]
 
         % ===== MAIN PIPELINE (CENTER, BOTTOM TO TOP) =====
@@ -41,16 +41,18 @@
         };
         \draw[arrow] (mapping) -| (candidates);
         
-        % 4a. Teacher model
-        \node[frozen, above=1cm of grid, minimum width=2.8cm] (teacher) {
-            \textbf{LM-TAD}\\
+        % 4a. Teacher model with winter icon
+        \node[frozen, above=1cm of grid, minimum width=2.8cm, minimum height=0.9cm] (teacher) {
+            \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-winter-100.png}
+            \hspace{0.1cm}\textbf{LM-TAD}\\
             {\footnotesize Transformer, Frozen}
         };
         \draw[arrow] (grid) -- (teacher);
         
-        % 4b. Student model
-        \node[trainable, above=1cm of candidates, minimum width=2.8cm] (student) {
-            \textbf{HOSER}\\
+        % 4b. Student model with fire icon
+        \node[trainable, above=1cm of candidates, minimum width=2.8cm, minimum height=0.9cm] (student) {
+            \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-fire-100.png}
+            \hspace{0.1cm}\textbf{HOSER}\\
             {\footnotesize GCN + Navigator, Trainable}
         };
         \draw[arrow] (candidates) -- (student);
@@ -106,7 +108,7 @@
         \draw[arrow] (time_loss) |- (total.east);
         
         % 9. Gradient flow (top)
-        \draw[flowArrow, red!70, line width=1.1pt] (total) -- ++(0, 0.8) node[above, font=\normalsize\bfseries] {Backprop to Student};
+        \draw[flowArrow, red!60, line width=0.9pt] (total) -- ++(0, 0.8) node[above, font=\normalsize\bfseries] {Backprop to Student};
 
     \end{tikzpicture}
     \caption{Knowledge distillation framework with bottom-to-top information flow. The frozen teacher LM-TAD provides soft targets via temperature-scaled distributions over grid cells. The trainable student HOSER learns from hard labels (cross-entropy), auxiliary tasks (time prediction), and soft teacher knowledge (KL divergence). The road-grid mapping bridges the cross-vocabulary gap, enabling knowledge transfer despite architectural and vocabulary differences.}
