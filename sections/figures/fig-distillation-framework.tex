@@ -1,103 +1,77 @@
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}[
-        % Layout structure:
-        % - Input at origin (0,0)
-        % - Vertical spacing: ~0.9cm between layers  
-        % - Horizontal spacing: ±1.9cm for branches
-        % - Left margin: -1.7cm for label path
-        % - Temperature layer: yshift=3.9cm
-        % Base styles
-        node distance=0.9cm and 2.1cm,
-        every node/.style={font=\small},
-        % Box styles (professional colors)
-        mainbox/.style={draw, rectangle, rounded corners=2pt, minimum width=2.5cm, minimum height=0.7cm, align=center, line width=0.5pt},
-        frozen/.style={mainbox, fill=blue!12, draw=blue!60, dashed, line width=0.6pt},
-        trainable/.style={mainbox, fill=green!12, draw=green!60},
-        data/.style={mainbox, fill=gray!8, draw=gray!50},
-        loss/.style={mainbox, fill=red!10, draw=red!50, minimum width=2cm},
-        % Arrow styles - sleeker
-        arrow/.style={-{Stealth[scale=0.6]}, semithick, draw=gray!60},
-        flowArrow/.style={-{Stealth[scale=0.65]}, thick, draw=blue!50},
+        % Styles
+        node distance=2.2cm,
+        box/.style={draw, thick, rectangle, rounded corners=5pt, minimum height=0.8cm, align=center, line width=0.8pt},
+        student/.style={box, fill=green!12, draw=green!70, minimum width=2.8cm},
+        loss/.style={box, fill=red!10, draw=red!60, minimum width=2.5cm},
+        teacher/.style={box, fill=blue!10, draw=blue!60, dashed, minimum width=2.5cm},
+        input/.style={box, fill=gray!10, draw=gray!60, minimum width=2.8cm},
+        distillbox/.style={draw, dashed, thick, rounded corners=8pt, draw=orange!60},
+        arrow/.style={->, thick, >=stealth},
+        looparrow/.style={arrow, line width=1.8pt, draw=red!70},
+        knowledge/.style={arrow, draw=purple!70},
         ]
 
-        % ===== MAIN PIPELINE (CENTER, BOTTOM TO TOP) =====
-        
-        % 1. Input (bottom)
-        \node[data] (input) at (0, 0) {
-            \textbf{Input Trajectory}
+        % Nodes
+        \node[input] (input) {
+            \textbf{Input Trajectory}\\
+            {\footnotesize $\mathbf{r}_{1:t}$}
         };
         
-        % 2. Vocabulary Mapping
-        \node[data, above=0.9cm of input] (mapping) {
-            \textbf{Road-Grid Mapping}
-        };
-        \draw[flowArrow] (input) -- (mapping);
-        
-        % 3a. Teacher model with winter icon
-        \node[frozen, above left=2cm and 1.9cm of mapping, minimum width=2.8cm, minimum height=0.9cm] (teacher) {
-            \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-winter-100.png}
-            \hspace{0.1cm}$\mathcal{L}_\phi$\\
-            {\footnotesize LM-TAD, Frozen}
+        \node[student, above=2cm of input] (hoser) {
+            \textbf{Student} $\mathcal{H}_\theta$\\
+            {\tiny HOSER (trainable)}
         };
         
-        % 3b. Student model with fire icon
-        \node[trainable, above right=2cm and 1.9cm of mapping, minimum width=2.8cm, minimum height=0.9cm] (student) {
-            \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-fire-100.png}
-            \hspace{0.1cm}$\mathcal{H}_\theta$\\
-            {\footnotesize HOSER, Trainable}
+        \node[loss, above left=1.8cm and 1.5cm of hoser] (celoss) {
+            $\mathcal{L}_{\text{CE}} + \alpha\mathcal{L}_{\text{time}}$\\
+            {\tiny Supervised losses}
         };
         
-        % 4. Arrows with data flow labels
-        \draw[arrow] (mapping) -| node[pos=0.7, above, font=\footnotesize] {$\mathbf{z}_{1:t} \in \mathcal{Z}^t$} (teacher.south);
-        \draw[arrow] (mapping) -| node[pos=0.7, above, font=\footnotesize] {$\mathcal{C}_t \subseteq \mathcal{V}$} (student.south);
-        
-        % Arrow from input to HOSER: Route FAR right around all boxes
-        \coordinate (input_right) at ($(input.east)+(0.3,0)$);
-        \coordinate (student_right) at ($(student.east)+(0.5,0)$);
-        \draw[arrow] (input.east) -- (input_right) |- (student_right) -- (student.east);
-        
-        % 5. Temperature scaling - optimized spacing
-        \node[data, above=1.1cm of mapping, yshift=3.9cm, minimum width=3cm] (temp) {
-            \textbf{Temperature Scaling}
-        };
-        \draw[arrow] (teacher) -- ++(0,1.5) -| node[pos=0.15, above, font=\footnotesize] {$q^{(\tau)}$} (temp.west);
-        \draw[arrow] (student) -- ++(0,1.5) -| node[pos=0.15, above, font=\footnotesize] {$\boldsymbol{\ell}^{\mathcal{H}}$} (temp.east);
-        
-        % 7. Multi-task losses
-        \node[loss, above left=0.9cm and 1.3cm of temp] (ce) {
-            \textbf{Cross-Entropy}
-        };
-        \node[loss, above=0.9cm of temp] (kl) {
-            \textbf{KL Divergence}
-        };
-        \node[loss, above right=0.9cm and 1.3cm of temp] (time_loss) {
-            \textbf{Time Loss}
+        \node[loss, above right=1.5cm and 0.6cm of hoser] (kl) {
+            $\mathcal{L}_{\text{KL}}^{(\tau)}$\\
+            {\tiny Distillation}
         };
         
-        \draw[arrow] (temp) -- (kl);
+        \node[teacher, right=2cm of kl] (lmtad) {
+            \textbf{Teacher} $\mathcal{L}_\phi$\\
+            {\tiny LM-TAD (frozen)}
+        };
         
-        % Input → Cross-Entropy: Route FAR left around all boxes with label
-        \coordinate (input_left) at ($(input.west)+(-0.3,0)$);
-        \coordinate (ce_left) at ($(ce.west)+(-0.5,0)$);
-        \draw[arrow, dashed] (input.west) -- (input_left) |- (ce_left) node[pos=0.5, rotate=90, above, font=\footnotesize] {labels} -- (ce.west);
-        
-        % Logits → Time Loss: Route from student around to Time Loss
-        \draw[arrow, dashed] (student.east) -- ++(0.8,0) |- node[pos=0.85, right, font=\footnotesize] {$\hat{t}$} (time_loss.east);
-        
-        % 8. Total loss
-        \node[loss, above=0.9cm of kl, minimum width=4.5cm, minimum height=0.8cm] (total) {
+        \node[loss, above=2.8cm of hoser, minimum width=3.5cm] (total) {
             \textbf{Total Loss}\\
-            {\footnotesize Weighted Combination}
+            {\footnotesize $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda \mathcal{L}_{\text{KL}}^{(\tau)} + \alpha \mathcal{L}_{\text{time}}$}
         };
-        \draw[arrow] (ce) |- (total.west);
-        \draw[arrow] (kl) -- (total);
-        \draw[arrow] (time_loss) |- (total.east);
         
-        % 9. Gradient flow (top)
-        \draw[flowArrow, red!60, line width=0.9pt] (total) -- ++(0, 0.8) node[above, font=\normalsize\bfseries] {Backprop to Student};
+        % Knowledge Distillation box
+        \node[distillbox, fit=(kl)(lmtad), inner sep=0.3cm, label={[font=\small\bfseries, text=orange!80]above:Knowledge Distillation}] (kdbox) {};
+        
+        % Arrows with labels
+        \draw[arrow] (input) -- node[right, font=\tiny] {$\psi(\mathbf{r})$} (hoser);
+        
+        \draw[arrow] (hoser.150) -- node[left, font=\tiny] {predictions} (celoss.south);
+        
+        \draw[arrow] (hoser.30) -- node[right, font=\tiny] {$p^{(\tau)}$} (kl.south);
+        
+        \draw[knowledge] (lmtad) -- node[above, font=\tiny] {$q^{(\tau)}$} (kl);
+        
+        \draw[arrow] (celoss) |- (total.200);
+        \draw[arrow] (kl) |- (total.340);
+        
+        % Training loop - simpler arc
+        \draw[looparrow, bend left=50] (total.west) to node[left, align=center] {
+            \textbf{Training Loop}\\
+            {\tiny $\theta \leftarrow \theta - \eta\nabla_\theta\mathcal{L}$}
+        } (hoser.west);
+        
+        % Temperature scaling note
+        \node[text=orange!70, font=\tiny, align=center] at ($(kl)+(0,-0.6)$) {
+            $\tau$-scaled\\softmax
+        };
 
     \end{tikzpicture}
-    \caption{Knowledge distillation framework with bottom-to-top information flow. The frozen teacher LM-TAD provides soft targets via temperature-scaled distributions over grid cells. The trainable student HOSER learns from hard labels (cross-entropy), auxiliary tasks (time prediction), and soft teacher knowledge (KL divergence). The road-grid mapping bridges the cross-vocabulary gap, enabling knowledge transfer despite architectural and vocabulary differences.}
+    \caption{Knowledge distillation framework for trajectory prediction. The student model $\mathcal{H}_\theta$ (HOSER) learns from both supervised losses and knowledge distillation from the frozen teacher $\mathcal{L}_\phi$ (LM-TAD). Temperature scaling with parameter $\tau$ softens the probability distributions $q^{(\tau)}$ and $p^{(\tau)}$ to enable effective knowledge transfer. The training loop optimizes only the student parameters $\theta$ via gradient descent.}
     \label{fig:distillation-framework}
 \end{figure}
