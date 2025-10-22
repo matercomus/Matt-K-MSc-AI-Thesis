@@ -52,8 +52,10 @@
         \draw[arrow] (mapping) -| node[pos=0.7, above, font=\footnotesize] {$\mathbf{z}_{1:t} \in \mathcal{Z}^t$} (teacher.south);
         \draw[arrow] (mapping) -| node[pos=0.7, above, font=\footnotesize] {$\mathcal{C}_t \subseteq \mathcal{V}$} (student.south);
         
-        % Arrow from input to HOSER: Route right to HOSER south edge
-        \draw[arrow] (input) -| (student.south);
+        % Arrow from input to HOSER: Route FAR right around all boxes
+        \coordinate (input_right) at ($(input.east)+(0.3,0)$);
+        \coordinate (student_right) at ($(student.east)+(0.5,0)$);
+        \draw[arrow] (input.east) -- (input_right) |- (student_right) -- (student.east);
         
         % 5. Temperature scaling - optimized spacing
         \node[data, above=1.1cm of mapping, yshift=3.9cm, minimum width=3cm] (temp) {
@@ -75,8 +77,10 @@
         
         \draw[arrow] (temp) -- (kl);
         
-        % Input → Cross-Entropy: Route left to CE south edge with label
-        \draw[arrow, dashed] (input) -| node[pos=0.25, rotate=90, above, font=\footnotesize] {labels} (ce.south);
+        % Input → Cross-Entropy: Route FAR left around all boxes with label
+        \coordinate (input_left) at ($(input.west)+(-0.3,0)$);
+        \coordinate (ce_left) at ($(ce.west)+(-0.5,0)$);
+        \draw[arrow, dashed] (input.west) -- (input_left) |- (ce_left) node[pos=0.5, rotate=90, above, font=\footnotesize] {labels} -- (ce.west);
         
         % Logits → Time Loss: Route from student around to Time Loss
         \draw[arrow, dashed] (student.east) -- ++(0.8,0) |- node[pos=0.85, right, font=\footnotesize] {$\hat{t}$} (time_loss.east);
