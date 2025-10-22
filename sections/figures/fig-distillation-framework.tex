@@ -22,41 +22,41 @@
         % 1. Input (bottom)
         \node[data] (input) at (0, 0) {
             \textbf{Input}\\
-            {\tiny $\mathbf{r}_{1:t}$}
+            {\tiny Trajectory}
         };
         
         % 2. Vocabulary Mapping
         \node[data, above=0.9cm of input] (mapping) {
-            \textbf{Mapping} $\psi$\\
-            {\tiny $\mathcal{V} \rightarrow \mathcal{Z}$}
+            \textbf{Mapping}\\
+            {\tiny Road to Grid}
         };
         \draw[flowArrow] (input) -- (mapping);
         
         % 3a. Grid sequence (left branch)
         \node[data, above left=0.9cm and 1.8cm of mapping, minimum width=2cm] (grid) {
-            Grid\\
-            {\tiny $\mathbf{z}_{1:t}$}
+            \textbf{Grid}\\
+            {\tiny Sequence}
         };
         \draw[arrow] (mapping) -| (grid);
         
         % 3b. Candidate set (right branch)
         \node[data, above right=0.9cm and 1.8cm of mapping, minimum width=2cm] (candidates) {
-            Candidates\\
-            {\tiny $\mathcal{C}_t$}
+            \textbf{Candidates}\\
+            {\tiny Top-64}
         };
         \draw[arrow] (mapping) -| (candidates);
         
         % 4a. Teacher model
         \node[frozen, above=0.9cm of grid, minimum width=2.5cm] (teacher) {
-            \textbf{Teacher} $\mathcal{L}_\phi$\\
-            {\tiny Transformer, \textit{Frozen}}
+            \textbf{Teacher}\\
+            {\tiny Transformer, Frozen}
         };
         \draw[arrow] (grid) -- (teacher);
         
         % 4b. Student model
         \node[trainable, above=0.9cm of candidates, minimum width=2.5cm] (student) {
-            \textbf{Student} $\mathcal{H}_\theta$\\
-            {\tiny GCN + Navigator, \textit{Trainable}}
+            \textbf{Student}\\
+            {\tiny GCN + Navigator, Trainable}
         };
         \draw[arrow] (candidates) -- (student);
         % Arrow from input to student
@@ -64,38 +64,38 @@
         
         % 5a. Teacher output
         \node[data, above=0.9cm of teacher, minimum width=2cm] (teacher_out) {
-            Teacher Probs\\
-            {\tiny $q_t$}
+            \textbf{Teacher}\\
+            {\tiny Probabilities}
         };
         \draw[arrow] (teacher) -- (teacher_out);
         
         % 5b. Student output
         \node[data, above=0.9cm of student, minimum width=2cm] (student_out) {
-            Student Logits\\
-            {\tiny $\ell_t$}
+            \textbf{Student}\\
+            {\tiny Logits}
         };
         \draw[arrow] (student) -- (student_out);
         
         % 6. Temperature scaling
         \node[data, above=1.3cm of mapping, yshift=5cm, minimum width=2.8cm] (temp) {
-            \textbf{Temp Scaling} $\tau$\\
-            {\tiny $q_t^{(\tau)}, p_t^{(\tau)}$}
+            \textbf{Temperature}\\
+            {\tiny Scaling}
         };
         \draw[arrow] (teacher_out) |- (temp.west);
         \draw[arrow] (student_out) |- (temp.east);
         
         % 7. Multi-task losses
         \node[loss, above left=1.0cm and 1.2cm of temp] (ce) {
-            $\mathcal{L}_{\text{CE}}$\\
-            {\tiny Cross-entropy}
+            \textbf{Cross}\\
+            {\tiny Entropy}
         };
         \node[loss, above=1.0cm of temp] (kl) {
-            $\mathcal{L}_{\text{KL}}$\\
-            {\tiny KL divergence}
+            \textbf{KL}\\
+            {\tiny Divergence}
         };
         \node[loss, above right=1.0cm and 1.2cm of temp] (time_loss) {
-            $\mathcal{L}_{\text{time}}$\\
-            {\tiny Time MAPE}
+            \textbf{Time}\\
+            {\tiny MAPE}
         };
         
         \draw[arrow] (temp) -- (kl);
@@ -108,7 +108,7 @@
         % 8. Total loss
         \node[loss, above=1.0cm of kl, minimum width=4cm, minimum height=0.75cm] (total) {
             \textbf{Total Loss}\\
-            {\tiny $\mathcal{L} = \mathcal{L}_{\text{CE}} + \alpha \mathcal{L}_{\text{time}} + \lambda \mathcal{L}_{\text{KL}}$}
+            {\tiny Weighted Combination}
         };
         \draw[arrow] (ce) |- (total.west);
         \draw[arrow] (kl) -- (total);
