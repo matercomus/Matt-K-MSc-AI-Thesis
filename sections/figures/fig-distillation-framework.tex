@@ -195,12 +195,6 @@
         % Dashed lines connecting magnification to main models
         \draw[dashed_connect] (mag_arch_box.west) -- (teacher.east);
         \draw[dashed_connect] (mag_arch_box.south west) -- (student.east);
-        
-        
-        % ===== BACKGROUND BOX FOR MAIN PIPELINE =====
-        \begin{scope}[on background layer]
-            \node[draw=gray!20, fill=gray!3, fit=(input) (total), inner sep=0.45cm, rounded corners=4pt] {};
-        \end{scope}
 
     \end{tikzpicture}
     \caption{Knowledge distillation framework with bottom-to-top information flow. The frozen teacher $\mathcal{L}_\phi$ provides soft targets via temperature-scaled distributions over grid cells. The trainable student $\mathcal{H}_\theta$ learns from hard labels (cross-entropy), auxiliary tasks (time prediction), and soft teacher knowledge (KL divergence). The vocabulary mapping $\psi$ bridges the cross-vocabulary gap between road segments and grid cells, enabling knowledge transfer despite architectural and vocabulary differences.}
