@@ -56,8 +56,8 @@
             {\footnotesize GCN + Navigator, Trainable}
         };
         \draw[arrow] (candidates) -- (student);
-        % Arrow from input to student
-        \draw[arrow] (input.east) -- ++(0.8,0) |- (student.south east);
+        % Arrow from input to student - end at left edge
+        \draw[arrow] (input.east) -- ++(0.8,0) |- (student.west);
         
         % 5a. Teacher output
         \node[data, above=1cm of teacher, minimum width=2.3cm] (teacher_out) {
@@ -92,11 +92,11 @@
         };
         
         \draw[arrow] (temp) -- (kl);
-        % Ground truth to CE
+        % Ground truth to CE - end at right edge
         \coordinate (gt_point) at ([xshift=-1.7cm]input.west);
-        \draw[arrow, dashed] (input.west) -- (gt_point) |- (ce.south) node[pos=0.88, left, font=\footnotesize] {labels};
-        % Student output to time loss  
-        \draw[arrow, dashed] (student_out.east) -- ++(0.7,0) |- (time_loss.south);
+        \draw[arrow, dashed] (input.west) -- (gt_point) |- (ce.east) node[pos=0.88, left, font=\footnotesize] {labels};
+        % Student output to time loss - end at right edge
+        \draw[arrow, dashed] (student_out.east) -- ++(0.7,0) |- (time_loss.east);
         
         % 8. Total loss
         \node[loss, above=1.1cm of kl, minimum width=4.5cm, minimum height=0.8cm] (total) {
