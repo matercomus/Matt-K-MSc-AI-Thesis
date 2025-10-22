@@ -92,9 +92,9 @@
         };
         
         \draw[arrow] (temp) -- (kl);
-        % Ground truth to CE - end at right edge
-        \coordinate (gt_point) at ([xshift=-1.7cm]input.west);
-        \draw[arrow, dashed] (input.west) -- (gt_point) |- (ce.east) node[pos=0.88, left, font=\footnotesize] {labels};
+        % Ground truth to CE - route around to avoid overlap
+        \coordinate (gt_point) at ([xshift=-2.5cm]input.west);
+        \draw[arrow, dashed] (input.west) -- (gt_point) |- (ce.south) node[pos=0.9, left, font=\footnotesize] {labels};
         % Student output to time loss - end at right edge
         \draw[arrow, dashed] (student_out.east) -- ++(0.7,0) |- (time_loss.east);
         
