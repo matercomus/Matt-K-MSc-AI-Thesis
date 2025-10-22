@@ -25,50 +25,51 @@
             {\tiny HOSER (trainable)}
         };
         
-        \node[loss, above left=1.8cm and 1.5cm of hoser] (celoss) {
-            $\mathcal{L}_{\text{CE}} + \alpha\mathcal{L}_{\text{time}}$\\
-            {\tiny Supervised losses}
-        };
-        
-        \node[loss, above right=1.5cm and 0.6cm of hoser] (kl) {
-            $\mathcal{L}_{\text{KL}}^{(\tau)}$\\
-            {\tiny Distillation}
-        };
-        
-        \node[teacher, right=2cm of kl] (lmtad) {
+        \node[teacher, right=2cm of hoser] (lmtad) {
             \textbf{Teacher} $\mathcal{L}_\phi$\\
             {\tiny LM-TAD (frozen)}
         };
         
-        \node[loss, above=2.8cm of hoser, minimum width=3.5cm] (total) {
+        \node[loss, above=1.5cm of hoser] (celoss) {
+            $\mathcal{L}_{\text{CE}} + \alpha\mathcal{L}_{\text{time}}$\\
+            {\tiny Supervised losses}
+        };
+        \node[loss, above right=1.5cm and 2cm of hoser] (kl) {
+            $\mathcal{L}_{\text{KL}}^{(\tau)}$\\
+            {\tiny Distillation}
+        };
+        
+        \node[loss, above=1.8cm of $(celoss)!0.5!(kl)$, minimum width=3.5cm] (total) {
             \textbf{Total Loss}\\
             {\footnotesize $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda \mathcal{L}_{\text{KL}}^{(\tau)} + \alpha \mathcal{L}_{\text{time}}$}
         };
         
-        % Knowledge Distillation box
-        \node[distillbox, fit=(kl)(lmtad), inner sep=0.3cm, label={[font=\small\bfseries, text=orange!80]above:Knowledge Distillation}] (kdbox) {};
+        % Knowledge Distillation box - made bigger
+        \node[distillbox, fit=(kl)(lmtad), inner sep=0.4cm, inner ysep=0.6cm, label={[font=\small\bfseries, text=orange!80]below:Knowledge Distillation}] (kdbox) {};
         
         % Arrows with labels
-        \draw[arrow] (input) -- node[right, font=\tiny] {$\psi(\mathbf{r})$} (hoser);
+        \draw[arrow] (input) -- node[right, font=\tiny] {roads} (hoser);
+
+        \draw[arrow] (input.east) -| node[pos=0.15, right, font=\tiny] {$\psi(\mathbf{r})$} (lmtad);
         
-        \draw[arrow] (hoser.150) -- node[left, font=\tiny] {predictions} (celoss.south);
+        \draw[arrow] (hoser) -- node[left, font=\tiny] {predictions} (celoss);
         
-        \draw[arrow] (hoser.30) -- node[right, font=\tiny] {$p^{(\tau)}$} (kl.south);
+        \draw[arrow] (hoser.north east) -- node[above left, font=\tiny] {$p^{(\tau)}$} (kl.south west);
         
-        \draw[knowledge] (lmtad) -- node[above, font=\tiny] {$q^{(\tau)}$} (kl);
+        \draw[knowledge] (lmtad.north east) -- node[above right, font=\tiny] {$q^{(\tau)}$} (kl.south east);
         
-        \draw[arrow] (celoss) |- (total.200);
-        \draw[arrow] (kl) |- (total.340);
+        \draw[arrow] (celoss) -- (total);
+        \draw[arrow] (kl) -- (total);
         
-        % Training loop - simpler arc
-        \draw[looparrow, bend left=50] (total.west) to node[left, align=center] {
+        % Training loop - arc on the left side
+        \draw[looparrow] (total.west) -- ++(-2.5,0) |- (hoser.west) node[pos=0.2, left, align=center] {
             \textbf{Training Loop}\\
             {\tiny $\theta \leftarrow \theta - \eta\nabla_\theta\mathcal{L}$}
-        } (hoser.west);
+        };
         
-        % Temperature scaling note
-        \node[text=orange!70, font=\tiny, align=center] at ($(kl)+(0,-0.6)$) {
-            $\tau$-scaled\\softmax
+        % Temperature scaling note - inside KD box, below KL
+        \node[text=orange!70, font=\tiny, align=center] at ($(kl)+(0,-0.9)$) {
+            $\tau$-scaled softmax
         };
 
     \end{tikzpicture}
