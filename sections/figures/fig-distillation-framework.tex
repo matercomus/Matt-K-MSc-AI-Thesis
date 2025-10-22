@@ -1,75 +1,70 @@
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}[
-        % Styles
-        node distance=2.2cm,
-        box/.style={draw, thick, rectangle, rounded corners=5pt, minimum height=0.8cm, align=center, line width=0.8pt},
-        student/.style={box, fill=green!12, draw=green!70, minimum width=2.8cm},
-        loss/.style={box, fill=red!10, draw=red!60, minimum width=2.5cm},
-        teacher/.style={box, fill=blue!10, draw=blue!60, dashed, minimum width=2.5cm},
-        input/.style={box, fill=gray!10, draw=gray!60, minimum width=2.8cm},
-        distillbox/.style={draw, dashed, thick, rounded corners=8pt, draw=orange!60},
-        arrow/.style={->, thick, >=stealth},
-        looparrow/.style={arrow, line width=1.8pt, draw=red!70},
-        knowledge/.style={arrow, draw=purple!70},
+            % Styles
+            node distance=2.2cm,
+            box/.style={draw, thick, rectangle, rounded corners=5pt, minimum height=0.8cm, align=center, line width=0.8pt},
+            student/.style={box, fill=green!12, draw=green!70, minimum width=2.8cm},
+            loss/.style={box, fill=red!10, draw=red!60, minimum width=2.5cm},
+            teacher/.style={box, fill=blue!10, draw=blue!60, minimum width=2.5cm},
+            input/.style={box, fill=gray!10, draw=gray!60, minimum width=2.8cm},
+            distillbox/.style={draw, dashed, thick, rounded corners=8pt, draw=orange!60},
+            arrow/.style={->, thick, >=stealth},
+            looparrow/.style={arrow, line width=1.8pt, draw=red!70, dashed, rounded corners=5pt},
+            knowledge/.style={arrow, draw=purple!70},
         ]
 
         % Nodes
         \node[input] (input) {
-            \textbf{Input Trajectory}\\
-            {\footnotesize $\mathbf{r}_{1:t}$}
+        \textbf{Input Trajectory}\\
+        {\footnotesize $\mathbf{r}_{1:t}$}
         };
-        
-        \node[student, above=2cm of input] (hoser) {
-            \textbf{Student} $\mathcal{H}_\theta$\\
-            {\tiny HOSER (trainable)}
-        };
-        
-        \node[teacher, right=2cm of hoser] (lmtad) {
-            \textbf{Teacher} $\mathcal{L}_\phi$\\
-            {\tiny LM-TAD (frozen)}
-        };
-        
-        \node[loss, above=1.5cm of hoser] (celoss) {
-            $\mathcal{L}_{\text{CE}} + \alpha\mathcal{L}_{\text{time}}$\\
-            {\tiny Supervised losses}
-        };
-        \node[loss, above right=1.5cm and 2cm of hoser] (kl) {
-            $\mathcal{L}_{\text{KL}}^{(\tau)}$\\
-            {\tiny Distillation}
-        };
-        
-        \node[loss, above=1.8cm of $(celoss)!0.5!(kl)$, minimum width=3.5cm] (total) {
-            \textbf{Total Loss}\\
-            {\footnotesize $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda \mathcal{L}_{\text{KL}}^{(\tau)} + \alpha \mathcal{L}_{\text{time}}$}
-        };
-        
-        % Knowledge Distillation box - made bigger
-        \node[distillbox, fit=(kl)(lmtad), inner sep=0.4cm, inner ysep=0.6cm, label={[font=\small\bfseries, text=orange!80]below:Knowledge Distillation}] (kdbox) {};
-        
-        % Arrows with labels
-        \draw[arrow] (input) -- node[right, font=\tiny] {roads} (hoser);
 
-        \draw[arrow] (input.east) -| node[pos=0.15, right, font=\tiny] {$\psi(\mathbf{r})$} (lmtad);
-        
-        \draw[arrow] (hoser) -- node[left, font=\tiny] {predictions} (celoss);
-        
-        \draw[arrow] (hoser.north east) -- node[above left, font=\tiny] {$p^{(\tau)}$} (kl.south west);
-        
-        \draw[knowledge] (lmtad.north east) -- node[above right, font=\tiny] {$q^{(\tau)}$} (kl.south east);
-        
-        \draw[arrow] (celoss) -- (total);
-        \draw[arrow] (kl) -- (total);
-        
-        % Training loop - arc on the left side
-        \draw[looparrow] (total.west) -- ++(-2.5,0) |- (hoser.west) node[pos=0.2, left, align=center] {
-            \textbf{Training Loop}\\
-            {\tiny $\theta \leftarrow \theta - \eta\nabla_\theta\mathcal{L}$}
+        \node[student, above=2cm of input] (hoser) {
+        \textbf{Student} $\mathcal{H}_\theta$\\
+        {\small HOSER (trainable)}
         };
-        
-        % Temperature scaling note - inside KD box, below KL
-        \node[text=orange!70, font=\tiny, align=center] at ($(kl)+(0,-0.9)$) {
-            $\tau$-scaled softmax
+
+        \node[teacher, right=2cm of hoser] (lmtad) {
+        \textbf{Teacher} $\mathcal{L}_\phi$\\
+        {\small LM-TAD (frozen)}
+        };
+
+        \node[loss, above=1.5cm of hoser] (celoss) {
+        $\mathcal{L}_{\text{CE}} + \alpha\mathcal{L}_{\text{time}}$\\
+        {\small Supervised losses}
+        };
+        \node[loss, above=1.5cm of lmtad] (kl) {
+        $\mathcal{L}_{\text{KL}}^{(\tau)}$\\
+        {\small Distillation}
+        };
+
+        \node[loss, above=1.8cm of celoss, minimum width=3.5cm] (total) {
+        \textbf{Total Loss}\\
+        {\footnotesize $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda \mathcal{L}_{\text{KL}}^{(\tau)} + \alpha \mathcal{L}_{\text{time}}$}
+        };
+
+        % Knowledge Distillation box - made bigger
+        \node[distillbox, fit=(kl)(lmtad), inner sep=0.4cm, inner ysep=0.6cm, label={[font=\small\bfseries, text=orange!80]above:Knowledge Distillation}] (kdbox) {};
+
+        % Arrows with labels
+        \draw[arrow] (input) -- node[right, font=\small] {roads} (hoser);
+
+        \draw[arrow] (input.north east) -- node[below right, font=\small] {$\psi(\mathbf{r})$} (lmtad.south west);
+
+        \draw[arrow] (hoser) -- node[left, font=\small] {predictions} (celoss);
+
+        \draw[arrow] (hoser.north east) -- node[above left, font=\small] {$p^{(\tau)}$} (kl.south west);
+
+        \draw[knowledge] (lmtad.north) -- node[above right, font=\small] {$q^{(\tau)}$} (kl.south);
+
+        \draw[arrow] (celoss) -- (total);
+        \draw[arrow] (kl.north west) -- (total.south east);
+
+        % Rotate the training loop label 90 degrees counterclockwise
+        \draw[looparrow] (total.west) -- ++(-1,0) |- (hoser.west) node[pos=0.1, align=center, rotate=90] {
+        \textbf{Training Loop}\\
+        {\small $\theta \leftarrow \theta - \eta\nabla_\theta\mathcal{L}$}
         };
 
     \end{tikzpicture}
