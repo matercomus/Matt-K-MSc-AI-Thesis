@@ -50,14 +50,15 @@
         \draw[arrow] (grid) -- (teacher);
         
         % 4b. Student model with fire icon
-        \node[trainable, above=1cm of candidates, minimum width=2.8cm, minimum height=0.9cm] (student) {
+        \node[trainable, above=1cm of candidates, minimum width=2.8cm, minimum height=0.9cm, anchor=west] (student) {
             \includegraphics[height=0.35cm]{sections/figures/Icons8/icons8-fire-100.png}
             \hspace{0.1cm}\textbf{HOSER}\\
             {\footnotesize GCN + Navigator, Trainable}
         };
-        \draw[arrow] (candidates) -- (student);
-        % Arrow from input to student - end at right edge
-        \draw[arrow] (input.east) -- ++(0.8,0) |- (student.east);
+        \draw[arrow] (candidates) -- (student.west);
+        % Arrow from input to student - end at right edge with gentle bend
+        \coordinate (input_to_student_mid) at ($(input.east)+(1.1,0)$);
+        \draw[arrow] (input.east) -- (input_to_student_mid) |- (student.east);
         
         % 5a. Teacher output
         \node[data, above=1cm of teacher, minimum width=2.3cm] (teacher_out) {
@@ -74,7 +75,7 @@
         \draw[arrow] (student) -- (student_out);
         
         % 6. Temperature scaling - reduced spacing
-        \node[data, above=1.2cm of mapping, yshift=4.8cm, minimum width=3cm] (temp) {
+        \node[data, above=1.2cm of mapping, yshift=4.3cm, minimum width=3cm] (temp) {
             \textbf{Temperature Scaling}
         };
         \draw[arrow] (teacher_out) |- (temp.west);
@@ -92,10 +93,14 @@
         };
         
         \draw[arrow] (temp) -- (kl);
-        % Ground truth to CE - connect to left edge with properly positioned rotated label
-        \coordinate (gt_point) at ([xshift=-2.5cm]input.west);
-        \coordinate (gt_vertical_mid) at ([xshift=-2.5cm, yshift=5cm]input.west);
-        \draw[arrow, dashed] (input.west) -- (gt_point) -- (gt_vertical_mid) node[pos=0.5, rotate=90, above, font=\footnotesize] {labels} -- (gt_vertical_mid |- ce.west) -- (ce.west);
+        % Ground truth to CE - clean routed path with rotated label
+        \coordinate (labels_left) at ($(input.west)+(-1.6,0)$);
+        \coordinate (labels_up) at ($(labels_left)+(0,4.8)$);
+        \coordinate (ce_left) at ($(ce.west)+(-0.35,0)$);
+        \draw[arrow, dashed]
+            (input.west) -- (labels_left)
+            -- (labels_up) node[pos=0.6, rotate=90, above, font=\footnotesize] {labels}
+            -- (ce_left) -- (ce.west);
         % Student output to time loss - end at right edge
         \draw[arrow, dashed] (student_out.east) -- ++(0.7,0) |- (time_loss.east);
         
