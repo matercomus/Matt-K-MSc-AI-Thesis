@@ -62,7 +62,7 @@
         \draw[arrow] (kl.north west) -- (total.south east);
 
         % Rotate the training loop label 90 degrees counterclockwise
-        \draw[looparrow] (total.west) -- ++(-1,0) |- (hoser.west) node[pos=0.1, align=center, rotate=90] {
+        \draw[looparrow] (total.west) -- ++(-1,0) |- (hoser.west) node[pos=0.25, align=center, rotate=90, xshift=0pt, yshift=15pt] {
         \textbf{Training Loop}\\
         {\small $\theta \leftarrow \theta - \eta\nabla_\theta\mathcal{L}$}
         };
