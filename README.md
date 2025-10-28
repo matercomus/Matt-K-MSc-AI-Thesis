@@ -31,14 +31,15 @@ This thesis addresses the challenge of generating synthetic taxi trajectory data
 
 ## Compilation
 
-The project uses `latexmk` for automated building with artifacts directed to the `build/` directory.
+The project uses **LuaLaTeX** for compilation via `latexmk`, with build artifacts directed to the `build/` directory.
 
 ### Prerequisites
 
-- TeX Live or MiKTeX distribution
+- TeX Live or MiKTeX distribution (with LuaTeX support)
 - LaTeX Workshop extension (for VS Code/Cursor)
 - ChkTeX (for linting)
 - latexindent (for formatting)
+- `texlive-emoji` package (for emoji support)
 
 See `notes/SETUP.md` for detailed installation instructions.
 
@@ -47,13 +48,21 @@ See `notes/SETUP.md` for detailed installation instructions.
 **Using LaTeX Workshop (VS Code/Cursor):**
 - Press `Ctrl+Alt+B` to build
 - Build artifacts will be placed in `build/` directory
+- The configuration uses LuaLaTeX by default (see `.vscode/settings.json`)
 
 **Using Command Line:**
 ```bash
 latexmk -pdf main.tex
 ```
 
-The compiled PDF will be generated as `build/main.pdf` (or `main.pdf` in root if building manually).
+The compiled PDF will be generated as `build/main.pdf`.
+
+**Note:** This project requires **LuaLaTeX** (not pdfLaTeX) for:
+- Native UTF-8 support via `fontspec` package
+- Color emoji rendering in figures (🔥❄️)
+- Modern font handling
+
+The `.latexmkrc` configuration automatically uses LuaLaTeX when building.
 
 ## Bibliography Management
 
