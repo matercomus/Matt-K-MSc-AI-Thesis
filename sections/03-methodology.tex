@@ -20,7 +20,7 @@ Table~\ref{tab:notation} summarizes the mathematical notation used throughout th
         $\mathcal{G} = (\mathcal{V}, \mathcal{E})$                                         & Road network graph with $|\mathcal{V}|$ segments \\
         $\mathbf{r}_{1:t} = (r_1, \ldots, r_t)$                                            & Partial trajectory of $t$ road segments          \\
         $\mathcal{C}_t \subseteq \mathcal{V}$                                              & Candidate set at timestep $t$ (top-$k$ roads)    \\
-        $\mathcal{Z} = \{1, \ldots, V\}$                                                   & Grid cell vocabulary, $V = 51{,}663$             \\
+        $\mathcal{Z} = \{1, \ldots, V\}$                                                   & Grid cell vocabulary             \\
         \midrule
         $\mathcal{L}_\phi : \mathcal{Z}^w \to \Delta^{|\mathcal{Z}|}$                      & Teacher model (frozen)                           \\
         $\mathcal{H}_\theta : \mathcal{V}^t \times \mathcal{V} \to \Delta^{|\mathcal{C}|}$ & Student model (trainable)                        \\
@@ -76,7 +76,7 @@ Table~\ref{tab:notation} summarizes the mathematical notation used throughout th
 \subsubsection{Model Specifications}
 \label{sec:method-models}
 
-We transfer knowledge from the pre-trained LM-TAD teacher $\mathcal{L}_\phi$~\cite{mbuyaTrajectoryAnomalyDetection2024} to the HOSER student $\mathcal{H}_\theta$~\cite{caoHolisticSemanticRepresentation2025}. The teacher operates on grid cell sequences with vocabulary size $|\mathcal{Z}| = 51{,}663$, while the student predicts over $|\mathcal{V}| = 40{,}060$ road segments.
+We transfer knowledge from the pre-trained LM-TAD teacher $\mathcal{L}_\phi$~\cite{mbuyaTrajectoryAnomalyDetection2024} to the HOSER student $\mathcal{H}_\theta$~\cite{caoHolisticSemanticRepresentation2025}. The teacher operates on grid cell sequences with vocabulary size $|\mathcal{Z}| = V$, while the student predicts over $|\mathcal{V}|$ road segments.
 
 \input{sections/figures/fig-distillation-framework}
 
@@ -86,7 +86,7 @@ We transfer knowledge from the pre-trained LM-TAD teacher $\mathcal{L}_\phi$~\ci
 The cross-vocabulary mapping $\psi$ (\autoref{def:vocab-mapping}) enables knowledge transfer between the teacher's grid-based representation and the student's road-based representation. The mapping assigns each road segment to its containing grid cell based on centroid coordinates (detailed algorithm in \hyperref[app:vocab-mapping-alg]{Appendix~\ref*{app:vocab-mapping-alg}}).
 
 \begin{remark}[Many-to-One Mapping]
-    Multiple roads may map to the same grid cell, particularly in dense urban cores. On average, each grid cell corresponds to $|\mathcal{V}|/V \approx 0.78$ roads, though downtown cells may contain 5--10 road segments.
+    Multiple roads may correspond to a single grid cell, with higher density in urban cores.
 \end{remark}
 
 \subsubsection{Probability Renormalization}
@@ -139,7 +139,7 @@ The total loss combines supervised learning with knowledge distillation:
     \lambda \underbrace{\mathcal{L}_{\text{KL}}^{(\tau)}(q^{(\tau)}, p^{(\tau)})}_{\text{soft targets}}
     \label{eq:total-loss}
 \end{equation}
-where $\alpha = 0.1$ (fixed) and $\lambda \in [0.001, 0.1]$ (tuned).
+where $\alpha$ is fixed and $\lambda$ is tuned to balance supervised and distillation objectives.
 
 \subsection{Training Pipeline}
 \label{sec:method-training}
@@ -150,7 +150,7 @@ where $\alpha = 0.1$ (fixed) and $\lambda \in [0.001, 0.1]$ (tuned).
     \begin{algorithmic}[1]
         \Require Dataset $\mathcal{D}$, Teacher $\mathcal{L}_\phi$, Student $\mathcal{H}_\theta$, hyperparameters $\{\lambda, \tau, w, \eta\}$
         \Ensure Trained parameters $\theta^*$
-        \State Initialize $\theta \sim \mathcal{N}(0, 0.02)$
+        \State Initialize $\theta$ from normal distribution
         \For{epoch $= 1$ to $E$}
         \For{$(\mathbf{r}, y) \in \mathcal{D}$}
         \State $\mathbf{z} \gets \psi(\mathbf{r})$ \Comment{Map roads to grid cells}
@@ -171,6 +171,6 @@ The teacher parameters $\phi$ remain frozen throughout training. Per-iteration c
 \subsection{Inference and Evaluation}
 \label{sec:method-inference}
 
-At inference time, we employ only the trained student $\mathcal{H}_{\theta^*}$ with standard beam search (width $b=4$) to generate trajectories. Given origin-destination pair $(r_o, r_d)$, the student produces complete trajectories at $\sim$77 trajectories/second.
+At inference time, we employ only the trained student $\mathcal{H}_{\theta^*}$ with beam search to generate trajectories. Given origin-destination pair $(r_o, r_d)$, the student produces complete trajectories efficiently.
 
 We evaluate using global distribution metrics (Jensen-Shannon Divergence) and local trajectory metrics (Hausdorff, DTW, EDR) computed separately on training and test OD pairs. Full evaluation details are provided in \autoref{sec:eval-metrics}.
