@@ -4,23 +4,24 @@
             "name": "latexmk",
             "command": "latexmk",
             "args": [
-                "-pdf",
+                "-synctex=1",
                 "-interaction=nonstopmode",
                 "-file-line-error",
+                "-lualatex",
+                "-outdir=%OUTDIR%",
                 "%DOC%"
-            ],
-            "env": {}
+            ]
         }
     ],
     "latex-workshop.latex.recipes": [
         {
-            "name": "latexmk",
+            "name": "latexmk (lualatex)",
             "tools": [
                 "latexmk"
             ]
         }
     ],
-    "latex-workshop.latex.recipe.default": "latexmk",
+    "latex-workshop.latex.recipe.default": "latexmk (lualatex)",
     "latex-workshop.latex.outDir": "build",
     "latex-workshop.formatting.latex": "latexindent",
     "latex-workshop.formatting.latexindent.path": "latexindent",
