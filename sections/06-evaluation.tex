@@ -76,6 +76,21 @@ These metrics compare individual trajectory pairs with matching OD endpoints:
 
 We present comprehensive results for the Beijing HOSER reference dataset, comparing vanilla and distilled models across all metrics.
 
+\subsubsection{Catastrophic Vanilla Failure vs Distilled Success}
+
+The most critical finding is the dramatic difference in path completion capability demonstrated by the dramatic OD matching rates. Distilled models achieve \textbf{85.7--88.2\% OD matching rates}, indicating successful navigation to target destinations. In stark contrast, the vanilla baseline achieves only \textbf{12.1\% on test data}, failing to complete 88\% of trajectories. This represents a \textbf{+73-76 percentage point improvement} from distillation.
+
+\paragraph{Distribution Quality Improvements}
+Knowledge distillation produces dramatic improvements in trajectory realism:
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item \textbf{87--89\% reduction in Distance JSD}: Vanilla 0.145--0.153 $\to$ Distilled 0.016--0.022
+    \item \textbf{98\% reduction in Radius JSD}: Vanilla 0.198--0.206 $\to$ Distilled 0.003--0.004
+    \item \textbf{Realistic trip lengths}: Distilled generates 6.3--6.7 km trips (vs real 5.16 km baseline), while vanilla produces unrealistically short 2.3--2.4 km trips (55\% below real)
+\end{itemize}
+
+\paragraph{Scenario-Level Analysis}
+Distillation benefits are universal across spatial and temporal contexts. All 9 evaluated scenarios (city\_center, suburban, weekday, weekend, peak, off\_peak, within\_center, to\_center, from\_center) show large improvements, with long-distance navigation benefiting most: \texttt{from\_center} scenarios improve by $\Delta$ Distance JSD = $-0.242$, \texttt{to\_center} by $-0.196$.
+
 \subsubsection{Path Completion Success}
 
 Figure~\ref{fig:od-matching} shows the OD pair matching rates, our most critical metric revealing whether models can successfully navigate to destinations.
@@ -259,19 +274,28 @@ Figure~\ref{fig:performance-radar} synthesizes all metrics into a radar chart.
 \subsection{Results: Porto Dataset}
 \label{sec:eval-porto}
 
-\textcolor{red}{[EVALUATION IN PROGRESS - Porto hyperparameter tuning and distillation training are currently running. Results will be added upon completion.]}
+We evaluate on the Porto taxi dataset using Phase 1 optimal hyperparameters ($\lambda=0.00644$, $\tau=2.802$, $w=4$) identified through a 20-trial Optuna study. Three seeds were evaluated for both vanilla and distilled models (seeds 42, 43, 44), generating 5,000 trajectories per model.
 
-\textbf{Expected structure:}
-\begin{itemize}[noitemsep,topsep=0pt]
-    \item Path completion success (OD matching rates)
-    \item Distribution quality (JSD metrics for distance, radius)
-    \item Generalization analysis (train vs test OD pairs)
-    \item Seed robustness (cross-seed consistency)
-    \item Local trajectory metrics (Hausdorff, DTW, EDR)
-    \item Performance summary and comparison with Beijing results
+\subsubsection{Contrasting Behavior: Both Models Succeed}
+
+Unlike Beijing's catastrophic vanilla failure, Porto reveals fundamentally different dynamics:
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item \textbf{Vanilla}: 88.8\% $\pm$ 0.9\% OD match rate (test set, mean $\pm$ std across seeds)
+    \item \textbf{Distilled}: 86.9\% $\pm$ 2.9\% OD match rate
+    \item \textbf{Marginal distillation benefit}: Aggregate metrics show minimal or negative differences (Distance JSD: vanilla 0.0055 vs distilled 0.0060, +9\%; Radius JSD: vanilla 0.0106 vs distilled 0.0108, +2\%)
 \end{itemize}
 
-\textbf{Anticipated challenges:} Porto trajectories are longer (avg. 8.0 vs 4.6 road segments), requiring adjusted training configurations (reduced batch size, gradient checkpointing) due to quadratic memory scaling. The smaller road network (11,024 vs 40,060 segments) may affect spatial complexity.
+\subsubsection{Trajectory Length Hypothesis}
+
+Porto trajectories average 3.66 km (29\% shorter than Beijing's 5.16 km), making the navigation task more tractable for vanilla MLE-only training. Shorter trajectories require fewer sequential decisions, reducing cumulative error and allowing vanilla models to successfully reach targets without teacher guidance.
+
+\subsubsection{Scenario-Dependent Benefits}
+
+While aggregate metrics show marginal benefit, scenario-level analysis reveals context-dependent performance: distilled models excel in dense urban contexts (\texttt{within\_center}: $\Delta$ Dist JSD = $-0.0104$, distilled better), while vanilla excels in suburban areas (\texttt{suburban}: $\Delta$ Dist JSD = $+0.0074$, vanilla better). Teacher (LM-TAD) knowledge appears spatially localized to training context (city center).
+
+\subsubsection{Dataset-Specific Hyperparameters}
+
+Porto requires 4.3$\times$ higher $\lambda$ (0.00644 vs Beijing's 0.0014), 42\% lower $\tau$ (2.802 vs 4.37), and 43\% shorter window (4 vs 7). Memory constraints necessitated batch size reduction (32 vs Beijing's 128), creating an uncontrolled confound that prevents isolating whether hyperparameter divergence stems from dataset characteristics or batch size effects.
 
 \subsection{Results: Beijing Private (BJUT) Dataset}
 \label{sec:eval-bjut}
