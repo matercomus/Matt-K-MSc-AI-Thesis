@@ -337,15 +337,15 @@ Table~\ref{tab:dataset-stats-appendix} provides comprehensive statistics for all
         \quad Grid cells (LM-TAD)       & 51,660 (205$\times$252) & 6,164 (46$\times$134) \\
         \midrule
         \multicolumn{3}{l}{\textit{Trajectories}}                                    \\
-        \quad Training                  & 629,380                 & $\sim$481,359         \\
-        \quad Validation                & 78,673                  & [TBC]                 \\
-        \quad Test                      & 179,823                 & [TBC]                 \\
+        \quad Training                  & 629,380                 & 481,359               \\
+        \quad Validation                & 78,673                  & (see note)            \\
+        \quad Test                      & 179,823                 & 137,532               \\
         \quad Total                     & 887,876                 & $\sim$700,000         \\
         \midrule
         \multicolumn{3}{l}{\textit{Trajectory Characteristics}}                      \\
-        \quad Avg. length (roads)       & 4.6                     & $\sim$8.0             \\
-        \quad Avg. distance (km)        & 5.16                    & [TBC]                 \\
-        \quad Avg. duration (min)       & 28.2                    & [TBC]                 \\
+        \quad Avg. length (roads)       & 4.6                     & 8.0                   \\
+        \quad Avg. distance (km)        & 5.16                    & 3.66                  \\
+        \quad Avg. duration (min)       & 28.2                    & 12.3                  \\
         \quad Max length (roads)        & 1024 (truncated)        & 1024 (truncated)      \\
         \midrule
         \multicolumn{3}{l}{\textit{Preprocessing}}                                   \\
@@ -363,6 +363,8 @@ Table~\ref{tab:dataset-stats-appendix} provides comprehensive statistics for all
 
 \textbf{Note on trajectory length:} Porto trajectories are substantially longer than Beijing (8.0 vs 4.6 road segments on average), leading to quadratic memory scaling in attention mechanisms. This necessitates reduced batch sizes for Porto experiments (see \autoref{sec:impl-practical}).
 
+\textbf{Note on Porto validation set:} Porto validation split size is not explicitly documented in available evaluation reports. The dataset uses OD-stratified train/test splits with 481,359 training and 137,532 test trajectories. Validation split methodology follows the HOSER framework but specific counts are pending verification from source data.
+
 \subsubsection{Vocabulary Alignment Details}
 \label{app:vocab-stats}
 
@@ -377,7 +379,7 @@ Table~\ref{tab:vocab-alignment-appendix} summarizes vocabulary alignment charact
         \textbf{Dataset} & \textbf{Roads ($|\mathcal{V}|$)} & \textbf{Grid Size} & \textbf{Cells ($|Z|$)} & \textbf{Avg. Roads/Cell} \\
         \midrule
         Beijing          & 40,060                           & 205 $\times$ 252   & 51,660                 & 0.78                     \\
-        Porto            & 11,024                           & 46 $\times$ 134    & 6,164                  & [TBC]                    \\
+        Porto            & 11,024                           & 46 $\times$ 134    & 6,164                  & 1.79                     \\
         \bottomrule
     \end{tabular}
 \end{table}
