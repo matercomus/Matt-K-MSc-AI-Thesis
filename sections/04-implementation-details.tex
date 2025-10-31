@@ -52,7 +52,25 @@ Key configuration:
 
 \subsubsection{Optimal Configuration}
 
-The hyperparameter search yields an unexpected result: minimal distillation weight with high temperature proves most effective.
+The hyperparameter search identifies dataset-specific optimal values that demonstrate the necessity of per-dataset tuning.
+
+\paragraph{Beijing Dataset}
+A 12-trial CMA-ES optimization identified optimal values:
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item $\lambda = 0.0014$ (KL divergence weight)
+    \item $\tau = 4.37$ (temperature)
+    \item $w = 7$ (teacher context window, steps)
+\end{itemize}
+These hyperparameters achieve 57.24\% validation accuracy (marginal +0.01\% over vanilla's 57.23\%), yet produce dramatic generation quality improvements (85--89\% OD match rate vs vanilla's 12\%), as detailed in Section~\ref{sec:eval-beijing}. This disconnect between validation and generation metrics indicates that next-step prediction accuracy is a poor proxy for long-horizon trajectory realism, motivating multi-objective optimization approaches discussed in Section~\ref{sec:conclusion-future}.
+
+\paragraph{Porto Dataset}
+A 2-phase optimization (Phase 1: 20 trials broad exploration, Phase 2: 20 trials narrow refinement) identified:
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item \textbf{Phase 1}: $\lambda = 0.00644$, $\tau = 2.802$, $w = 4$ (validation acc 26.53\%, used for evaluation in Section~\ref{sec:eval-porto})
+    \item \textbf{Phase 2}: $\lambda = 0.00598$, $\tau = 2.515$, $w = 4$ (validation acc 26.55\%, +0.02\% improvement, full evaluation pending)
+\end{itemize}
+
+\textbf{Cross-dataset divergence}: Porto optimal hyperparameters differ significantly from Beijing---$\lambda$ is 4.3$\times$ higher (0.00644 vs 0.0014), $\tau$ is 42\% lower (2.802 vs 4.37), and $w$ is 43\% shorter (4 vs 7). This divergence demonstrates that cross-dataset hyperparameter transfer fails and per-dataset HPO studies are mandatory. The higher Porto $\lambda$ is counterintuitive given the easier task (vanilla achieves 88.8\% OD match vs Beijing's 12\%), potentially attributable to batch size reduction (32 vs 128) due to memory constraints with longer trajectories---an uncontrolled confound discussed in Section~\ref{sec:conclusion-future}.
 
 \begin{table}[h]
     \centering
