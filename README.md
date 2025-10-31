@@ -133,3 +133,18 @@ Vrije Universiteit Amsterdam
 
 This thesis is submitted in partial fulfillment of the requirements for the VU degree of Master of Science in Artificial Intelligence. All rights reserved.
 
+## Citation
+
+If you found this work useful, please consider citing it:
+
+```bibtex
+@mastersthesis{kedzia2025knowledge,
+  title     = {Knowledge Distillation for Map-Matched Trajectory Prediction: Improving Urban Route Prediction through Cross-Task Knowledge Transfer},
+  author    = {K{\k{e}}dzia, Mateusz},
+  school    = {Vrije Universiteit Amsterdam},
+  year      = {2025},
+  type      = {Master's thesis},
+  note      = {MSc in Artificial Intelligence}
+}
+```
+
