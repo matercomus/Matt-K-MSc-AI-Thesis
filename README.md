@@ -24,9 +24,8 @@ This thesis addresses the challenge of generating synthetic taxi trajectory data
 │   │   └── VU_logo.pdf
 │   └── plots/                 # Generated plots and figures
 ├── build/                     # LaTeX build artifacts (auto-generated)
-├── notes/                     # Markdown notes and documentation
-│   └── SETUP.md              # Development setup guide
-└── .cursor/                   # Cursor IDE configuration
+└── notes/                     # Markdown notes and documentation
+    └── SETUP.md              # Development setup guide
 ```
 
 ## Compilation
@@ -36,7 +35,6 @@ The project uses **LuaLaTeX** for compilation via `latexmk`, with build artifact
 ### Prerequisites
 
 - TeX Live or MiKTeX distribution (with LuaTeX support)
-- LaTeX Workshop extension (for VS Code/Cursor)
 - ChkTeX (for linting)
 - latexindent (for formatting)
 - `texlive-emoji` package (for emoji support)
@@ -45,12 +43,6 @@ See `notes/SETUP.md` for detailed installation instructions.
 
 ### Building the Document
 
-**Using LaTeX Workshop (VS Code/Cursor):**
-- Press `Ctrl+Alt+B` to build
-- Build artifacts will be placed in `build/` directory
-- The configuration uses LuaLaTeX by default (see `.vscode/settings.json`)
-
-**Using Command Line:**
 ```bash
 latexmk -pdf main.tex
 ```
@@ -84,7 +76,7 @@ The repository includes configuration files for code quality:
 
 ### Git Workflow
 
-This project follows conventional commit conventions with gitmojis. See `.cursor/rules/git-best-practices.mdc` for details.
+This project follows conventional commit conventions with gitmojis for clear version history.
 
 ## Project Status
 

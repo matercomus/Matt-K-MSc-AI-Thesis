@@ -17,8 +17,10 @@ build/
 *.bcf
 *.run.xml
 
-# Cursor AI workspace directory (entire directory not tracked)
+# IDE workspace directories and config files (not tracked)
 .cursor/
+.vscode/
+latex-workshop-config.json.template
 
 # Notes directory - documentation and references (not version controlled)
 notes/
