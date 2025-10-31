@@ -138,6 +138,17 @@ The reverse KL divergence has several desirable properties for knowledge distill
 
 The role of temperature in distillation has been extensively studied. Higher temperatures smooth the output distribution, enabling transfer of relational information between classes~\cite{hintonDistillingKnowledgeNeural2015}. Recent work on LLM distillation emphasizes that temperature helps preserve diversity in the target distribution, preventing the narrowing effect that can occur with aggressive supervision~\cite{singhORPODistillMixedPolicyPreference2025}. The optimal temperature is task- and dataset-dependent, requiring empirical tuning for each application.
 
+\paragraph{Hyperparameter Optimization}
+We employ Optuna with the CMA-ES sampler to identify optimal distillation hyperparameters for each dataset. The search space spans $\lambda \in [0.001, 0.1]$ (log scale), $\tau \in [1.0, 5.0]$ (linear scale), and window size $w \in [2, 8]$ (integer). For the Beijing dataset, a 12-trial optimization identified optimal values:
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item $\lambda = 0.0014$ (KL divergence weight)
+    \item $\tau = 4.37$ (temperature)
+    \item $w = 7$ (teacher context window, steps)
+\end{itemize}
+These hyperparameters achieve 57.24\% validation accuracy (marginal +0.01\% over vanilla's 57.23\%), yet produce dramatic generation quality improvements (85--89\% OD match rate vs vanilla's 12\%). This disconnect between validation and generation metrics indicates that next-step prediction accuracy is a poor proxy for long-horizon trajectory realism.
+
+\textbf{Dataset-specific tuning is mandatory}---Porto optimal hyperparameters diverge significantly from Beijing: $\lambda = 0.00598$ (4.3$\times$ higher), $\tau = 2.515$ (42\% lower), $w = 4$ (43\% shorter). Cross-dataset hyperparameter transfer fails, requiring per-dataset HPO study.
+
 \subsubsection{Combined Training Objective}
 
 The total loss combines supervised learning with knowledge distillation:
