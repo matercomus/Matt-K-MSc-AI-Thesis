@@ -1,31 +1,39 @@
-# Privacy-Preserving Synthetic Trajectory Generation for Taxi Route Anomaly Detection
+# Knowledge Distillation for Map-Matched Trajectory Prediction
 
 This repository contains the LaTeX source code for my Master's thesis in Artificial Intelligence at Vrije Universiteit Amsterdam.
 
 ## Research Overview
 
-This thesis addresses the challenge of generating synthetic taxi trajectory datasets that preserve essential characteristics for anomaly detection research while ensuring passenger privacy protection. The proposed framework integrates DiffTraj-based synthetic generation with LM-TAD anomaly detection to enable privacy-preserving research in urban transportation systems.
+This thesis addresses the challenge of improving fast trajectory prediction models through cross-task knowledge distillation. We transfer spatial understanding from LM-TAD (a trajectory anomaly detection model) to HOSER (a fast zone-based prediction model), achieving 85-89% path completion success (47-74× improvement over baseline) while maintaining fast inference speed (~0.1ms per trajectory). The work demonstrates that "normal trajectory" knowledge learned by anomaly detection models can dramatically improve route prediction without inference-time overhead, enabling practical deployment in real-time traffic management systems, urban digital twins, and large-scale simulations.
 
 ## Repository Structure
 
 ```
 .
 ├── main.tex                    # Main LaTeX document
-├── main.pdf                    # Compiled thesis (generated)
 ├── custom-commands.tex         # Custom LaTeX commands and formatting
-├── title_page.tex             # Thesis title page
-├── references_new.bib         # Bibliography file (managed via Zotero)
-├── llncs/                     # Springer LNCS template files
-│   ├── llncs.cls              # Document class
-│   ├── splncs04.bst           # Bibliography style
-│   └── ...                    # Sample files and documentation
-├── assets/                    # Images and figures
-│   ├── vu/                    # University branding
-│   │   └── VU_logo.pdf
-│   └── plots/                 # Generated plots and figures
-├── build/                     # LaTeX build artifacts (auto-generated)
-└── notes/                     # Markdown notes and documentation
-    └── SETUP.md              # Development setup guide
+├── references.bib              # Bibliography file (managed via Zotero)
+├── sections/                   # Thesis content sections
+│   ├── 00-title-page.tex       # Title page
+│   ├── 00-abstract.tex         # Abstract
+│   ├── 01-introduction.tex     # Introduction
+│   ├── 02-related-work.tex     # Literature review
+│   ├── 03-methodology.tex      # Methodology
+│   ├── 04-implementation-details.tex  # Implementation
+│   ├── 05-data-preprocessing.tex      # Data preprocessing
+│   ├── 06-evaluation.tex       # Evaluation and results
+│   ├── 07-conclusion.tex       # Conclusion
+│   ├── 08-appendix.tex         # Appendix
+│   └── figures/                # TikZ figure definitions
+├── llncs/                      # Springer LNCS template files
+│   ├── llncs.cls               # Document class
+│   ├── splncs04.bst            # Bibliography style
+│   └── ...                     # Sample files and documentation
+├── assets/plots/               # Generated plots and figures
+├── build/                      # LaTeX build artifacts (generated)
+│   ├── main.pdf                # Compiled thesis
+│   └── main.txt                # Text version for review
+└── notes/                      # Personal research notes (not tracked)
 ```
 
 ## Compilation
@@ -38,32 +46,41 @@ The project uses **LuaLaTeX** for compilation via `latexmk`, with build artifact
 - ChkTeX (for linting)
 - latexindent (for formatting)
 - `texlive-emoji` package (for emoji support)
-
-See `notes/SETUP.md` for detailed installation instructions.
+- `pdftotext` (for generating text version via `build-and-convert.sh`)
 
 ### Building the Document
 
 ```bash
-latexmk -pdf main.tex
+latexmk main.tex
 ```
 
 The compiled PDF will be generated as `build/main.pdf`.
 
-**Note:** This project requires **LuaLaTeX** (not pdfLaTeX) for:
+**Important:** Do not use the `-pdf` flag, as it forces pdfLaTeX mode. This project requires **LuaLaTeX** for:
 - Native UTF-8 support via `fontspec` package
 - Color emoji rendering in figures (🔥❄️)
 - Modern font handling
 
-The `.latexmkrc` configuration automatically uses LuaLaTeX when building.
+The `.latexmkrc` configuration automatically selects LuaLaTeX (`$pdf_mode = 4`) when building.
+
+### Alternative: Build and Convert to Text
+
+For full-document review and analysis:
+
+```bash
+./build-and-convert.sh
+```
+
+This builds the thesis and converts it to `build/main.txt` for easier searching and cross-section analysis.
 
 ## Bibliography Management
 
-References are managed through **Zotero** using the MCP (Model Context Protocol) integration. The `references_new.bib` file is exported from Zotero and should not be manually edited.
+References are managed through **Zotero**. The `references.bib` file is exported from Zotero and should not be manually edited.
 
 To update citations:
-1. Add/modify references in Zotero
-2. Export updated bibliography to `references_new.bib`
-3. Rebuild the document
+1. Add/modify references in Zotero library
+2. Export updated bibliography to `references.bib`
+3. Rebuild the document with `latexmk main.tex`
 
 ## Development Workflow
 
