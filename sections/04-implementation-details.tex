@@ -31,6 +31,8 @@ The LM-TAD teacher model is loaded from pre-trained checkpoints with vocabulary 
 
 We employ a systematic two-phase hyperparameter search using the Optuna framework~\cite{akibaOptunaNextgenerationHyperparameter2019} to identify optimal distillation parameters.
 
+The balance between distillation weight and temperature is non-trivial and task-dependent. Recent work demonstrates that minimal distillation weights can be effective when paired with appropriate temperature scaling: AdaSwitch~\cite{pengAdaSwitchAdaptiveSwitching2025} shows that minimal teacher intervention preserves student capacity, while ORPO-Distill~\cite{singhORPODistillMixedPolicyPreference2025} demonstrates that excessive supervision can narrow output distributions. These findings support systematic hyperparameter search rather than assuming universal optimal values.
+
 \subsubsection{Search Space Design}
 
 Three hyperparameters govern knowledge transfer (\hyperref[app:hyperparam-space]{Table~\ref*{tab:hyperparam-search-appendix}, Appendix~\ref*{app:hyperparam-space}}): $\lambda$ (distillation weight, log scale [0.001, 0.1]) controls teacher influence vs. supervised signal; $\tau$ (temperature, linear [1.0, 5.0]) smooths distributions to expose ``dark knowledge''; and $w$ (window size, [2, 8]) determines teacher context length, trading accuracy for speed.

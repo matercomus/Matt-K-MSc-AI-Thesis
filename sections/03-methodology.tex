@@ -89,6 +89,10 @@ The cross-vocabulary mapping $\psi$ (\autoref{def:vocab-mapping}) enables knowle
     Multiple roads may correspond to a single grid cell, with higher density in urban cores.
 \end{remark}
 
+\begin{remark}[Output Space Alignment]
+    The cross-vocabulary mapping introduces distributional differences between the teacher's grid-cell representation and the student's road-segment representation. Recent work on cross-vocabulary KD~\cite{zhangDualSpaceFrameworkGeneral2025} demonstrates that bridging distributions from different output spaces can limit teacher-student similarity. Our approach employs a fixed deterministic mapping $\psi$ based on spatial centroids, prioritizing computational simplicity and interpretability over alignment complexity.
+\end{remark}
+
 \subsubsection{Probability Renormalization}
 \label{sec:method-renorm}
 
@@ -129,6 +133,10 @@ Since the teacher produces distributions over all grid cells $\mathcal{Z}$ while
     \end{equation}
     which scales as $\mathcal{O}(1/\tau)$. Multiplying by $\tau^2$ ensures $\mathcal{O}(\tau)$ scaling, preventing gradient vanishing in the high-temperature regime where distillation is most effective~\cite{hintonDistillingKnowledgeNeural2015}.
 \end{proof}
+
+The reverse KL divergence has several desirable properties for knowledge distillation. It exhibits mode-seeking behavior, encouraging the student to learn specific behaviors from the teacher rather than spreading probability across multiple suboptimal options. Additionally, it reduces exposure bias by training the student on its own predicted distributions~\cite{OnPolicyDistillation}. Recent work demonstrates that this loss function enables dense, per-token supervision that is significantly more compute-efficient than sparse reward signals~\cite{OnPolicyDistillation}.
+
+The role of temperature in distillation has been extensively studied. Higher temperatures smooth the output distribution, enabling transfer of relational information between classes~\cite{hintonDistillingKnowledgeNeural2015}. Recent work on LLM distillation emphasizes that temperature helps preserve diversity in the target distribution, preventing the narrowing effect that can occur with aggressive supervision~\cite{singhORPODistillMixedPolicyPreference2025}. The optimal temperature is task- and dataset-dependent, requiring empirical tuning for each application.
 
 \subsubsection{Combined Training Objective}
 

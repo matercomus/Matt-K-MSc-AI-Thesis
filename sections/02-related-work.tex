@@ -39,6 +39,8 @@ Anomaly detectors such as LM-TAD learn what \emph{normal} mobility looks like by
 \label{sec:lit-distill}
 Knowledge distillation~\cite{hintonDistillingKnowledgeNeural2015} addresses the accuracy–efficiency dilemma by transferring soft targets from a high-capacity teacher to a lightweight student.  Vision and NLP studies show that students can approximate teachers with negligible runtime overhead.  \textit{Takeaway}: distillation offers a principled route to inherit transformer knowledge without paying inference cost.
 
+Recent advances have explored policy-based distillation strategies for LLMs. AdaSwitch~\cite{pengAdaSwitchAdaptiveSwitching2025} dynamically combines on-policy and off-policy generation at the token level, while ORPO-Distill~\cite{singhORPODistillMixedPolicyPreference2025} employs mixed-policy strategies to balance consistency and diversity. Cross-vocabulary distillation has been addressed by DSKD~\cite{zhangDualSpaceFrameworkGeneral2025}, which unifies output spaces through shared prediction heads to enable knowledge transfer between models with different vocabularies. These works demonstrate that the choice of distillation strategy—particularly regarding when and how teacher knowledge is incorporated—significantly impacts performance.
+
 \subsection{Cross-Task Transfer and Foundation Mobility Models}
 \label{sec:lit-transfer}
 Cross-task transfer extends distillation across objectives—e.g.
