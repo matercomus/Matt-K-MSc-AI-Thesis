@@ -4,7 +4,22 @@ This repository contains the LaTeX source code for my Master's thesis in Artific
 
 ## Research Overview
 
-This thesis addresses the challenge of improving fast trajectory prediction models through cross-task knowledge distillation. We transfer spatial understanding from LM-TAD (a trajectory anomaly detection model) to HOSER (a fast zone-based prediction model), achieving 85-89% path completion success (47-74× improvement over baseline) while maintaining fast inference speed (~0.1ms per trajectory). The work demonstrates that "normal trajectory" knowledge learned by anomaly detection models can dramatically improve route prediction without inference-time overhead, enabling practical deployment in real-time traffic management systems, urban digital twins, and large-scale simulations.
+This thesis addresses a fundamental challenge in urban trajectory prediction: how to achieve transformer-level spatial reasoning while maintaining millisecond-scale inference speeds required for real-time traffic management.
+
+**The Problem:** Existing fast prediction models suffer from poor route completion rates (12-18%), limiting their practical deployment. While sophisticated models like LM-TAD achieve superior spatial reasoning, their computational overhead (~3.4ms per trajectory vs ~0.1ms for fast models) prevents real-time application in city-wide traffic management systems.
+
+**The Solution:** Through training-time knowledge distillation, we transfer spatial understanding from LM-TAD (a trajectory anomaly detection model) to HOSER (a fast zone-based prediction model). We demonstrate that repurposing the "normal trajectory" knowledge learned by anomaly detection models enables dramatic improvements in route prediction without inference-time overhead.
+
+**Key Results on Beijing Dataset (40,060 roads, 629,380 trajectories):**
+- **85-89% path completion success** (47-74× improvement over vanilla baseline's 12-18%)
+- **87% better distance distribution matching** (JSD: 0.016-0.022 vs 0.145-0.153)
+- **98% better spatial pattern fidelity** (radius JSD: 0.003-0.004 vs 0.198-0.206)
+- **Realistic trip lengths** (6.4 km vs vanilla's 2.4 km, real: 5.2 km)
+- **Maintained fast inference speed** (~0.1ms per trajectory, enabling real-time deployment)
+
+**Novel Findings:** Hyperparameter optimization reveals that minimal distillation weight (λ=0.0014) with high temperature (τ=4.37) enables effective knowledge transfer. This counter-intuitive result suggests that subtle distributional guidance is more effective than aggressive knowledge transfer, allowing the student model to integrate spatial priors while preserving its architectural strengths.
+
+**Impact:** The resulting system enables practical deployment for policy makers and traffic regulators, supporting applications in real-time traffic signal optimization, infrastructure planning, urban digital twins, agent-based traffic simulation, and high-quality synthetic trajectory data generation. This work demonstrates the viability of cross-task knowledge distillation for trajectory prediction and provides a scalable framework for integrating AI-based route prediction into operational traffic management systems.
 
 ## Repository Structure
 
