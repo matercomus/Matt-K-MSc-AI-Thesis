@@ -77,6 +77,8 @@ Despite promising results, several limitations warrant acknowledgment:
 
 \textbf{Evaluation Limitations.} The OD pair matching metric (grid-based, 111m resolution) may be sensitive to grid size choice. Alternative evaluation protocols (e.g., corridor-based matching, semantic location matching) could provide complementary perspectives on path completion quality.
 
+\textbf{Validation Accuracy as Poor Proxy for Generation Quality.} Hyperparameter optimization based on validation next-step accuracy (+0.01--0.23\% improvement) produces dramatic generation quality differences (+73\% OD match improvement on Beijing). This disconnect indicates that validation metrics measure local decision accuracy but fail to capture long-horizon spatial understanding required for realistic end-to-end trajectories. Future work should explore multi-objective optimization directly targeting trajectory quality metrics (JSD, OD match, Hausdorff distance) rather than relying on validation accuracy as a surrogate.
+
 \subsection{Future Work}
 \label{sec:conclusion-future}
 
@@ -97,6 +99,8 @@ Several promising directions extend this research:
 \textbf{Learning Rate Analysis.} Systematically evaluate learning rates from $10^{-5}$ to $10^{-3}$ with fixed distillation parameters. Hypothesis: lower learning rates may enable finer-grained teacher knowledge integration.
 
 \textbf{Temperature Characterization.} Evaluate $\tau \in [1, 10]$ to map the temperature-performance relationship. Expected: very low $\tau$ provides minimal smoothing (limited dark knowledge), very high $\tau$ over-smooths and loses discriminative information.
+
+\textbf{Batch Size and Memory Trade-offs.} Porto's longer trajectories necessitated batch size reduction (128 $\to$ 32) due to O(T$^2$) attention memory scaling with gradient checkpointing. This creates an uncontrolled confound---impossible to isolate whether cross-dataset hyperparameter divergence (4.3$\times$ higher $\lambda$, 42\% lower $\tau$, 43\% shorter $w$) stems from dataset characteristics or batch size effects. Future work should investigate: (1) controlled ablation with matched batch sizes (requires more GPU memory or trajectory subsampling), (2) efficient attention mechanisms (sparse attention, chunked processing) to enable larger batch sizes on long sequences, (3) empirical characterization of batch size impact on optimal distillation hyperparameters.
 
 \subsubsection{Inference Speed Validation}
 
