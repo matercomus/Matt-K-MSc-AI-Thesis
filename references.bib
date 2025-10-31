@@ -1411,6 +1411,16 @@
   langid = {english}
 }
 
+@misc{OnPolicyDistillation,
+  title = {On-{{Policy Distillation}}},
+  journal = {Thinking Machines Lab},
+  url = {https://thinkingmachines.ai/blog/on-policy-distillation/},
+  urldate = {2025-10-31},
+  abstract = {On-policy, dense supervision is a useful tool for distillation},
+  langid = {english},
+  file = {/home/matt/Zotero/storage/XB6EYFV5/on-policy-distillation.html}
+}
+
 @inproceedings{ozekiBalancingPrivacyUtility2023,
   title = {Balancing {{Privacy}} and {{Utility}} of {{Spatio-Temporal Data}} for {{Taxi-Demand Prediction}}},
   booktitle = {2023 24th {{IEEE International Conference}} on {{Mobile Data Management}} ({{MDM}})},
@@ -1456,6 +1466,25 @@
   copyright = {http://creativecommons.org/licenses/by/4.0},
   langid = {english},
   file = {/home/matt/Zotero/storage/7B8PDPE8/Pappalardo and Simini - 2018 - Data-driven generation of spatio-temporal routines in human mobility.pdf}
+}
+
+@misc{pengAdaSwitchAdaptiveSwitching2025,
+  title = {{{AdaSwitch}}: {{Adaptive Switching Generation}} for {{Knowledge Distillation}}},
+  shorttitle = {{{AdaSwitch}}},
+  author = {Peng, Jingyu and Wang, Maolin and Cai, Hengyi and Li, Yuchen and Zhang, Kai and Wang, Shuaiqiang and Yin, Dawei and Zhao, Xiangyu},
+  year = 2025,
+  month = oct,
+  number = {arXiv:2510.07842},
+  eprint = {2510.07842},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2510.07842},
+  url = {http://arxiv.org/abs/2510.07842},
+  urldate = {2025-10-31},
+  abstract = {Small language models (SLMs) are crucial for applications with strict latency and computational constraints, yet achieving high performance remains challenging. Knowledge distillation (KD) can transfer capabilities from large teacher models, but existing methods involve trade-offs: off-policy distillation provides high-quality supervision but introduces a training-inference mismatch, while on-policy approaches maintain consistency but rely on low-quality student outputs. To address these issues, we propose AdaSwitch, a novel approach that dynamically combines on-policy and off-policy generation at the token level. AdaSwitch allows the student to first explore its own predictions and then selectively integrate teacher guidance based on real-time quality assessment. This approach simultaneously preserves consistency and maintains supervision quality. Experiments on three datasets with two teacher-student LLM pairs demonstrate that AdaSwitch consistently improves accuracy, offering a practical and effective method for distilling SLMs with acceptable additional overhead.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language},
+  file = {/home/matt/Zotero/storage/K5PFDWTC/Peng et al. - 2025 - AdaSwitch Adaptive Switching Generation for Knowledge Distillation.pdf;/home/matt/Zotero/storage/597GBJBC/2510.html}
 }
 
 @unpublished{ponomarevaHowDPfyML2023,
@@ -1700,6 +1729,25 @@
   eventtitle = {{{NeurIPS}} 2022 {{Workshop}} on {{Synthetic Data}} for {{Empowering ML Research}}},
   langid = {english},
   file = {/home/matt/Zotero/storage/TP75ZUXU/Singh et al. - 2022 - C-GATS Conditional Generation of Anomalous Time Series.pdf}
+}
+
+@misc{singhORPODistillMixedPolicyPreference2025,
+  title = {{{ORPO-Distill}}: {{Mixed-Policy Preference Optimization}} for {{Cross-Architecture LLM Distillation}}},
+  shorttitle = {{{ORPO-Distill}}},
+  author = {Singh, Aasheesh and Vaddina, Vishal and Birru, Dagnachew},
+  year = 2025,
+  month = sep,
+  number = {arXiv:2509.25100},
+  eprint = {2509.25100},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2509.25100},
+  url = {http://arxiv.org/abs/2509.25100},
+  urldate = {2025-10-31},
+  abstract = {We introduce ORPO-Distill, a general-purpose method for cross-architecture LLM distillation that formulates the problem as a preference optimization task. Unlike standard CoT distillation, the approach transfers knowledge through diverse reasoning traces. It employs an Odds-Ratio Preference Optimization objective that contrasts teacher and student traces for more effective learning, and adopts a mixed-policy strategy for utilizing student-generated outputs, outperforming both off- and on-policy alternatives. Experiments on five datasets and multiple student models show consistent improvements over conventional black-box KD baselines.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/822WQDNC/Singh et al. - 2025 - ORPO-Distill Mixed-Policy Preference Optimization for Cross-Architecture LLM Distillation.pdf;/home/matt/Zotero/storage/D64W77AJ/Singh et al. - 2025 - ORPO-Distill Mixed-Policy Preference Optimization for Cross-Architecture LLM Distillation.pdf;/home/matt/Zotero/storage/JUXSTK27/2509.html;/home/matt/Zotero/storage/S2JBI54N/2509.html}
 }
 
 @article{siTrajBERTBERTBasedTrajectory2024,
@@ -2311,6 +2359,24 @@
   number = {2},
   pages = {1--28},
   publisher = {ACM}
+}
+
+@misc{zhangDualSpaceFrameworkGeneral2025,
+  title = {A {{Dual-Space Framework}} for {{General Knowledge Distillation}} of {{Large Language Models}}},
+  author = {Zhang, Xue and Zhang, Songming and Liang, Yunlong and Meng, Fandong and Chen, Yufeng and Xu, Jinan and Zhou, Jie},
+  year = 2025,
+  month = apr,
+  number = {arXiv:2504.11426},
+  eprint = {2504.11426},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2504.11426},
+  url = {http://arxiv.org/abs/2504.11426},
+  urldate = {2025-10-31},
+  abstract = {Knowledge distillation (KD) is a promising solution to compress large language models (LLMs) by transferring their knowledge to smaller models. During this process, white-box KD methods usually minimize the distance between the output distributions of the teacher model and the student model to transfer more information. However, we reveal that the current white-box KD framework exhibits two limitations: a) bridging probability distributions from different output spaces will limit the similarity between the teacher model and the student model; b) this framework cannot be applied to LLMs with different vocabularies. One of the root causes for these limitations is that the distributions from the teacher and the student for KD are output by different prediction heads, which yield distributions in different output spaces and dimensions. Therefore, in this paper, we propose a dual-space knowledge distillation (DSKD) framework that unifies the prediction heads of the teacher and the student models for KD. Specifically, we first introduce two projectors with ideal initialization to project the teacher/student hidden states into the student/teacher representation spaces. After this, the hidden states from different models can share the same head and unify the output spaces of the distributions. Furthermore, we develop an exact token alignment (ETA) algorithm to align the same tokens in two differently-tokenized sequences. Based on the above, our DSKD framework is a general KD framework that supports both off-policy and on-policy KD, and KD between any two LLMs regardless of their vocabularies. Extensive experiments on instruction-following, mathematical reasoning, and code generation benchmarks show that DSKD significantly outperforms existing methods based on the current white-box KD framework and surpasses other cross-tokenizer KD methods for LLMs with different vocabularies.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/home/matt/Zotero/storage/DKR4B3HY/Zhang et al. - 2025 - A Dual-Space Framework for General Knowledge Distillation of Large Language Models.pdf;/home/matt/Zotero/storage/LJPCLYQK/2504.html}
 }
 
 @article{zhangEndtoendTrajectoryGeneration2025,
