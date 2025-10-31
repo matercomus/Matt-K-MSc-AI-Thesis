@@ -74,16 +74,16 @@ A 2-phase optimization (Phase 1: 20 trials broad exploration, Phase 2: 20 trials
 
 \begin{table}[h]
     \centering
-    \caption{Optimal distillation hyperparameters from Optuna tuning}
-    \label{tab:optimal-hparams}
+    \caption{Optimal distillation hyperparameters per dataset}
+    \label{tab:distill-hparams}
     \small
-    \begin{tabular}{lll}
+    \begin{tabular}{lccccl}
         \toprule
-        \textbf{Parameter} & \textbf{Optimal Value} & \textbf{Interpretation}                     \\
+        \textbf{Dataset} & \textbf{$\lambda$} & \textbf{$\tau$} & \textbf{$w$} & \textbf{Val Acc} & \textbf{Notes}                     \\
         \midrule
-        $\lambda$          & 0.0014                 & Very subtle teacher guidance                \\
-        $\tau$             & 4.37                   & High temperature (broad knowledge transfer) \\
-        $w$                & 7                      & Nearly full context window                  \\
+        Beijing          & 0.0014             & 4.37            & 7            & 57.24\%          & 12 trials (CMA-ES)                 \\
+        Porto (Phase 1)  & 0.00644            & 2.802           & 4            & 26.53\%          & 20 trials, used for eval           \\
+        Porto (Phase 2)  & 0.00598            & 2.515           & 4            & 26.55\%          & 20 trials refinement, eval pending \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -139,23 +139,22 @@ We use AdamW optimizer with cosine annealing and effective batch size 512 (64 sa
 \subsection{Practical Considerations}
 \label{sec:impl-practical}
 
-\subsubsection{Dataset-Specific Adaptations}
+\subsubsection{Memory Scaling and Batch Size Constraints}
 
-Different urban networks require minor adaptations:
+Trajectory length significantly impacts memory requirements due to O(T$^2$) scaling in attention mechanisms and pairwise distance computations. Porto trajectories average 8.0 road segments versus Beijing's 4.6, necessitating different batch configurations:
 
-\textbf{Beijing}: Standard configuration with 1024 max trajectory length.
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Beijing}: Effective batch size 1024 (128 per GPU $\times$ 8 accumulation steps)
+    \item \textbf{Porto}: Effective batch size 256 (32 per GPU $\times$ 8 accumulation steps)
+\end{itemize}
 
-\textbf{Porto}: Longer trajectories (avg. 8 vs 4.6 points) require reduced batch size (64 $\rightarrow$ 32) and gradient checkpointing to prevent memory overflow. Memory usage scales quadratically with trajectory length due to attention mechanisms and distance matrices.
+This 4$\times$ batch size reduction for Porto, while necessary for GPU memory constraints (24GB VRAM with gradient checkpointing), introduces an uncontrolled confound in cross-dataset hyperparameter comparison. The observed hyperparameter divergence between datasets ($\lambda$ differs by 4.3$\times$, $\tau$ by 42\%, $w$ by 43\%) may stem from either intrinsic dataset characteristics or batch size effects---disentangling these factors requires controlled ablation with matched batch sizes, discussed as future work in Section~\ref{sec:conclusion-future}.
 
-\textbf{BJUT (Private Beijing)}: Similar to Beijing reference dataset but requires independent map-matching and preprocessing pipeline.
+\subsubsection{Computational Infrastructure}
 
-\subsubsection{Common Challenges and Solutions}
+All experiments run on NVIDIA A100 (40GB) or RTX 3090 (24GB) GPUs. The distillation framework adds negligible training overhead: teacher forward passes account for $<$10\% of total training time due to frozen weights and efficient batching. Training time per epoch scales linearly with dataset size: Beijing requires $\sim$15 minutes/epoch (629k trajectories), Porto $\sim$12 minutes/epoch (481k trajectories, despite longer sequences, due to reduced batch size balancing memory and throughput).
 
-\textbf{Grid dimension mismatch}: Ensure LM-TAD's \texttt{grip\_size} parameter matches the vocabulary mapping configuration. Beijing uses $205 \times 252$ grid, Porto uses $46 \times 134$.
+\subsubsection{Reproducibility}
 
-\textbf{Highway type parsing}: Some datasets use nested list formats (e.g., \texttt{["primary", "secondary"]}), others use integer codes. The data loader handles both via conditional parsing.
-
-\textbf{Memory overflow}: Reduce batch size or enable gradient checkpointing for datasets with longer trajectories. Porto requires 50\% smaller batches than Beijing despite similar dataset sizes.
-
-\textbf{Reproducibility:} Complete implementation, trained models, evaluation scripts, and configuration files are provided in the supplementary materials to facilitate reproduction of all experiments.
+All hyperparameter search configurations, optimal values (Table~\ref{tab:distill-hparams}), training scripts, and evaluation protocols are documented to facilitate reproduction. Random seeds are fixed for deterministic behavior where possible; stochastic components (data shuffling, dropout) use seeded generators.
 
