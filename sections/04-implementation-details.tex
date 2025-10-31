@@ -88,6 +88,38 @@ A 2-phase optimization (Phase 1: 20 trials broad exploration, Phase 2: 20 trials
     \end{tabular}
 \end{table}
 
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase1/optimization_history.pdf}
+        \caption{Phase 1 (20 trials)}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase2/optimization_history.pdf}
+        \caption{Phase 2 (20 trials refinement)}
+    \end{subfigure}
+    \caption{Porto hyperparameter optimization history across both phases. CMA-ES efficiently explores the search space, with Phase 2 refining the best configuration from Phase 1.}
+    \label{fig:porto-optuna-history}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase1/param_importance.pdf}
+        \caption{Phase 1 parameter importance}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase2/param_importance.pdf}
+        \caption{Phase 2 parameter importance}
+    \end{subfigure}
+    \caption{Porto hyperparameter importance analysis. Temperature ($\tau$) and window size ($w$) show stronger influence on validation accuracy than distillation weight ($\lambda$) across both phases.}
+    \label{fig:porto-optuna-importance}
+\end{figure}
+
 This configuration suggests that \emph{subtle distributional guidance} from the teacher, rather than aggressive knowledge transfer, enables the student to integrate spatial understanding without compromising its architectural strengths.
 
 \subsection{Training Optimizations}

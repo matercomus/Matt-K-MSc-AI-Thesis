@@ -136,13 +136,22 @@ Table~\ref{tab:od-results} quantifies the dramatic difference in path completion
 
 \subsubsection{Distribution Quality}
 
-Figure~\ref{fig:distance-distributions} compares trip distance distributions between real data and generated trajectories.
+Figure~\ref{fig:beijing-distance-distributions} compares trip distance distributions between real data and generated trajectories.
 
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\textwidth]{assets/plots/hoser/distance_distributions.pdf}
-    \caption{Trip distance distributions for real vs. generated trajectories. Distilled models match real distributions closely (JSD = 0.016--0.022), while vanilla generates unrealistically short trips (JSD = 0.145--0.153).}
-    \label{fig:distance-distributions}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/distributions/distance_distribution_train_od.pdf}
+        \caption{Train OD pairs}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/distributions/distance_distribution_test_od.pdf}
+        \caption{Test OD pairs}
+    \end{subfigure}
+    \caption{Beijing trip distance distributions comparing real vs generated trajectories. Distilled models match real distributions closely across both train and test OD pairs.}
+    \label{fig:beijing-distance-distributions}
 \end{figure}
 
 Table~\ref{tab:jsd-results} quantifies distribution matching quality via JSD metrics.
@@ -177,26 +186,33 @@ Table~\ref{tab:jsd-results} quantifies distribution matching quality via JSD met
     \item Distilled models slightly overestimate trip length (6.4 km vs 5.2 km), a conservative bias
 \end{itemize}
 
-Figure~\ref{fig:jsd-comparison} provides a comprehensive view of all distribution metrics.
+Figure~\ref{fig:beijing-jsd-comparison} provides a comprehensive view of all distribution metrics.
 
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=0.7\textwidth]{assets/plots/hoser/jsd_comparison.pdf}
-    \caption{Comprehensive JSD comparison across distance, duration, and radius of gyration. Distilled models (blue) dramatically outperform vanilla (red) on all metrics.}
-    \label{fig:jsd-comparison}
+    \includegraphics[width=0.8\linewidth]{assets/plots/eval/beijing/jsd_comparison.pdf}
+    \caption{Beijing JSD comparison across distance, radius, and duration metrics. Distilled models consistently achieve low JSD values ($<$0.022) while vanilla models show significant distribution mismatch (0.14--0.21).}
+    \label{fig:beijing-jsd-comparison}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/plots/eval/beijing/od_matching_rates.pdf}
+    \caption{Beijing OD matching rates across train and test sets. Distilled models achieve 85--89\% success while vanilla models fail 82--88\% of paths, demonstrating the critical impact of distillation on path completion.}
+    \label{fig:beijing-od-rates}
 \end{figure}
 
 \subsubsection{Generalization vs. Memorization}
 
 A critical question: do distilled models merely memorize training patterns or learn generalizable spatial reasoning?
 
-Figure~\ref{fig:train-test} compares performance on training OD pairs (seen during training) versus test OD pairs (unseen).
+Figure~\ref{fig:beijing-train-test} compares performance on training OD pairs (seen during training) versus test OD pairs (unseen).
 
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=0.8\textwidth]{assets/plots/hoser/train_test_comparison.pdf}
-    \caption{Train vs. test performance comparison. Distilled models perform \emph{better} on test than train (lower JSD), indicating true spatial generalization. Vanilla degrades on test.}
-    \label{fig:train-test}
+    \includegraphics[width=0.8\linewidth]{assets/plots/eval/beijing/train_test_comparison.pdf}
+    \caption{Beijing train vs test performance comparison. Distilled models perform better on test than train (lower JSD), indicating true spatial generalization rather than memorization. Vanilla degrades on test.}
+    \label{fig:beijing-train-test}
 \end{figure}
 
 \textbf{Key findings:}
@@ -211,11 +227,11 @@ Figure~\ref{fig:train-test} compares performance on training OD pairs (seen duri
 
 To assess whether distillation reliably transfers knowledge, we train with multiple random seeds.
 
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\textwidth]{assets/plots/hoser/seed_robustness.pdf}
-    \caption{Cross-seed consistency for distilled models. Coefficient of variation (CV) below 15\% across all metrics indicates reliable knowledge transfer.}
-    \label{fig:seed-robustness}
+    \includegraphics[width=0.9\linewidth]{assets/plots/eval/beijing/seed_robustness.pdf}
+    \caption{Beijing cross-seed consistency for distilled models (seeds 42, 44). Coefficient of variation (CV) below 15\% across all metrics indicates reliable knowledge transfer regardless of initialization.}
+    \label{fig:beijing-seed-robustness}
 \end{figure}
 
 \textbf{Key findings:}
@@ -228,13 +244,13 @@ To assess whether distillation reliably transfers knowledge, we train with multi
 
 \subsubsection{Local Trajectory Metrics}
 
-Figure~\ref{fig:local-metrics} presents trajectory-level similarity measures.
+Figure~\ref{fig:beijing-local-metrics} presents trajectory-level similarity measures.
 
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=0.8\textwidth]{assets/plots/hoser/local_metrics.pdf}
-    \caption{Local trajectory metrics. Note: Lower values for vanilla reflect shorter trajectories, not better quality.}
-    \label{fig:local-metrics}
+    \includegraphics[width=0.8\linewidth]{assets/plots/eval/beijing/local_metrics.pdf}
+    \caption{Beijing local trajectory metrics (Hausdorff distance, DTW, EDR). Note: Lower values for vanilla reflect shorter trajectories, not better quality.}
+    \label{fig:beijing-local-metrics}
 \end{figure}
 
 \begin{table}[h]
@@ -296,6 +312,22 @@ Porto demonstrates that vanilla HOSER can successfully navigate when trajectorie
 \textbf{Trajectory length hypothesis:} Porto trajectories average 3.66 km (29\% shorter than Beijing's 5.16 km), making the navigation task more tractable for vanilla MLE-only training. Shorter trajectories require fewer sequential decisions, reducing cumulative error and allowing vanilla models to successfully reach targets without teacher guidance.
 
 \subsubsection{Distribution Quality}
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/distributions/distance_distribution_train_od.pdf}
+        \caption{Train OD pairs}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/distributions/distance_distribution_test_od.pdf}
+        \caption{Test OD pairs}
+    \end{subfigure}
+    \caption{Porto trip distance distributions. Both vanilla and distilled models closely match real distributions, indicating that distillation's benefits are context-dependent rather than universal.}
+    \label{fig:porto-distance-distributions}
+\end{figure}
 
 Aggregate distribution metrics show minimal distillation benefit on Porto:
 \begin{itemize}[leftmargin=*,noitemsep]
