@@ -2,6 +2,13 @@
 
 This repository contains the LaTeX source code for my Master's thesis in Artificial Intelligence at Vrije Universiteit Amsterdam.
 
+> [!WARNING]
+> **Work in Progress** - This thesis is currently under active development. Content, structure, and results may change as the research progresses.
+
+## 📄 View Thesis
+
+**[Read the thesis online (PDF)](https://matercomus.github.io/Matt-K-MSc-AI-Thesis/thesis.pdf)** - Automatically updated with each commit to main branch
+
 ## Research Overview
 
 This thesis addresses a fundamental challenge in urban trajectory prediction: how to achieve transformer-level spatial reasoning while maintaining millisecond-scale inference speeds required for real-time traffic management.
