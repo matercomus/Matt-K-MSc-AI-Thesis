@@ -8,7 +8,7 @@ echo "Building LaTeX thesis..."
 echo "========================================="
 
 cd /home/matt/Dev/Matt-K-MSc-AI-Thesis
-latexmk -pdf -g -output-directory=build main.tex
+latexmk -g -output-directory=build main.tex
 
 # Check if build was successful
 if [ $? -eq 0 ]; then

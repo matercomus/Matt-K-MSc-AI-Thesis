@@ -17,9 +17,8 @@ build/
 *.bcf
 *.run.xml
 
-# Cursor AI plans and workspace files
-.cursor/plans/
-.cursor/mcp.json
+# Cursor AI workspace directory (entire directory not tracked)
+.cursor/
 
 # Notes directory - documentation and references (not version controlled)
 notes/
