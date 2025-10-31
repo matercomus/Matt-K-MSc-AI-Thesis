@@ -38,7 +38,7 @@ Our experiments reveal several important insights about knowledge distillation f
 
 The resulting system enables several practical applications for urban traffic management and intelligent transportation:
 
-\textbf{Real-Time Traffic Management.} Fast inference speeds ($\sim$13 ms/batch, $\sim$77 trajectories/second) combined with accurate route prediction support real-time traffic signal optimization, dynamic routing, and congestion management at city scale.
+\textbf{Real-Time Traffic Management.} Fast inference speeds (measured 1.9 trajectories/second on commodity hardware, Table~\ref{tab:generation-perf}) combined with accurate route prediction support real-time traffic signal optimization, dynamic routing, and congestion management at city scale.
 
 \textbf{Infrastructure Planning and Policy Decisions.} High-quality trajectory generation enables traffic regulators to simulate infrastructure changes (new roads, lane additions, traffic calming) and predict their impact on mobility patterns before costly construction.
 
@@ -55,7 +55,7 @@ Despite promising results, several limitations warrant acknowledgment:
 
 \textbf{Limited Dataset Evaluation.} We present complete results for Beijing and Porto (Phase 1 hyperparameters). Comprehensive cross-dataset validation with additional urban environments is needed to confirm generalization across cities with different characteristics (network topology, trajectory lengths, mobility patterns).
 
-\textbf{Inference Speed Not Formally Benchmarked.} While fast inference is a core motivation ($\sim$13 ms/batch claimed), we have not conducted systematic latency benchmarking under controlled conditions. Formal validation comparing vanilla vs distilled inference speeds, batch size sensitivity, and hardware-specific performance is needed.
+\textbf{Incomplete Inference Speed Benchmarking.} While we have measured Porto generation throughput (Table~\ref{tab:generation-perf}), Beijing measurements were not collected, and formal teacher-vs-student latency comparisons remain future work. Complete characterization across datasets, batch sizes, and hardware configurations is needed for production deployment guidance.
 
 \textbf{Limited Ablation Studies.} We lack comprehensive ablation studies for key design choices:
 \begin{itemize}[noitemsep,topsep=0pt]
