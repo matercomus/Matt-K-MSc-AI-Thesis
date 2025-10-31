@@ -126,6 +126,10 @@ Several promising directions extend this research:
 
 \textbf{Progressive Distillation.} Investigate staged knowledge transfer: first distill basic spatial understanding, then refine with trajectory-specific knowledge, potentially improving convergence and final performance.
 
+\textbf{On-Policy and Mixed-Policy Distillation.} Our framework employs off-policy distillation with frozen teacher supervision on ground-truth trajectories. Recent advances explore on-policy approaches where students generate trajectories during training~\cite{singhORPODistillMixedPolicyPreference2025,pengAdaSwitchAdaptiveSwitching2025}, potentially reducing training-inference mismatch. Industry implementations report substantial compute efficiency gains with on-policy distillation while using the same reverse KL objective~\cite{OnPolicyDistillation}. Future work could investigate: (i) on-policy trajectory generation during training; (ii) mixed-policy strategies combining fixed teacher supervision with student-generated samples; (iii) adaptive mechanisms responding to student confidence or trajectory difficulty.
+
+\textbf{Dual-Space Knowledge Distillation.} The vocabulary mapping $\psi$ enables cross-vocabulary transfer, but distillation occurs only in the student (road-segment) space. Recent work on cross-vocabulary KD~\cite{zhangDualSpaceFrameworkGeneral2025} demonstrates that conducting distillation in both representation spaces—projecting teacher hidden states to student space AND student hidden states to teacher space—can improve knowledge transfer. Future work could explore: (i) bidirectional distillation in both road and grid spaces; (ii) trainable projectors for vocabulary alignment; (iii) quantifying the impact of vocabulary mismatch on transfer effectiveness.
+
 \subsubsection{Theoretical Understanding}
 
 \textbf{Why Does Minimal $\lambda$ Work Best?} Develop theoretical framework explaining why subtle teacher guidance ($\lambda = 0.0014$) outperforms stronger knowledge transfer. Connection to regularization, implicit bias, and student capacity constraints.
