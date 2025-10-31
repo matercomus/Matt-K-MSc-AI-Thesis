@@ -8,21 +8,15 @@ This thesis addresses a fundamental challenge in urban trajectory prediction: ho
 \subsection{Summary of Contributions}
 \label{sec:conclusion-contributions}
 
-We make four primary contributions to trajectory prediction research:
+This thesis makes four primary contributions to trajectory prediction research (detailed in Section~\ref{sec:introduction}):
 
-\textbf{1. First Cross-Task Distillation Framework.} We propose the first knowledge distillation framework that transfers spatial reasoning from trajectory \emph{anomaly detection} to trajectory \emph{prediction}. This cross-task paradigm demonstrates that ``normal trajectory'' knowledge learned by anomaly detectors provides valuable priors for route prediction, opening a new direction for model combination in mobility research.
+\textbf{1. Cross-Task Distillation for Trajectory Generation.} We propose the first knowledge distillation framework transferring spatial reasoning from trajectory anomaly detection (LM-TAD) to trajectory prediction (HOSER). On Beijing, this enables dramatic generation improvements: 85--89\% path completion versus vanilla's 12\%, 87--98\% JSD reductions, with no inference-time overhead. This cross-task paradigm demonstrates that ``normal trajectory'' knowledge learned by anomaly detectors provides valuable spatial priors for route prediction.
 
-\textbf{2. Dramatic Performance Improvements.} On the Beijing dataset with 40,060 roads and 629,380 training trajectories, our distilled models achieve:
-\begin{itemize}[noitemsep,topsep=0pt]
-    \item \textbf{85--89\% path completion success} vs. vanilla's 12--18\% (47--74$\times$ improvement)
-    \item \textbf{87\% better distance distribution matching} (JSD: 0.016--0.022 vs 0.145--0.153)
-    \item \textbf{98\% better spatial pattern fidelity} (radius JSD: 0.003--0.004 vs 0.198--0.206)
-    \item \textbf{Realistic trip lengths} (6.4 km vs vanilla's 2.4 km, real: 5.2 km)
-\end{itemize}
+\textbf{2. Scenario-Level Evaluation Protocol and Context-Dependent Findings.} We introduce OD matching as the primary end-to-end metric and develop a scenario-level evaluation protocol (9 spatial/temporal contexts). This reveals context-dependent distillation behavior: universal benefits on complex urban networks (Beijing: all scenarios improve) versus spatially localized improvements in simpler environments (Porto: dense urban gains, suburban neutral).
 
-\textbf{3. Optimal Hyperparameter Discovery.} Systematic Optuna-based tuning reveals that \emph{minimal distillation weight} ($\lambda = 0.0014$) with \emph{high temperature} ($\tau = 4.37$) enables effective knowledge transfer. This counter-intuitive result suggests subtle distributional guidance is more effective than aggressive knowledge transfer, allowing students to integrate teacher knowledge while preserving their architectural strengths.
+\textbf{3. Validation--Generation Disconnect as Methodological Insight.} Hyperparameter optimization shows minimal validation accuracy gains (+0.01--0.23\%) produce dramatic generation quality improvements (+73\% OD match on Beijing). This disconnect demonstrates that next-step prediction accuracy is a poor proxy for long-horizon trajectory realism, motivating multi-objective optimization targeting trajectory quality metrics (JSD, OD match, Hausdorff) rather than validation accuracy surrogates.
 
-\textbf{4. Reproducible Evaluation Framework.} We release a comprehensive evaluation pipeline covering global distribution metrics (JSD), local trajectory similarity (Hausdorff, DTW, EDR), and path completion assessment. The framework separately evaluates memorization (train OD pairs) and generalization (test OD pairs), revealing distilled models' surprising ability to \emph{generalize better than they memorize}—test JSD lower than train JSD.
+\textbf{4. Dataset-Specific Hyperparameter Necessity.} Systematic Optuna-based optimization reveals non-transferable optimal configurations across cities: $\lambda$ diverges by 4.3$\times$, $\tau$ by 42\%, $w$ by 43\% between Beijing and Porto (Table~\ref{tab:distill-hparams}). This demonstrates per-dataset HPO is mandatory. The batch-size confound (Porto requires 4$\times$ reduction due to longer trajectories) complicates interpretation but highlights critical experimental design considerations for future work.
 
 \subsection{Key Findings}
 \label{sec:conclusion-findings}
