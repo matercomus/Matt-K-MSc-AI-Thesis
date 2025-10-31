@@ -5,7 +5,7 @@
 \section{Experimental Evaluation}
 \label{sec:evaluation}
 
-This section presents a comprehensive empirical evaluation of knowledge distillation for trajectory prediction. We begin by describing the experimental setup and evaluation metrics (\autoref{sec:eval-setup}, \autoref{sec:eval-metrics}), then present detailed results for the Beijing dataset (\autoref{sec:eval-beijing}), followed by placeholders for ongoing Porto and planned BJUT evaluations (\autoref{sec:eval-porto}, \autoref{sec:eval-bjut}). We conclude with cross-dataset analysis and inference speed discussion (\autoref{sec:eval-cross}, \autoref{sec:eval-inference}).
+This section presents a comprehensive empirical evaluation of knowledge distillation for trajectory prediction. We begin by describing the experimental setup and evaluation metrics (\autoref{sec:eval-setup}, \autoref{sec:eval-metrics}), then present detailed results for the Beijing dataset (\autoref{sec:eval-beijing}) and Porto dataset (\autoref{sec:eval-porto}). We conclude with cross-dataset analysis and inference speed discussion (\autoref{sec:eval-cross}, \autoref{sec:eval-inference}).
 
 \subsection{Experimental Setup}
 \label{sec:eval-setup}
@@ -73,7 +73,7 @@ These metrics compare individual trajectory pairs with matching OD endpoints:
 
 \subsubsection{Scenario-Level Evaluation}
 
-To assess context-dependent performance, we partition trajectories into 9 spatial and temporal scenarios defined in \texttt{scenarios\_beijing.yaml} and \texttt{scenarios\_porto.yaml}: temporal contexts (\texttt{weekday}, \texttt{weekend}, \texttt{peak}, \texttt{off\_peak}) and spatial contexts (\texttt{city\_center}, \texttt{suburban}, \texttt{within\_center}, \texttt{to\_center}, \texttt{from\_center}). For each scenario, we compute aggregate metrics (OD match rate, Distance/Radius JSD) and report per-scenario performance deltas ($\Delta$) between distilled and vanilla models. This granular analysis reveals where distillation provides benefit versus where vanilla suffices, avoiding the averaging effect of aggregate metrics that can mask context-dependent performance.
+To assess context-dependent performance, we partition trajectories into 9 spatial and temporal scenarios using predefined dataset-specific scenario sets: temporal contexts (weekday, weekend, peak, off-peak) and spatial contexts (city center, suburban, within center, to center, from center). For each scenario, we compute aggregate metrics (OD match rate, Distance/Radius JSD) and report per-scenario performance deltas ($\Delta$) between distilled and vanilla models. This granular analysis reveals where distillation provides benefit versus where vanilla suffices, avoiding the averaging effect of aggregate metrics that can mask context-dependent performance.
 
 \subsection{Results: Beijing Dataset}
 \label{sec:eval-beijing}
@@ -282,49 +282,51 @@ We evaluate on the Porto taxi dataset using Phase 1 optimal hyperparameters ($\l
 
 \subsubsection{Contrasting Behavior: Both Models Succeed}
 
-Unlike Beijing's catastrophic vanilla failure, Porto reveals fundamentally different dynamics:
+Unlike Beijing's catastrophic vanilla failure, Porto reveals fundamentally different dynamics where both vanilla and distilled models achieve high path completion success, with marginal or context-dependent distillation benefits.
+
+\subsubsection{Path Completion Success}
+
+Porto demonstrates that vanilla HOSER can successfully navigate when trajectories are sufficiently short:
 \begin{itemize}[leftmargin=*,noitemsep]
     \item \textbf{Vanilla}: 88.8\% $\pm$ 0.9\% OD match rate (test set, mean $\pm$ std across seeds)
-    \item \textbf{Distilled}: 86.9\% $\pm$ 2.9\% OD match rate
-    \item \textbf{Marginal distillation benefit}: Aggregate metrics show minimal or negative differences (Distance JSD: vanilla 0.0055 vs distilled 0.0060, +9\%; Radius JSD: vanilla 0.0106 vs distilled 0.0108, +2\%)
+    \item \textbf{Distilled}: 86.9\% $\pm$ 2.9\% OD match rate (test set)
+    \item \textbf{Marginal difference}: $-$1.9 percentage points (distilled slightly lower)
 \end{itemize}
 
-\subsubsection{Trajectory Length Hypothesis}
+\textbf{Trajectory length hypothesis:} Porto trajectories average 3.66 km (29\% shorter than Beijing's 5.16 km), making the navigation task more tractable for vanilla MLE-only training. Shorter trajectories require fewer sequential decisions, reducing cumulative error and allowing vanilla models to successfully reach targets without teacher guidance.
 
-Porto trajectories average 3.66 km (29\% shorter than Beijing's 5.16 km), making the navigation task more tractable for vanilla MLE-only training. Shorter trajectories require fewer sequential decisions, reducing cumulative error and allowing vanilla models to successfully reach targets without teacher guidance.
+\subsubsection{Distribution Quality}
 
-\subsubsection{Scenario-Dependent Benefits}
+Aggregate distribution metrics show minimal distillation benefit on Porto:
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item \textbf{Distance JSD}: Vanilla 0.0055 vs Distilled 0.0060 (+9\%, vanilla better)
+    \item \textbf{Radius JSD}: Vanilla 0.0106 vs Distilled 0.0108 (+2\%, vanilla better)
+\end{itemize}
 
-While aggregate metrics show marginal benefit, scenario-level analysis reveals context-dependent performance: distilled models excel in dense urban contexts (\texttt{within\_center}: $\Delta$ Dist JSD = $-0.0104$, distilled better), while vanilla excels in suburban areas (\texttt{suburban}: $\Delta$ Dist JSD = $+0.0074$, vanilla better). Teacher (LM-TAD) knowledge appears spatially localized to training context (city center).
+The minimal differences (both models achieve JSD $<$ 0.011) indicate that when vanilla succeeds at path completion, distributional guidance from distillation provides limited additional benefit.
+
+\subsubsection{Scenario-Level Analysis}
+
+While aggregate metrics show marginal benefit, scenario-level analysis reveals context-dependent performance:
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item \textbf{Dense urban contexts}: Distilled excels (within center: $\Delta$ Distance JSD = $-0.0104$, distilled better)
+    \item \textbf{Suburban contexts}: Vanilla excels (suburban: $\Delta$ Distance JSD = $+0.0074$, vanilla better)
+\end{itemize}
+
+This spatial heterogeneity suggests teacher (LM-TAD) knowledge is localized to training context (city center), providing benefit in dense urban navigation but not in suburban areas.
 
 \subsubsection{Dataset-Specific Hyperparameters}
 
 Porto requires 4.3$\times$ higher $\lambda$ (0.00644 vs Beijing's 0.0014), 42\% lower $\tau$ (2.802 vs 4.37), and 43\% shorter window (4 vs 7). Memory constraints necessitated batch size reduction (32 vs Beijing's 128), creating an uncontrolled confound that prevents isolating whether hyperparameter divergence stems from dataset characteristics or batch size effects.
 
-\subsection{Results: Beijing Private (BJUT) Dataset}
-\label{sec:eval-bjut}
-
-\textcolor{red}{[TO BE COMPLETED - Dataset preparation and evaluation planned for cross-validation of distillation effectiveness on independent data source.]}
-
-\textbf{Planned evaluation:}
-\begin{itemize}[noitemsep,topsep=0pt]
-    \item Independent map-matching and preprocessing of BJUT taxi dataset
-    \item Training LM-TAD teacher on BJUT data
-    \item Distillation experiments with optimal hyperparameters from Beijing
-    \item Full metric suite matching Beijing and Porto evaluations
-    \item Cross-dataset generalization analysis
-\end{itemize}
-
-\textbf{Research question:} Does distillation effectiveness transfer to independently processed datasets, or is it specific to HOSER's curated benchmarks?
-
 \subsection{Cross-Dataset Analysis}
 \label{sec:eval-cross}
 
-\textcolor{red}{[TO BE COMPLETED AFTER ALL DATASETS EVALUATED]}
+\textcolor{red}{[TO BE COMPLETED AFTER PORTO PHASE 2 EVALUATION]}
 
 \textbf{Planned analyses:}
 \begin{itemize}[noitemsep,topsep=0pt]
-    \item Compare distillation effectiveness (JSD improvements, OD matching gains) across Beijing, Porto, BJUT
+    \item Compare distillation effectiveness (JSD improvements, OD matching gains) across Beijing and Porto datasets
     \item Identify dataset characteristics that influence knowledge transfer quality
     \item Assess whether optimal hyperparameters ($\lambda$, $\tau$, $w$) generalize across cities
     \item Analyze relationship between network size, trajectory length, and distillation benefits

@@ -10,10 +10,10 @@ This thesis answers the question by distilling the transformer-based LM-TAD anom
 
 \paragraph{Contributions.}  We make four key contributions:
 \begin{itemize}
-  \item Propose the first cross-task distillation framework that transfers spatial knowledge from trajectory anomaly detection to trajectory prediction.
-  \item Develop a batched, GPU-optimised KL divergence module that enables large-scale training with negligible overhead.
-  \item Empirically validate the distilled model on large-scale urban datasets, showing pronounced improvements across established mobility-generation metrics while maintaining millisecond-level inference latency.
-  \item Release an end-to-end evaluation pipeline for trajectory generation and similarity analysis, facilitating reproducible research.
+  \item Propose the first cross-task distillation framework that transfers spatial knowledge from trajectory anomaly detection to trajectory prediction, enabling dramatic trajectory generation improvements on Beijing (85--89\% path completion vs vanilla's 12\%, 87--98\% JSD reduction) with no inference-time overhead.
+  \item Introduce a scenario-level evaluation protocol with OD matching as the primary end-to-end metric, revealing context-dependent distillation behavior: universal benefits on complex urban networks (Beijing) versus spatially localized improvements in simpler environments (Porto).
+  \item Demonstrate the validation--generation disconnect as a methodological insight: minimal validation accuracy gains (+0.01--0.23\%) produce dramatic generation quality improvements (+73\% OD match), motivating multi-objective optimization beyond next-step accuracy proxies.
+  \item Establish the necessity of dataset-specific hyperparameter tuning through systematic Optuna-based optimization, revealing non-transferable optimal configurations across cities (4.3$\times$ divergence in $\lambda$, 42\% in $\tau$, 43\% in $w$ between Beijing and Porto) and highlighting the batch-size confound as a critical factor requiring controlled ablation studies.
 \end{itemize}
 
 \paragraph{Paper organisation.}  \autoref{sec:lit-review} surveys the evolution of trajectory modelling, culminating in the need for knowledge distillation.  \autoref{sec:methodology} details the LM-TAD\,$\rightarrow$\,HOSER distillation algorithm and training pipeline.  \autoref{sec:data-preprocessing} describes dataset preparation, and \autoref{sec:evaluation} presents empirical results.  We conclude with future research directions in \autoref{sec:conclusion}.

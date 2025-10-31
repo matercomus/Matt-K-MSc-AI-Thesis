@@ -4,18 +4,16 @@
 \section{Datasets and Preprocessing}
 \label{sec:data-preprocessing}
 
-This section describes the datasets used for distillation experiments, their preprocessing pipeline, and the compatibility layer required to bridge HOSER's road-based and LM-TAD's grid-based representations. We evaluate our framework on three urban trajectory datasets representing different cities and data sources.
+This section describes the datasets used for distillation experiments, their preprocessing pipeline, and the compatibility layer required to bridge HOSER's road-based and LM-TAD's grid-based representations. We evaluate our framework on two urban trajectory datasets representing different urban environments and mobility patterns.
 
 \subsection{Dataset Overview}
 \label{sec:data-overview}
 
-We evaluate the distillation framework on three urban trajectory datasets (statistics in \hyperref[app:dataset-stats]{Table~\ref*{tab:dataset-stats-appendix}, Appendix~\ref*{app:dataset-stats}}). The Beijing HOSER reference dataset~\cite{caoHolisticSemanticRepresentation2025} provides our primary evaluation benchmark, while Porto and BJUT datasets enable cross-dataset validation.
+We evaluate the distillation framework on two urban trajectory datasets (statistics in \hyperref[app:dataset-stats]{Table~\ref*{tab:dataset-stats-appendix}, Appendix~\ref*{app:dataset-stats}}). The Beijing HOSER reference dataset~\cite{caoHolisticSemanticRepresentation2025} provides our primary evaluation benchmark, while the Porto dataset enables cross-dataset validation and demonstrates the necessity of dataset-specific hyperparameter tuning.
 
 \textbf{Beijing HOSER Reference Dataset:} Standardized benchmark from the original HOSER paper with 40,060 road segments and 629,380 training trajectories. Map-matched by the original authors, ensuring high alignment quality. We adapted the format for LM-TAD compatibility while preserving train/validation/test splits.
 
-\textbf{Porto HOSER Dataset:} Different urban environment with longer average trajectories (8.0 vs 4.6 road segments). Also from the original HOSER paper~\cite{caoHolisticSemanticRepresentation2025}. \textcolor{red}{[EVALUATION IN PROGRESS]}
-
-\textbf{Beijing Private (BJUT) Dataset:} Independent data source from Beijing University of Technology for cross-dataset validation. \textcolor{red}{[TO BE COMPLETED]}
+\textbf{Porto HOSER Dataset:} Different urban environment with longer average trajectories (8.0 vs 4.6 road segments). Also from the original HOSER paper~\cite{caoHolisticSemanticRepresentation2025}. Evaluation results with Phase 1 optimal hyperparameters are presented in Section~\ref{sec:eval-porto}.
 
 \subsection{Dataset Format}
 \label{sec:data-format}
@@ -56,7 +54,6 @@ Complete dataset statistics are provided in \hyperref[app:dataset-stats]{Table~\
 \begin{itemize}[noitemsep,topsep=0pt]
     \item \textbf{Beijing}: 40,060 roads, 629,380 training trajectories, average length 4.6 roads, 5.16 km trips
     \item \textbf{Porto}: $\sim$11,024 roads, $\sim$481,359 training trajectories, average length 8.0 roads (substantially longer)
-    \item \textbf{BJUT}: Planned for cross-dataset validation (independent preprocessing)
 \end{itemize}
 
 \textbf{Note on trajectory length:} Porto trajectories are substantially longer than Beijing (8.0 vs 4.6 road segments), leading to quadratic memory scaling in attention mechanisms. This necessitates reduced batch sizes for Porto experiments (see \autoref{sec:impl-practical}).
@@ -69,8 +66,6 @@ The datasets represent real-world urban mobility patterns with inherent characte
 \textbf{Beijing:} High-density metropolitan area with complex road hierarchy. Trajectories span residential, commercial, and transportation hub regions, providing diverse route types.
 
 \textbf{Porto:} Smaller city with different urban structure. Longer trajectories suggest different mobility patterns (potentially more suburban routes or lower road density).
-
-\textbf{BJUT (planned):} Independent data source enables assessment of whether distillation benefits generalize beyond HOSER's curated benchmark datasets.
 
 All datasets are \emph{map-matched}, meaning GPS points have been aligned to road segments via sophisticated algorithms. This preprocessing step, performed by domain experts, eliminates GPS noise and ensures trajectory realism. Our distillation framework operates entirely on these cleaned, road-level trajectories.
 

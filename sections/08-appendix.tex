@@ -327,36 +327,36 @@ Table~\ref{tab:dataset-stats-appendix} provides comprehensive statistics for all
     \caption{Complete trajectory dataset statistics and preprocessing details}
     \label{tab:dataset-stats-appendix}
     \small
-    \begin{tabular}{llll}
+    \begin{tabular}{lll}
         \toprule
-        \textbf{Statistic}              & \textbf{Beijing}        & \textbf{Porto}        & \textbf{BJUT} \\
+        \textbf{Statistic}              & \textbf{Beijing}        & \textbf{Porto}        \\
         \midrule
-        \multicolumn{4}{l}{\textit{Road Network}}                                                         \\
-        \quad Road segments             & 40,060                  & $\sim$11,024          & [TBC]         \\
-        \quad Spatial zones             & 300                     & 300                   & [TBC]         \\
-        \quad Grid cells (LM-TAD)       & 51,660 (205$\times$252) & 6,164 (46$\times$134) & [TBC]         \\
+        \multicolumn{3}{l}{\textit{Road Network}}                                    \\
+        \quad Road segments             & 40,060                  & $\sim$11,024          \\
+        \quad Spatial zones             & 300                     & 300                   \\
+        \quad Grid cells (LM-TAD)       & 51,660 (205$\times$252) & 6,164 (46$\times$134) \\
         \midrule
-        \multicolumn{4}{l}{\textit{Trajectories}}                                                         \\
-        \quad Training                  & 629,380                 & $\sim$481,359         & [TBC]         \\
-        \quad Validation                & 78,673                  & [TBC]                 & [TBC]         \\
-        \quad Test                      & 179,823                 & [TBC]                 & [TBC]         \\
-        \quad Total                     & 887,876                 & $\sim$700,000         & [TBC]         \\
+        \multicolumn{3}{l}{\textit{Trajectories}}                                    \\
+        \quad Training                  & 629,380                 & $\sim$481,359         \\
+        \quad Validation                & 78,673                  & [TBC]                 \\
+        \quad Test                      & 179,823                 & [TBC]                 \\
+        \quad Total                     & 887,876                 & $\sim$700,000         \\
         \midrule
-        \multicolumn{4}{l}{\textit{Trajectory Characteristics}}                                           \\
-        \quad Avg. length (roads)       & 4.6                     & $\sim$8.0             & [TBC]         \\
-        \quad Avg. distance (km)        & 5.16                    & [TBC]                 & [TBC]         \\
-        \quad Avg. duration (min)       & 28.2                    & [TBC]                 & [TBC]         \\
-        \quad Max length (roads)        & 1024 (truncated)        & 1024 (truncated)      & [TBC]         \\
+        \multicolumn{3}{l}{\textit{Trajectory Characteristics}}                      \\
+        \quad Avg. length (roads)       & 4.6                     & $\sim$8.0             \\
+        \quad Avg. distance (km)        & 5.16                    & [TBC]                 \\
+        \quad Avg. duration (min)       & 28.2                    & [TBC]                 \\
+        \quad Max length (roads)        & 1024 (truncated)        & 1024 (truncated)      \\
         \midrule
-        \multicolumn{4}{l}{\textit{Preprocessing}}                                                        \\
-        \quad Map-matching quality      & High (HOSER authors)    & High (HOSER authors)  & [Independent] \\
-        \quad Partition time (sec)      & 15--20                  & 4                     & [TBC]         \\
-        \quad Zone trans. matrix (sec)  & 10--15                  & 67                    & [TBC]         \\
-        \quad Vocab. mapping time (sec) & $<$1                    & $<$1                  & [TBC]         \\
+        \multicolumn{3}{l}{\textit{Preprocessing}}                                   \\
+        \quad Map-matching quality      & High (HOSER authors)    & High (HOSER authors)  \\
+        \quad Partition time (sec)      & 15--20                  & 4                     \\
+        \quad Zone trans. matrix (sec)  & 10--15                  & 67                    \\
+        \quad Vocab. mapping time (sec) & $<$1                    & $<$1                  \\
         \midrule
-        \multicolumn{4}{l}{\textit{Data Splits}}                                                          \\
-        \quad Split strategy            & OD-stratified           & OD-stratified         & [TBC]         \\
-        \quad Test OD overlap           & 0\% (held-out)          & 0\% (held-out)        & [TBC]         \\
+        \multicolumn{3}{l}{\textit{Data Splits}}                                     \\
+        \quad Split strategy            & OD-stratified           & OD-stratified         \\
+        \quad Test OD overlap           & 0\% (held-out)          & 0\% (held-out)        \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -378,7 +378,6 @@ Table~\ref{tab:vocab-alignment-appendix} summarizes vocabulary alignment charact
         \midrule
         Beijing          & 40,060                           & 205 $\times$ 252   & 51,660                 & 0.78                     \\
         Porto            & 11,024                           & 46 $\times$ 134    & 6,164                  & [TBC]                    \\
-        BJUT             & [TBC]                            & [TBC]              & [TBC]                  & [TBC]                    \\
         \bottomrule
     \end{tabular}
 \end{table}

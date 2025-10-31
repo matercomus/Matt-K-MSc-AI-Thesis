@@ -59,7 +59,7 @@ The resulting system enables several practical applications for urban traffic ma
 
 Despite promising results, several limitations warrant acknowledgment:
 
-\textbf{Limited Dataset Evaluation.} We present complete results only for Beijing. Porto evaluation is in progress, and BJUT evaluation is planned. Comprehensive cross-dataset validation is needed to confirm generalization across urban environments with different characteristics (network topology, trajectory lengths, mobility patterns).
+\textbf{Limited Dataset Evaluation.} We present complete results for Beijing and Porto (Phase 1 hyperparameters). Comprehensive cross-dataset validation with additional urban environments is needed to confirm generalization across cities with different characteristics (network topology, trajectory lengths, mobility patterns).
 
 \textbf{Inference Speed Not Formally Benchmarked.} While fast inference is a core motivation ($\sim$13 ms/batch claimed), we have not conducted systematic latency benchmarking under controlled conditions. Formal validation comparing vanilla vs distilled inference speeds, batch size sensitivity, and hardware-specific performance is needed.
 
@@ -86,7 +86,9 @@ Several promising directions extend this research:
 
 \subsubsection{Extended Dataset Evaluation}
 
-\textbf{Complete Porto and BJUT Evaluation.} Finish Porto experiments (currently running) and conduct full BJUT evaluation to validate cross-dataset generalization. Compare distillation effectiveness across cities with different characteristics.
+\textbf{Complete Porto Phase 2 Evaluation.} Finish evaluation with Phase 2 optimal hyperparameters ($\lambda = 0.00598$, $\tau = 2.515$, $w = 4$) to compare against Phase 1 results and validate final performance.
+
+\textbf{BJUT Abnormal-Trajectory Evaluation (Work in Progress).} Planned targeted case study using the Beijing Private (BJUT) taxi dataset for cross-dataset validation of distillation effectiveness on an independent data source. Given current data quality limitations (insufficient clean sample size for large-scale evaluation), this analysis is underway and targeted for inclusion in the final thesis version. The evaluation will assess whether distillation benefits generalize beyond HOSER's curated benchmark datasets.
 
 \textbf{Additional Urban Networks.} Evaluate on diverse cities (Chengdu, Xi'an, San Francisco, London) covering varied network topologies (grid vs organic street patterns), scales (dense metropolitan vs sprawling suburban), and mobility patterns (taxi-dominated vs mixed-mode transportation).
 
