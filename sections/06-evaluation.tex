@@ -71,6 +71,10 @@ These metrics compare individual trajectory pairs with matching OD endpoints:
 
 \textbf{Critical distinction}: The model receives target OD $(r_o, r_d)$ but may fail to reach $r_d$. We extract the \emph{generated trajectory's actual endpoints} and check if this OD pair exists in real data via grid-based spatial binning (0.001°, $\sim$111m). High matching rates indicate path completion success and realistic mobility patterns. Low rates reveal fundamental navigation failures.
 
+\subsubsection{Scenario-Level Evaluation}
+
+To assess context-dependent performance, we partition trajectories into 9 spatial and temporal scenarios defined in \texttt{scenarios\_beijing.yaml} and \texttt{scenarios\_porto.yaml}: temporal contexts (\texttt{weekday}, \texttt{weekend}, \texttt{peak}, \texttt{off\_peak}) and spatial contexts (\texttt{city\_center}, \texttt{suburban}, \texttt{within\_center}, \texttt{to\_center}, \texttt{from\_center}). For each scenario, we compute aggregate metrics (OD match rate, Distance/Radius JSD) and report per-scenario performance deltas ($\Delta$) between distilled and vanilla models. This granular analysis reveals where distillation provides benefit versus where vanilla suffices, avoiding the averaging effect of aggregate metrics that can mask context-dependent performance.
+
 \subsection{Results: Beijing Dataset}
 \label{sec:eval-beijing}
 
