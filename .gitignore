@@ -22,5 +22,8 @@ build/
 .vscode/
 latex-workshop-config.json.template
 
+# Temporary screenshots and diagrams (not tracked)
+Screenshot_*.png
+
 # Notes directory - documentation and references (not version controlled)
 notes/
