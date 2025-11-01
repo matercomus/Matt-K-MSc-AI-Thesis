@@ -809,3 +809,14 @@ Figures~\ref{fig:appendix-porto-scenario-city-center} and~\ref{fig:appendix-port
     \caption{Porto suburban scenario cross-model comparison. Lower-density context where vanilla already performs well, showing limited marginal benefit from distillation. Demonstrates spatial localization of teacher knowledge.}
     \label{fig:appendix-porto-scenario-suburban}
 \end{figure}
+
+\paragraph{Multi-Scenario Grid Comparisons (Porto)}
+
+Figure~\ref{fig:appendix-porto-multiscenario-grid} presents a powerful visualization showing the same OD pair evaluated across multiple scenarios, demonstrating how vanilla and distilled model behavior varies with spatial and temporal context.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{assets/plots/eval/porto/scenario_cross_model/test/multi_scenario_grid/test_origin7840_dest5620_grid.pdf}
+    \caption{Porto multi-scenario grid showing the same test OD pair (origin 7840, dest 5620) across different spatial and temporal contexts. Each panel shows vanilla vs distilled trajectories for a specific scenario, revealing how context modulates distillation benefits. This visualization powerfully demonstrates the context-dependent nature of knowledge transfer in Porto.}
+    \label{fig:appendix-porto-multiscenario-grid}
+\end{figure}
