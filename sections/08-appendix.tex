@@ -697,6 +697,21 @@ Figures~\ref{fig:appendix-beijing-cross-test} and~\ref{fig:appendix-beijing-cros
     \label{fig:appendix-beijing-cross-train}
 \end{figure}
 
+\paragraph{Scenario-Specific Cross-Model Comparisons (Beijing)}
+
+Figure~\ref{fig:appendix-beijing-scenario-city-center} presents scenario-specific cross-model trajectory comparisons for Beijing, showing the dramatic improvement from distillation across spatial contexts.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.8\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/scenario_cross_model/test/city_center/test_od_comparison_1_origin17496_dest33590.pdf}
+        \caption{City center: Test OD comparison showing vanilla premature termination vs distilled complete path}
+    \end{subfigure}
+    \caption{Beijing city center scenario cross-model comparison. Demonstrates universal distillation benefit characteristic of Beijing, where teacher knowledge dramatically improves path completion regardless of spatial context.}
+    \label{fig:appendix-beijing-scenario-city-center}
+\end{figure}
+
 \subsubsection{Cross-Model Trajectory Comparisons (Porto)}
 \label{app:cross-model-porto}
 
@@ -756,7 +771,7 @@ Figures~\ref{fig:appendix-porto-cross-test} through~\ref{fig:appendix-porto-scen
 
 \paragraph{Scenario-Specific Cross-Model Comparisons (Porto)}
 
-Figures~\ref{fig:appendix-porto-scenario-city-center} and~\ref{fig:appendix-porto-scenario-suburban} present cross-model trajectory comparisons for specific spatial scenarios, demonstrating how distillation benefits vary by urban context. City center trajectories show where teacher knowledge provides spatial guidance, while suburban trajectories reveal contexts where vanilla models already perform well.
+Figures~\ref{fig:appendix-porto-scenario-city-center} and~\ref{fig:appendix-porto-scenario-suburban} present cross-model trajectory comparisons for specific spatial scenarios, demonstrating how distillation benefits vary by urban context in Porto (contrasting with Beijing's universal improvements shown in Figure~\ref{fig:appendix-beijing-scenario-city-center}). City center trajectories show where teacher knowledge provides spatial guidance, while suburban trajectories reveal contexts where vanilla models already perform well.
 
 \begin{figure}[H]
     \centering
