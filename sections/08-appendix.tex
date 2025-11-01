@@ -700,7 +700,7 @@ Figures~\ref{fig:appendix-beijing-cross-test} and~\ref{fig:appendix-beijing-cros
 \subsubsection{Cross-Model Trajectory Comparisons (Porto)}
 \label{app:cross-model-porto}
 
-Figures~\ref{fig:appendix-porto-cross-test} and~\ref{fig:appendix-porto-cross-train} present direct side-by-side trajectory visualizations for Porto, showing subtle differences in route selection and distribution quality.
+Figures~\ref{fig:appendix-porto-cross-test} through~\ref{fig:appendix-porto-scenario-suburban} present direct side-by-side trajectory visualizations for Porto, showing subtle differences in route selection and distribution quality. Additionally, Figures~\ref{fig:appendix-porto-scenario-city-center} and~\ref{fig:appendix-porto-scenario-suburban} show scenario-specific comparisons revealing context-dependent performance patterns.
 
 \begin{figure}[H]
     \centering
@@ -752,4 +752,45 @@ Figures~\ref{fig:appendix-porto-cross-test} and~\ref{fig:appendix-porto-cross-tr
     \end{subfigure}
     \caption{Porto train OD cross-model comparisons showing baseline high performance with marginal distillation improvements.}
     \label{fig:appendix-porto-cross-train}
+\end{figure}
+
+\paragraph{Scenario-Specific Cross-Model Comparisons (Porto)}
+
+Figures~\ref{fig:appendix-porto-scenario-city-center} and~\ref{fig:appendix-porto-scenario-suburban} present cross-model trajectory comparisons for specific spatial scenarios, demonstrating how distillation benefits vary by urban context. City center trajectories show where teacher knowledge provides spatial guidance, while suburban trajectories reveal contexts where vanilla models already perform well.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenario_cross_model/test/city_center/test_od_comparison_1_origin234_dest7406.pdf}
+        \caption{City center: Test OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenario_cross_model/test/city_center/test_od_comparison_3_origin587_dest554.pdf}
+        \caption{City center: Test OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenario_cross_model/train/city_center/train_od_comparison_1_origin8435_dest357.pdf}
+        \caption{City center: Train OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenario_cross_model/train/city_center/train_od_comparison_3_origin10016_dest1949.pdf}
+        \caption{City center: Train OD 3}
+    \end{subfigure}
+    \caption{Porto city center scenario cross-model comparisons. Dense urban context where distillation provides spatial guidance benefits, reflecting teacher (LM-TAD) training domain expertise.}
+    \label{fig:appendix-porto-scenario-city-center}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.8\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenario_cross_model/test/suburban/test_od_comparison_1_origin10232_dest2811.pdf}
+        \caption{Suburban: Test OD comparison (only one suitable pair found for this scenario)}
+    \end{subfigure}
+    \caption{Porto suburban scenario cross-model comparison. Lower-density context where vanilla already performs well, showing limited marginal benefit from distillation. Demonstrates spatial localization of teacher knowledge.}
+    \label{fig:appendix-porto-scenario-suburban}
 \end{figure}
