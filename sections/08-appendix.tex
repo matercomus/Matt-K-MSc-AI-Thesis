@@ -385,3 +385,371 @@ Table~\ref{tab:vocab-alignment-appendix} summarizes vocabulary alignment charact
 \end{table}
 
 The many-to-one mapping (multiple roads per grid cell) is inevitable in dense urban areas. Grid resolution is chosen to balance spatial granularity (finer grids capture local patterns) with vocabulary size (larger vocabularies increase computational cost).
+
+\subsection{Supplementary Figures}
+\label{app:figures}
+
+This section provides comprehensive visual documentation of hyperparameter optimization, distribution analyses, trajectory examples, and cross-model comparisons that support the evaluation presented in \autoref{sec:evaluation}.
+
+\subsubsection{Hyperparameter Optimization (Porto)}
+\label{app:optuna-porto}
+
+Figure~\ref{fig:appendix-optuna-phase1} and Figure~\ref{fig:appendix-optuna-phase2} present additional Optuna visualization plots for Porto Phase 1 and Phase 2 hyperparameter optimization, complementing the optimization history and parameter importance plots shown in \autoref{sec:impl-hparams}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase1/contour_plot.pdf}
+        \caption{Parameter contour plot}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase1/slice_plot.pdf}
+        \caption{Parameter slice plot}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase1/parallel_coordinate.pdf}
+        \caption{Parallel coordinate plot}
+    \end{subfigure}
+    \caption{Porto Phase 1 hyperparameter optimization analysis. Contour and slice plots reveal parameter interactions and sensitivities. Parallel coordinates show trial progression through the search space.}
+    \label{fig:appendix-optuna-phase1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase2/contour_plot.pdf}
+        \caption{Parameter contour plot}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase2/slice_plot.pdf}
+        \caption{Parameter slice plot}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/optuna/phase2/parallel_coordinate.pdf}
+        \caption{Parallel coordinate plot}
+    \end{subfigure}
+    \caption{Porto Phase 2 hyperparameter optimization analysis. Refinement phase shows tighter parameter distributions and more consistent trial performance compared to Phase 1.}
+    \label{fig:appendix-optuna-phase2}
+\end{figure}
+
+\subsubsection{Scenario-Level Analysis (Beijing)}
+\label{app:scenario-beijing}
+
+Figures~\ref{fig:appendix-beijing-scenario-heatmap} through~\ref{fig:appendix-beijing-scenario-spatial} present scenario-level performance breakdowns for Beijing, supporting the context-dependent analysis in \autoref{sec:eval-beijing}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{assets/plots/eval/beijing/scenarios/scenario_metrics_heatmap.pdf}
+    \caption{Beijing scenario-level metrics heatmap showing performance across spatial and temporal contexts. Distilled models maintain consistent high performance across all scenarios.}
+    \label{fig:appendix-beijing-scenario-heatmap}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/scenarios/train_od_scenario_comparison.pdf}
+        \caption{Train OD scenarios}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/scenarios/test_od_scenario_comparison.pdf}
+        \caption{Test OD scenarios}
+    \end{subfigure}
+    \caption{Beijing scenario comparison across train and test OD pairs. Distilled models show consistent superiority regardless of spatial or temporal context.}
+    \label{fig:appendix-beijing-scenario-comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/scenarios/spatial_scenarios_analysis.pdf}
+        \caption{Spatial context analysis}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/scenarios/temporal_scenarios_comparison.pdf}
+        \caption{Temporal context analysis}
+    \end{subfigure}
+    \caption{Beijing spatial and temporal scenario performance. Universal improvement across all contexts demonstrates robust knowledge transfer.}
+    \label{fig:appendix-beijing-scenario-spatial}
+\end{figure}
+
+\subsubsection{Scenario-Level Analysis (Porto)}
+\label{app:scenario-porto}
+
+Figures~\ref{fig:appendix-porto-scenario-heatmap} through~\ref{fig:appendix-porto-scenario-sensitivity} present scenario-level performance breakdowns for Porto, revealing context-dependent behavior discussed in \autoref{sec:eval-porto}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{assets/plots/eval/porto/scenarios/scenario_metrics_heatmap.pdf}
+    \caption{Porto scenario-level metrics heatmap showing spatially localized performance gains. Distillation benefits concentrate in suburban and rural contexts.}
+    \label{fig:appendix-porto-scenario-heatmap}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenarios/train_od_scenario_comparison.pdf}
+        \caption{Train OD scenarios}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenarios/test_od_scenario_comparison.pdf}
+        \caption{Test OD scenarios}
+    \end{subfigure}
+    \caption{Porto scenario comparison across train and test OD pairs. Performance varies by spatial context, with stronger improvements in less urbanized areas.}
+    \label{fig:appendix-porto-scenario-comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenarios/spatial_metrics_differentiation.pdf}
+        \caption{Spatial differentiation}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/scenarios/metric_sensitivity_by_scenario.pdf}
+        \caption{Metric sensitivity}
+    \end{subfigure}
+    \caption{Porto spatial context differentiation and metric sensitivity by scenario. Different metrics respond differently to distillation across contexts.}
+    \label{fig:appendix-porto-scenario-sensitivity}
+\end{figure}
+
+\subsubsection{Trajectory Examples (Beijing)}
+\label{app:traj-beijing}
+
+Figures~\ref{fig:appendix-beijing-traj-train} and~\ref{fig:appendix-beijing-traj-test} show representative trajectory comparisons for Beijing train and test OD pairs, illustrating the qualitative differences between vanilla and distilled model generations.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/train_od_comparison_1_origin32347_dest26801.pdf}
+        \caption{Train OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/train_od_comparison_3_origin32347_dest37646.pdf}
+        \caption{Train OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/train_od_comparison_5_origin2466_dest8733.pdf}
+        \caption{Train OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/train_od_comparison_7_origin20252_dest22542.pdf}
+        \caption{Train OD 7}
+    \end{subfigure}
+    \caption{Beijing train OD trajectory examples. Distilled models generate complete paths reaching destinations, while vanilla models frequently terminate prematurely.}
+    \label{fig:appendix-beijing-traj-train}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/test_od_comparison_1_origin4462_dest35846.pdf}
+        \caption{Test OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/test_od_comparison_3_origin24387_dest15499.pdf}
+        \caption{Test OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/test_od_comparison_5_origin36493_dest3549.pdf}
+        \caption{Test OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/trajectories/test_od_comparison_7_origin27117_dest12017.pdf}
+        \caption{Test OD 7}
+    \end{subfigure}
+    \caption{Beijing test OD trajectory examples. Generalization to unseen OD pairs demonstrates robust spatial understanding transferred from teacher.}
+    \label{fig:appendix-beijing-traj-test}
+\end{figure}
+
+\subsubsection{Trajectory Examples (Porto)}
+\label{app:traj-porto}
+
+Figures~\ref{fig:appendix-porto-traj-train} and~\ref{fig:appendix-porto-traj-test} show representative trajectory comparisons for Porto train and test OD pairs, illustrating context-dependent performance patterns.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/train_od_comparison_1_origin8237_dest1036.pdf}
+        \caption{Train OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/train_od_comparison_3_origin7840_dest3067.pdf}
+        \caption{Train OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/train_od_comparison_5_origin320_dest8550.pdf}
+        \caption{Train OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/train_od_comparison_7_origin712_dest8443.pdf}
+        \caption{Train OD 7}
+    \end{subfigure}
+    \caption{Porto train OD trajectory examples. Both vanilla and distilled models achieve high path completion rates, with subtle differences in route selection.}
+    \label{fig:appendix-porto-traj-train}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/test_od_comparison_1_origin9991_dest542.pdf}
+        \caption{Test OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/test_od_comparison_3_origin587_dest554.pdf}
+        \caption{Test OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/test_od_comparison_5_origin5462_dest1997.pdf}
+        \caption{Test OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/trajectories/test_od_comparison_7_origin3067_dest899.pdf}
+        \caption{Test OD 7}
+    \end{subfigure}
+    \caption{Porto test OD trajectory examples. Performance on held-out OD pairs demonstrates generalization to new spatial contexts.}
+    \label{fig:appendix-porto-traj-test}
+\end{figure}
+
+\subsubsection{Cross-Model Trajectory Comparisons (Beijing)}
+\label{app:cross-model-beijing}
+
+Figures~\ref{fig:appendix-beijing-cross-test} and~\ref{fig:appendix-beijing-cross-train} present direct side-by-side trajectory visualizations comparing vanilla and distilled model outputs for Beijing, providing qualitative evidence of improved path completion.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/test_od_comparison_1_origin4462_dest35846.pdf}
+        \caption{Test OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/test_od_comparison_3_origin24387_dest15499.pdf}
+        \caption{Test OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/test_od_comparison_5_origin36493_dest3549.pdf}
+        \caption{Test OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/test_od_comparison_7_origin27117_dest12017.pdf}
+        \caption{Test OD 7}
+    \end{subfigure}
+    \caption{Beijing test OD cross-model comparisons showing vanilla (premature termination) vs distilled (complete paths) behavior.}
+    \label{fig:appendix-beijing-cross-test}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/train_od_comparison_1_origin32347_dest26801.pdf}
+        \caption{Train OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/train_od_comparison_3_origin32347_dest37646.pdf}
+        \caption{Train OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/train_od_comparison_5_origin2466_dest8733.pdf}
+        \caption{Train OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/beijing/cross_model/train_od_comparison_7_origin20252_dest22542.pdf}
+        \caption{Train OD 7}
+    \end{subfigure}
+    \caption{Beijing train OD cross-model comparisons demonstrating consistent distillation improvements even on training set OD pairs.}
+    \label{fig:appendix-beijing-cross-train}
+\end{figure}
+
+\subsubsection{Cross-Model Trajectory Comparisons (Porto)}
+\label{app:cross-model-porto}
+
+Figures~\ref{fig:appendix-porto-cross-test} and~\ref{fig:appendix-porto-cross-train} present direct side-by-side trajectory visualizations for Porto, showing subtle differences in route selection and distribution quality.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/test/test_od_comparison_1_origin9991_dest542.pdf}
+        \caption{Test OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/test/test_od_comparison_3_origin587_dest554.pdf}
+        \caption{Test OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/test/test_od_comparison_5_origin5462_dest1997.pdf}
+        \caption{Test OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/test/test_od_comparison_7_origin3067_dest899.pdf}
+        \caption{Test OD 7}
+    \end{subfigure}
+    \caption{Porto test OD cross-model comparisons. Both models complete most paths; differences appear in route choice and spatial distribution.}
+    \label{fig:appendix-porto-cross-test}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/train/train_od_comparison_1_origin8237_dest1036.pdf}
+        \caption{Train OD 1}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/train/train_od_comparison_3_origin7840_dest3067.pdf}
+        \caption{Train OD 3}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/train/train_od_comparison_5_origin320_dest8550.pdf}
+        \caption{Train OD 5}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/cross_model/train/train_od_comparison_7_origin712_dest8443.pdf}
+        \caption{Train OD 7}
+    \end{subfigure}
+    \caption{Porto train OD cross-model comparisons showing baseline high performance with marginal distillation improvements.}
+    \label{fig:appendix-porto-cross-train}
+\end{figure}

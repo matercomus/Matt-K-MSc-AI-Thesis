@@ -282,7 +282,7 @@ EDR (normalized metric) shows similar values across models ($\sim$0.50), indicat
 
 \subsubsection{Comprehensive Performance Summary}
 
-Figure~\ref{fig:performance-radar} synthesizes all metrics into a radar chart.
+Figure~\ref{fig:performance-radar} synthesizes all metrics into a radar chart, while Figure~\ref{fig:beijing-metrics-heatmap} provides a detailed heatmap visualization of all scenario-level metrics.
 
 \begin{figure}[h]
     \centering
@@ -290,6 +290,16 @@ Figure~\ref{fig:performance-radar} synthesizes all metrics into a radar chart.
     \caption{Normalized performance radar chart. Distilled models (blue) dominate across all dimensions. Scores computed as: OD coverage (raw \%), Distance quality (1 - JSD), Radius quality (1 - JSD), Distance accuracy (1 - |real - gen| / real).}
     \label{fig:performance-radar}
 \end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assets/plots/hoser/metrics_heatmap.pdf}
+    \caption{Beijing comprehensive metrics heatmap across all models, seeds, and OD splits. Color intensity reveals consistent distilled superiority (lower JSD values shown in blue) across all evaluation dimensions. See \autoref{app:scenario-beijing} for detailed scenario-level breakdowns.}
+    \label{fig:beijing-metrics-heatmap}
+\end{figure}
+
+\paragraph{Qualitative Trajectory Visualization}
+Representative trajectory comparisons for Beijing train and test OD pairs are presented in \autoref{app:traj-beijing} and \autoref{app:cross-model-beijing}, providing visual confirmation of improved path completion and spatial coherence in distilled model outputs.
 
 \subsection{Results: Porto Dataset}
 \label{sec:eval-porto}
@@ -329,13 +339,29 @@ Porto demonstrates that vanilla HOSER can successfully navigate when trajectorie
     \label{fig:porto-distance-distributions}
 \end{figure}
 
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/distributions/radius_distribution_train_od.pdf}
+        \caption{Train OD pairs}
+    \end{subfigure}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{assets/plots/eval/porto/distributions/radius_distribution_test_od.pdf}
+        \caption{Test OD pairs}
+    \end{subfigure}
+    \caption{Porto radius of gyration distributions. Both models match real distributions closely, with minimal differences between vanilla and distilled outputs.}
+    \label{fig:porto-radius-distributions}
+\end{figure}
+
 Aggregate distribution metrics show minimal distillation benefit on Porto:
 \begin{itemize}[leftmargin=*,noitemsep]
     \item \textbf{Distance JSD}: Vanilla 0.0055 vs Distilled 0.0060 (+9\%, vanilla better)
     \item \textbf{Radius JSD}: Vanilla 0.0106 vs Distilled 0.0108 (+2\%, vanilla better)
 \end{itemize}
 
-The minimal differences (both models achieve JSD $<$ 0.011) indicate that when vanilla succeeds at path completion, distributional guidance from distillation provides limited additional benefit.
+The minimal differences (both models achieve JSD $<$ 0.011) indicate that when vanilla succeeds at path completion, distributional guidance from distillation provides limited additional benefit. Additional distribution analyses and scenario-level heatmaps are presented in \autoref{app:scenario-porto}.
 
 \subsubsection{Scenario-Level Analysis}
 
@@ -346,6 +372,9 @@ While aggregate metrics show marginal benefit, scenario-level analysis reveals c
 \end{itemize}
 
 This spatial heterogeneity suggests teacher (LM-TAD) knowledge is localized to training context (city center), providing benefit in dense urban navigation but not in suburban areas.
+
+\paragraph{Qualitative Trajectory Visualization}
+Representative trajectory comparisons for Porto train and test OD pairs are presented in \autoref{app:traj-porto} and \autoref{app:cross-model-porto}. These visualizations confirm high path completion rates for both vanilla and distilled models, with subtle differences in route selection patterns.
 
 \subsubsection{Dataset-Specific Hyperparameters}
 
